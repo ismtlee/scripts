@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>tail -f development.log</title>
+		<title>php error log</title>
 		<script>
 			function showText(t){
 				document.querySelector('#showData').innerHTML += t;
@@ -9,7 +9,8 @@
 			if(!window.WebSocket){
 				alert('Your browser not Support websocket!');
 			} else {
-				var ws = new WebSocket('ws://127.0.0.1:8001');
+				//var ws = new WebSocket('ws://127.0.0.1:8001');
+				var ws = new WebSocket('ws://log.cnappbox.com:8001');
 				ws.onopen = function(e){
 					showText('Websocket opened!');
 				};
