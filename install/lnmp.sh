@@ -4,6 +4,7 @@ download=~/Downloads
 prefix=/usr/local/cellar
 
 main() {
+	dependencies
 	if [ ! -d $download ];
 	then
 		mkdir $download 
