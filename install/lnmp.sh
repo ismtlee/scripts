@@ -28,25 +28,25 @@ download() {
   nginx_tgz=nginx-1.2.1.tar.gz
   mcrypt_tgz=libmcrypt-2.5.8.tar.gz
 
-	if [ ! -d $download/$mysql_tgz ];
+	if [ ! -f $download/$mysql_tgz ];
 	then
   	wget http://dev.mysql.com/get/Downloads/MySQL-5.5/mysql-5.5.25.tar.gz/from/http://cdn.mysql.com/ -P $download
 		tar zxvf mysql-5.5.25.tar.gz
 	fi
 
-	if [ ! -d $download/$php_tgz ];
+	if [ ! -f $download/$php_tgz ];
 	then
 		wget http://cn2.php.net/get/php-5.4.4.tar.gz/from/this/mirror
 		tar zxvf php-5.4.4.tar.gz
 	fi
 
-	if [ ! -d $download/$nginx_tgz ];
+	if [ ! -f $download/$nginx_tgz ];
 	then
 		wget http://nginx.org/download/nginx-1.2.1.tar.gz 
 		tar zxvf nginx-1.2.1.tar.gz
 	fi
 
-	if [ ! -d $download/$mcrypt_tgz ];
+	if [ ! -f $download/$mcrypt_tgz ];
 	then
 		wget http://nchc.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz
 		tar zxvf libmcrypt-2.5.8.tar.gz
