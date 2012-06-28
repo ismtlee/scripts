@@ -21,6 +21,10 @@ main() {
 	install_php
 }
 
+dependencies() {
+	yum -y install libxml2 libxml2-devel
+}
+
 #download source archive.
 download() {
 	mysql_tgz=mysql-5.5.25.tar.gz
