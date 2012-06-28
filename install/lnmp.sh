@@ -103,7 +103,7 @@ install_php() {
 	cd $download/libmcrypt-2.5.8/libltdl
 	./configure --enable-ltdl-install
 	make;make install
-	yum install libicu libicu-devel
+	yum -y install libicu libicu-devel
 
 	cd $download/php-5.4.4
 
