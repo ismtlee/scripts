@@ -27,6 +27,7 @@ dependencies() {
 	yum -y install openssl openssl-devel
 	yum -y install bzip2  bzip2-devel
 	yum -y install libcurl-devel 
+	yum -y install gd-devel
 }
 
 #download source archive.
