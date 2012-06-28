@@ -25,7 +25,7 @@ main() {
 dependencies() {
 	yum -y install libxml2 libxml2-devel
 	yum -y install openssl openssl-devel
-	yum -y install bzip  bzip-devel
+	yum -y install bzip2  bzip2-devel
 }
 
 #download source archive.
