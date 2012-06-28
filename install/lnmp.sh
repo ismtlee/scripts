@@ -3,9 +3,6 @@ root=$PWD
 download=~/Downloads
 prefix=/usr/local/cellar
 
-
-main
-
 main() {
 	if [ ! -d $download ];
 	then
@@ -139,4 +136,4 @@ adduser2group() {
 
 }
 
-
+main
