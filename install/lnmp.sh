@@ -36,15 +36,15 @@ dependencies() {
 
 #download source archive.
 download() {
-	mysql_tgz=mysql-5.5.25.tar.gz
+	mysql_tgz=mysql-5.5.24.tar.gz
 	php_tgz=php-5.4.4.tar.gz
   nginx_tgz=nginx-1.2.1.tar.gz
   mcrypt_tgz=libmcrypt-2.5.8.tar.gz
 
 	if [ ! -f $download/$mysql_tgz ];
 	then
-  	wget http://dev.mysql.com/get/Downloads/MySQL-5.5/mysql-5.5.25.tar.gz/from/http://cdn.mysql.com/ -P $download
-		tar zxvf mysql-5.5.25.tar.gz
+  	wget http://dev.mysql.com/get/Downloads/MySQL-5.5/mysql-5.5.24.tar.gz/from/http://cdn.mysql.com/ -P $download
+		tar zxvf mysql-5.5.24.tar.gz
 	fi
 
 	if [ ! -f $download/$php_tgz ];
@@ -68,7 +68,7 @@ download() {
 }
 
 install_mysql() {
-	cd $download/mysql-5.5.25
+	cd $download/mysql-5.5.24
 	mysql_installed=`rpm -qa|grep mysql`
 	if [ -n $mysql_installed ]  
 	then
