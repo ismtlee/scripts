@@ -148,7 +148,7 @@ install_php() {
 
 	cp $root/php.ini /usr/local/etc/
 	cp $root/php-fpm /etc/init.d/
-	cp $root/php-fpm.conf $prefix/etc/
+	cp $root/php-fpm.conf $prefix/php54/etc/
 	chmod +x /etc/init.d/php-fpm
 
 	mkdir -p /logs/php
