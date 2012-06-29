@@ -15,9 +15,9 @@ main() {
 	adduser2group www www
 	adduser2group mysql mysql
 	echo "Begin install mysql..............................................................................."
-#	install_mysql
+	install_mysql
 	echo "Begin install nginx..............................................................................."
-#	install_nginx
+	install_nginx
 	echo "Begin install php..............................................................................."
 	install_php
 	create_link
