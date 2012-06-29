@@ -20,6 +20,7 @@ main() {
 #	install_nginx
 	echo "Begin install php..............................................................................."
 	install_php
+	create_link
 }
 
 dependencies() {
