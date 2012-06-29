@@ -115,7 +115,7 @@ install_mysql() {
   /etc/init.d/mysql restart
 
 	/opt/mysql/bin/mysqladmin -u root password spvfLy
-	/opt/mysql/bin/mysql -uroot -pspvfLy -e 'use mysql;delete from user where password="";flush privileges;exit'
+	/opt/mysql/bin/mysql -uroot -pspvfLy -e 'use mysql;delete from user where password="";flush privileges;'
 }
 
 
