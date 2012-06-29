@@ -171,4 +171,10 @@ adduser2group() {
 
 }
 
+create_link() {
+	ln -s /opt/mysql/bin/mysql /usr/local/bin/mysql
+	ln -s $prefix/php54/bin/php /usr/local/bin/php54
+	ln -s $prefix/php54/bin/phpize /usr/local/bin/phpize54
+}
+
 main
