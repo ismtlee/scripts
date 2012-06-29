@@ -123,6 +123,7 @@ install_nginx() {
 	cd $download/nginx-1.2.1
   yum -y install pcre pcre-devel
 	./configure --prefix=${prefix}/nginx --user=www --group=www  --with-http_stub_status_module 
+	make;make install
 	cp $root/nginx /etc/init.d/
 	cp $root/nginx.conf $prefix/nginx/conf
 	cp $root/sites.conf $prefix/nginx/conf
