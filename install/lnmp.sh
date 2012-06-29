@@ -132,6 +132,8 @@ install_nginx() {
 }
 
 install_php() {
+	cd $download/libmcrypt-2.5.8/
+	./configure;make;make install
 	cd $download/libmcrypt-2.5.8/libltdl
 	./configure --enable-ltdl-install
 	make;make install
