@@ -30,6 +30,7 @@ dependencies() {
 	yum -y install gd-devel
 	yum -y install glibc-headers
 	yum -y install gcc-c++
+	yum -y install ncurses-devel
 }
 
 #download source archive.
