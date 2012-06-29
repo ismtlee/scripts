@@ -71,7 +71,7 @@ install_mysql() {
 	if [ -n $mysql_installed ]  
 	then
 		echo "old mysql exists, deleted..."
-		rpm -e mysql
+		rpm -e mysql_installed
 	fi
 
   cmake_installed=`rpm -qa|grep cmake`
