@@ -17,9 +17,9 @@ main() {
 	echo "Begin install mysql..............................................................................."
 #	install_mysql
 	echo "Begin install nginx..............................................................................."
-	install_nginx
+#	install_nginx
 	echo "Begin install php..............................................................................."
-#	install_php
+	install_php
 }
 
 dependencies() {
