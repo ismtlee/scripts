@@ -46,9 +46,9 @@ install() {
   ./configure  --prefix=${prefix}/php54 --enable-fpm --with-fpm-user=www --with-fpm-group=www --with-libxml-dir --with-openssl --with-zlib --with-curl --with-gd --with-jpeg-dir --with-png-dir --with-zlib-dir --with-freetype-dir --with-gettext --enable-mbstring --with-mcrypt --with-mysql=/opt/mysql --with-pdo-mysql=/opt/mysql/bin/mysql_config --with-mysqli=/opt/mysql/bin/mysql_config --enable-zip --with-bz2 --enable-soap --with-pear --with-pcre-dir --with-openssl --with-config-file-path=/usr/local/etc --enable-shmop --enable-intl
   make;make install
 
-	cp php.ini /usr/local/etc/
-	cp php-fpm /etc/init.d/
-	cp php-fpm.conf $prefix/php54/etc/
+	cp $root/php.ini /usr/local/etc/
+	cp $root/php-fpm /etc/init.d/
+	cp $root/php-fpm.conf $prefix/php54/etc/
 	chmod +x /etc/init.d/php-fpm
 
 	mkdir -p /logs/php

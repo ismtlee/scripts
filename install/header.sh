@@ -1,5 +1,5 @@
 #!/bin/sh
-#root=$PWD
+root=$PWD
 download=~/Downloads
 prefix=/usr/local/cellar
 
