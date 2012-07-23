@@ -35,7 +35,7 @@ usergroup() {
 }
 
 create_link() {
-
+  :
 }
 
 main
