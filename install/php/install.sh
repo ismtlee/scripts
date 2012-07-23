@@ -52,7 +52,7 @@ install() {
 	chmod +x /etc/init.d/php-fpm
 
 	mkdir -p /logs/php
-  chown -R www /logs
+  chown -R www:www /logs
 	/etc/init.d/php-fpm restart
 }
 
