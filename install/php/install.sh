@@ -1,6 +1,6 @@
 #!/bin/sh
 source ../header.sh
-version=5.4.4
+version=5.4.5
 
 dependencies() {
 	yum -y install libxml2 libxml2-devel
