@@ -5,7 +5,6 @@ prefix=/usr/local/cellar
 
 
 main() {
-	dependencies
 	if [ ! -d $download ];
 	then
 	  mkdir $download
@@ -13,6 +12,7 @@ main() {
 	cd $download
 
 	if [ $1 = 'install' ];then
+	  dependencies
 	  download
 	  usergroup
 	  install
