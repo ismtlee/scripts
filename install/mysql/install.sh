@@ -19,7 +19,7 @@ download() {
 	fi
 }
 
-install{
+install() {
 	cd $download/mysql-$version
 	mysql_installed=`rpm -qa|grep mysql`
 	if [ -n $mysql_installed ]  
