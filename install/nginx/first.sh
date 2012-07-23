@@ -3,7 +3,7 @@
 source ../header.sh
 
 echo "The script only for first installation. This may cover your configuration."
-echo "Do you wish to proceed <y or n> ? \c"
+echo "Do you wish to proceed <y or n> ?"
 read WISH
 
 if [ $WISH = "n" ];then
