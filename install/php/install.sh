@@ -62,7 +62,7 @@ usergroup() {
 }
 
 #create user&group
-adduser2group() {
+#adduser2group() {
 #	GROUP=`cat /etc/group|grep $1`
 #	if [ -z $GROUP ] 
 #	then
@@ -75,7 +75,7 @@ adduser2group() {
 		#useradd -g $1 $2
 #	fi
 
-}
+#}
 
 create_link() {
 	ln -s $prefix/php54/bin/php /usr/local/bin/php54
