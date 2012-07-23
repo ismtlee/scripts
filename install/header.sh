@@ -11,7 +11,7 @@ main() {
 	fi
 	cd $download
 
-	if [ $1 = 'install' ];then
+	if [ $1 = "install" ];then
 	  dependencies
 	  download
 	  usergroup
@@ -19,7 +19,7 @@ main() {
 	  config
 	fi
 
-	if [ $1 != 'update' ];then
+	if [ $1 != "update" ];then
 		echo "invalid option.quit."
 		exit
 	fi
