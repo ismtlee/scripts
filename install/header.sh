@@ -17,6 +17,7 @@ main() {
 	  usergroup
 	  install
 	  config
+
 		exit
 	fi
 
