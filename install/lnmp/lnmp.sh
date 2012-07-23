@@ -44,7 +44,8 @@ download() {
 
 	if [ ! -f $download/$mysql_tgz ];
 	then
-  	wget http://dev.mysql.com/get/Downloads/MySQL-5.5/mysql-5.5.24.tar.gz/from/http://cdn.mysql.com/ -P $download
+  	#wget http://dev.mysql.com/get/Downloads/MySQL-5.5/mysql-5.5.24.tar.gz/from/http://cdn.mysql.com/ -P $download
+  	wget http://cdn.mysql.com/Downloads/MySQL-5.5/mysql-5.5.25a.tar.gz -P $download
 		tar zxvf mysql-5.5.24.tar.gz
 	fi
 
