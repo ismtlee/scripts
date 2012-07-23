@@ -1,6 +1,6 @@
 #!/bin/sh
 source ../header.sh
-version=5.5.25
+version=5.5.25a
 
 dependencies() {
 	yum -y install openssl openssl-devel
