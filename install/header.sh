@@ -17,6 +17,7 @@ main() {
 	  usergroup
 	  install
 	  config
+		exit
 	fi
 
 	if [ x$1 != "xupdate" ];then
