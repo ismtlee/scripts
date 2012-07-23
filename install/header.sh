@@ -3,6 +3,7 @@ root=$PWD
 download=~/Downloads
 prefix=/usr/local/cellar
 
+
 main() {
 	dependencies
 	if [ ! -d $download ];
@@ -11,8 +12,24 @@ main() {
 	fi
 	cd $download
 
-	download
-	usergroup
-	install
-	create_link
+	if [ $1 = 'install' ];then
+	  download
+	  usergroup
+	  install
+	  config
+	fi
+
+	if [ $1 != 'update' ];then
+		echo "invalid option.quit."
+		exit
+	fi
+
+	update
 }	
+
+update() {
+	cd $download
+  download
+	install
+	reload
+}

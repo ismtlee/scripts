@@ -49,18 +49,6 @@ install() {
 		-DWITH_INNOBASE_STORAGE_ENGINE=1 \
 		-DWITHOUT_PARTITION_STORAGE_ENGINE=1
 	make;make install
-	#initialize
-  cp /opt/mysql/support-files/my-medium.cnf /opt/mysql/etc/my.cnf
-	chmod 755 scripts/mysql_install_db
-	scripts/mysql_install_db --user=mysql --basedir=/opt/mysql/ --datadir=/opt/mysql/data/
-	
-  cp /opt/mysql/support-files/mysql.server /etc/init.d/mysql
-	chmod +x /etc/init.d/mysql
-
-  /etc/init.d/mysql restart
-
-	/opt/mysql/bin/mysqladmin -u root password spvfLy
-	/opt/mysql/bin/mysql -uroot -pspvfLy -e 'use mysql;delete from user where password="";flush privileges;'
 }
 
 usergroup() {
@@ -68,7 +56,19 @@ usergroup() {
   useradd -g mysql mysql 
 }
 
-create_link() {
+config() {
+  #initialize
+  cp /opt/mysql/support-files/my-medium.cnf /opt/mysql/etc/my.cnf
+  chmod 755 scripts/mysql_install_db
+  scripts/mysql_install_db --user=mysql --basedir=/opt/mysql/ --datadir=/opt/mysql/data/
+
+  cp /opt/mysql/support-files/mysql.server /etc/init.d/mysql
+  chmod +x /etc/init.d/mysql
+
+  /etc/init.d/mysql restart
+
+  /opt/mysql/bin/mysqladmin -u root password spvfLy
+  /opt/mysql/bin/mysql -uroot -pspvfLy -e 'use mysql;delete from user where password="";flush privileges;'
 	ln -s /opt/mysql/bin/mysql /usr/local/bin/mysql
 }
 

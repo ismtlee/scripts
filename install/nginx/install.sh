@@ -20,13 +20,6 @@ install() {
 	cd $download/nginx-$version
 	./configure --prefix=${prefix}/nginx --user=www --group=www  --with-http_stub_status_module 
 	make;make install
-	cp $root/nginx /etc/init.d/
-	cp $root/nginx.conf.init $prefix/nginx/conf
-	cp $root/sites.conf.init $prefix/nginx/conf
-	chmod +x /etc/init.d/nginx
-	mkdir -p /logs/nginx
-	chown -R www /logs
-	/etc/init.d/nginx restart
 }
 
 usergroup() {
@@ -34,8 +27,18 @@ usergroup() {
 	useradd -g www www 
 }
 
-create_link() {
-  :
+config() {
+	cp $root/nginx /etc/init.d/
+  cp $root/nginx.conf $prefix/nginx/conf
+  cp $root/sites.conf $prefix/nginx/conf
+  chmod +x /etc/init.d/nginx
+  mkdir -p /logs/nginx
+  chown -R www /logs
+  /etc/init.d/nginx restart
+}
+
+reload() {
+	/etc/init.d/nginx reload
 }
 
 main
