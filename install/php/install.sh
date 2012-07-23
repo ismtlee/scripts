@@ -72,4 +72,4 @@ reload() {
 }
 
 
-main
+main $1
