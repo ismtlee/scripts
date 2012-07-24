@@ -41,4 +41,4 @@ reload() {
 	/etc/init.d/nginx reload
 }
 
-main
+main $1
