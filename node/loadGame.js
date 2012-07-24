@@ -27,6 +27,7 @@ function execCmd(req, res, shFile, arg, tip) {
   });
   cmd.stderr.on("data", function (chunk) {
     res.write(chunk);
+		res.end();
   });
   cmd.on('exit', function(code) {
     //console.log("end....");
