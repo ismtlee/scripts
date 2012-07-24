@@ -19,8 +19,8 @@ function index(req, res) {
 function execCmd(req, res, shFile, arg, tip) {
   //var spawn = require('child_process').spawn;
   //var cmd = spawn("/bin/sh", [shFile]);
-  var  exec = require('child_process').execFile;
-  var cmd = exec(shFile, arg);
+  var  exec = require('child_process').exec;
+  var cmd = exec('sh ' + shFile + ' ' + arg);
   res.writeHead(200, {"Content-Type": "text/plain; charset=UTF-8"});
   cmd.stdout.on("data", function (chunk) {
     res.write(chunk);
