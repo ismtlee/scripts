@@ -16,9 +16,11 @@ function index(req, res) {
   });
 }
 
-function execCmd(req, res, shFile, tip) {
-  var spawn = require('child_process').spawn;
-  var cmd = spawn("/bin/sh", [shFile]);
+function execCmd(req, res, shFile, arg, tip) {
+  //var spawn = require('child_process').spawn;
+  //var cmd = spawn("/bin/sh", [shFile]);
+  var  exec = require('child_process').execFile;
+  var cmd = exec(shFile, arg);
   res.writeHead(200, {"Content-Type": "text/plain; charset=UTF-8"});
   cmd.stdout.on("data", function (chunk) {
     res.write(chunk);
@@ -39,10 +41,11 @@ http.createServer(function (req, res) {
  
   switch(uri) {
     case '/load':
-      execCmd(req, res, 'loadGame.sh', '亲，数据已经加载并生效了!');
+      //execCmd(req, res, 'loadGame.sh', '亲，数据已经加载并生效了!');
       break;
-    case '/update':
-      execCmd(req, res, 'svnup.sh', '亲，dev代码已更新完毕!');
+    case '/andwall':
+    case '/applist':
+      execCmd(req, res, 'svnup.sh', uri, '亲，' + uri + '代码已更新完毕!');
       break;
     default:
       index(req, res);
