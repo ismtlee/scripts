@@ -5,7 +5,7 @@ update() {
 }
 
 sync() {
-	/usr/bin/rsync -avz  --delete --force --exclude=".svn/***" --password-file=/etc/rsyncd/rsync.password www@$1::andplus   /usr/deploy/andplus/androidplus
+	rsync -avz  --delete  --force --exclude=".svn/***" --password-file=/etc/rsyncd/rsync.password  /usr/deploy/andplus/androidplus www@$1::andplus 
 }
 
 update $1
