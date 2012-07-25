@@ -72,4 +72,9 @@ config() {
 	ln -s /opt/mysql/bin/mysql /usr/local/bin/mysql
 }
 
-main
+reload() {
+  /etc/init.d/mysql restart 
+}				
+
+
+main $1
