@@ -4,4 +4,9 @@ update() {
  /usr/bin/svn up /usr/deploy$1
 }
 
+sync() {
+	/usr/bin/rsync -avz  --delete --delete-excluded --force --exclude=".svn/***" --password-file=/etc/rsyncd/rsync.password www@$1::andplus   /usr/deploy/andplus/androidplus
+}
+
 update $1
+sync 192.168.1.13
