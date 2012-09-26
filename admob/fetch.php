@@ -1,129 +1,101 @@
-<?php 
- class mycurl { 
-     protected $_useragent = 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1'; 
-     protected $_url; 
-     protected $_followlocation; 
-     protected $_timeout; 
-     protected $_maxRedirects; 
-     protected $_cookieFileLocation = './cookie.txt'; 
-     protected $_post; 
-     protected $_postFields; 
-     protected $_referer ="http://www.google.com"; 
+<?php
+ 
+$COOKIEJAR = 'cookies.txt';
 
-     protected $_session; 
-     protected $_webpage; 
-     protected $_includeHeader; 
-     protected $_noBody; 
-     protected $_status; 
-     protected $_binaryTransfer; 
-     public    $authentication = 0; 
-     public    $auth_name      = ''; 
-     public    $auth_pass      = ''; 
+login();
+$data = fetch();
 
-     public function useAuth($use){ 
-       $this->authentication = 0; 
-       if($use == true) $this->authentication = 1; 
-     } 
+print_r(json_decode($data, true));
 
-     public function setName($name){ 
-       $this->auth_name = $name; 
-     } 
-     public function setPass($pass){ 
-       $this->auth_pass = $pass; 
-     } 
+function login() {
+	$url = 'https://accounts.google.com/ServiceLogin?service=admob&hl=en_US&continue=https://www.admob.com/home/login/google?&followup=https://www.admob.com/home/login/google?';
+  $USERNAME = 'letangadmob@gmail.com';
+  $PASSWORD = 'lt@147258369.';
+  $ch = curl_init();
+  curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+  curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1)");
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+  curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+  curl_setopt($ch, CURLOPT_COOKIEJAR, $GLOBALS['COOKIEJAR']);
+  curl_setopt($ch, CURLOPT_COOKIEFILE, $GLOBALS['COOKIEJAR']);
+  curl_setopt($ch, CURLOPT_HEADER, 0);  
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+  curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 120);
+  curl_setopt($ch, CURLOPT_TIMEOUT, 120);
+  curl_setopt($ch, CURLOPT_FOLLOWLOCATION,1); 
+  curl_setopt($ch, CURLOPT_URL, $url);
+  $data = curl_exec($ch);
+  
+  $formFields = getFormFields($data);
+  
+  $formFields['Email']  = $USERNAME;
+  $formFields['Passwd'] = $PASSWORD;
+  unset($formFields['PersistentCookie']);
+  
+  $post_string = '';
+  foreach($formFields as $key => $value) {
+      $post_string .= $key . '=' . urlencode($value) . '&';
+  }
+  
+  $post_string = substr($post_string, 0, -1);
+  
+  #curl_setopt($ch, CURLOPT_URL, $url);
+  curl_setopt($ch, CURLOPT_POST, 1);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, $post_string);
+  
+  $result = curl_exec($ch);
+  if($result === false) {
+    echo 'Curl error:' . curl_error($ch);
+  }
+}
 
-     public function __construct($url,$followlocation = true,$timeOut = 30,$maxRedirecs = 4,$binaryTransfer = false,$includeHeader = false,$noBody = false) 
-     { 
-         $this->_url = $url; 
-         $this->_followlocation = $followlocation; 
-         $this->_timeout = $timeOut; 
-         $this->_maxRedirects = $maxRedirecs; 
-         $this->_noBody = $noBody; 
-         $this->_includeHeader = $includeHeader; 
-         $this->_binaryTransfer = $binaryTransfer; 
+function fetch() {
+  $ch2 = curl_init();
+  #curl_setopt($ch2, CURLOPT_URL, "http://zhcn.admob.com/my_sites/widgets/trends/data/?_dc=1346813721212");
+  curl_setopt($ch2, CURLOPT_URL, "http://zhcn.admob.com/my_sites/widgets/revenue/data/?_dc=1346753157248");
+  curl_setopt($ch2, CURLOPT_HEADER, false);
+  curl_setopt($ch2, CURLOPT_RETURNTRANSFER, 1);
+  curl_setopt($ch2, CURLOPT_COOKIEFILE, $GLOBALS['COOKIEJAR']);
+  $data =  curl_exec($ch2);
+  unlink($GLOBALS['COOKIEJAR']);
+  curl_close($ch2);
+  return $data;
+}
 
-         $this->_cookieFileLocation = dirname(__FILE__).'/cookie.txt'; 
+function getFormFields($data)
+{
+    if (preg_match('/(<form.*?id=.?gaia_loginform.*?<\/form>)/is', $data, $matches)) {
+        $inputs = getInputs($matches[1]);
 
-     } 
+        return $inputs;
+    } else {
+        die('didnt find login form');
+    }
+}
 
-     public function setReferer($referer){ 
-       $this->_referer = $referer; 
-     } 
+function getInputs($form)
+{
+    $inputs = array();
 
-     public function setCookiFileLocation($path) 
-     { 
-         $this->_cookieFileLocation = $path; 
-     } 
+    $elements = preg_match_all('/(<input[^>]+>)/is', $form, $matches);
 
-     public function setPost ($postFields) 
-     { 
-        $this->_post = true; 
-        $this->_postFields = $postFields; 
-     } 
+    if ($elements > 0) {
+        for($i = 0; $i < $elements; $i++) {
+            $el = preg_replace('/\s{2,}/', ' ', $matches[1][$i]);
 
-     public function setUserAgent($userAgent) 
-     { 
-         $this->_useragent = $userAgent; 
-     } 
+            if (preg_match('/name=(?:["\'])?([^"\'\s]*)/i', $el, $name)) {
+                $name  = $name[1];
+                $value = '';
 
-     public function createCurl($url = 'nul') 
-     { 
-        if($url != 'nul'){ 
-          $this->_url = $url; 
-        } 
+                if (preg_match('/value=(?:["\'])?([^"\'\s]*)/i', $el, $value)) {
+                    $value = $value[1];
+                }
 
-         $s = curl_init(); 
+                $inputs[$name] = $value;
+            }
+        }
+    }
 
-         curl_setopt($s,CURLOPT_URL,$this->_url); 
-         curl_setopt($s,CURLOPT_HTTPHEADER,array('Expect:')); 
-         curl_setopt($s,CURLOPT_TIMEOUT,$this->_timeout); 
-         curl_setopt($s,CURLOPT_MAXREDIRS,$this->_maxRedirects); 
-         curl_setopt($s,CURLOPT_RETURNTRANSFER,true); 
-         curl_setopt($s,CURLOPT_FOLLOWLOCATION,$this->_followlocation); 
-         curl_setopt($s,CURLOPT_COOKIEJAR,$this->_cookieFileLocation); 
-         curl_setopt($s,CURLOPT_COOKIEFILE,$this->_cookieFileLocation); 
-
-         if($this->authentication == 1){ 
-           curl_setopt($s, CURLOPT_USERPWD, $this->auth_name.':'.$this->auth_pass); 
-         } 
-         if($this->_post) 
-         { 
-             curl_setopt($s,CURLOPT_POST,true); 
-             curl_setopt($s,CURLOPT_POSTFIELDS,$this->_postFields); 
-
-         } 
-
-         if($this->_includeHeader) 
-         { 
-               curl_setopt($s,CURLOPT_HEADER,true); 
-         } 
-
-         if($this->_noBody) 
-         { 
-             curl_setopt($s,CURLOPT_NOBODY,true); 
-         } 
-         /* 
-         if($this->_binary) 
-         { 
-             curl_setopt($s,CURLOPT_BINARYTRANSFER,true); 
-         } 
-         */ 
-         curl_setopt($s,CURLOPT_USERAGENT,$this->_useragent); 
-         curl_setopt($s,CURLOPT_REFERER,$this->_referer); 
-
-         $this->_webpage = curl_exec($s); 
-                   $this->_status = curl_getinfo($s,CURLINFO_HTTP_CODE); 
-         curl_close($s); 
-
-     } 
-
-   public function getHttpStatus() 
-   { 
-       return $this->_status; 
-   } 
-
-   public function __tostring(){ 
-      return $this->_webpage; 
-   } 
-} 
-?> 
+    return $inputs;
+}

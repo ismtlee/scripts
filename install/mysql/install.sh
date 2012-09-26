@@ -58,7 +58,8 @@ usergroup() {
 
 config() {
   #initialize
-  cp /opt/mysql/support-files/my-medium.cnf /opt/mysql/etc/my.cnf
+  #cp /opt/mysql/support-files/my-medium.cnf /opt/mysql/etc/my.cnf
+  cp $root/my.cnf /opt/mysql/etc/my.cnf
   chmod 755 scripts/mysql_install_db
   scripts/mysql_install_db --user=mysql --basedir=/opt/mysql/ --datadir=/opt/mysql/data/
 
