@@ -31,6 +31,7 @@ config() {
 	cp $root/nginx /etc/init.d/
   cp $root/nginx.conf $prefix/nginx/conf
   cp $root/sites.conf $prefix/nginx/conf
+  cp $root/NginxLogCut.sh $prefix/nginx/sbin/
   chmod +x /etc/init.d/nginx
   mkdir -p /logs/nginx
   chown -R www /logs
