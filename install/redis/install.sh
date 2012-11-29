@@ -3,7 +3,7 @@ source ../header.sh
 version=2.6.6
 
 dependencies() {
-	;
+  echo no dependencies...
 }
 
 download() {
@@ -22,7 +22,7 @@ install() {
 }
 
 usergroup() {
-	;
+  echo no user group...	
 }
 
 config() {
