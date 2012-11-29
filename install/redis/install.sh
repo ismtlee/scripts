@@ -31,6 +31,7 @@ config() {
   cp $root/6379.conf /usr/local/etc/redis/ 
   chmod +x /etc/init.d/redis_6379
   mkdir -p /logs/redis
+  mkdir -p /opt/redis/var/6379 
   chown -R www /logs
   /etc/init.d/redis_6379 stop 
   /etc/init.d/redis_6379 start
