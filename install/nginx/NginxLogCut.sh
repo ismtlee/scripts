@@ -13,3 +13,6 @@ mv ${logs_path}error.log ${save_path}/error_$(date -d y“yesterday” +%Y%m%d).
 mv ${logs_path}access.log ${save_path}/access_$(date -d y“yesterday” +%Y%m%d).log
 
 /etc/init.d/nginx reload
+
+#remove 
+find ${save_path} -type f -mtime +6 -exec rm {} \;
