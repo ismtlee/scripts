@@ -8,7 +8,7 @@ H = order E by $0 desc;
 I = filter H by $1 == 1;
 J = filter H by $1 == 2;
 K = join I by $0, J by $0;
-L = foreach K generate $0 as img, $1 as show_status, $2 as show_imei, $3 as show_ip, $5 as click_status, $6 as click_imei, $7 as click_ip, (float)$6/show_imei as click_imei_rate, (float)click_ip/show_ip as click_ip_rate;
+L = foreach K generate $0 as img, $1 as show_status, $2 as show_imei, $3 as show_ip, $5 as click_status, $6 as click_imei, $7 as click_ip, (float)$6/$2 as click_imei_rate, (float)$7/$3 as click_ip_rate;
 M = order L by show_imei desc;
 STORE M INTO '$out_dir';
 
