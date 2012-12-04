@@ -1,5 +1,5 @@
---A = load '$logfile' using PigStorage('\t');
-A = load '/usr/deploy/jmmq/logs/pluginlog_20121203_00' using PigStorage('\t');
+A = load '$logfile' using PigStorage('\t');
+--A = load '/usr/deploy/jmmq/logs/pluginlog_20121203_00' using PigStorage('\t');
 B = filter A by $5 MATCHES  'adpic/P_.*(png|jpg|jpeg|gif)';
 C = foreach B generate $3 as status, $4 as imei, $5 as img, $7 as ip;
 D = group C by (img, status);
