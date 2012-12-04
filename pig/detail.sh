@@ -7,4 +7,5 @@ output=$root/output/detail_$lastday
 rm -rf $output
 pig -x local -param out_dir=$output -param logfile=$logfile $root/detail.pig 
 
+echo "send mail ..."
 mail -s report_$lastday he.hq@joymeng.com < $output/part-r-00000
