@@ -8,6 +8,7 @@ H = order E by $0 desc;
 I = filter H by $1 == 1;
 J = filter H by $1 == 2;
 K = join I by $0, J by $0;
-STORE K INTO '$out_dir';
+L = foreach K generate $0, $1, $2, $3, $5, $6, $7
+STORE L INTO '$out_dir';
 
 
