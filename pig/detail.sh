@@ -8,6 +8,6 @@ rm -rf $output
 pig -x local -param out_dir=$output -param logfile=$logfile $root/detail.pig 
 
 #mail -s report_$lastday he.hq@joymeng.com -- -f li.jun@joymeng.com < $output/part-r-00000
-mail -s report_$lastday -c "ismtlee@gmail.com" he.hq@joymeng.com < $output/part-r-00000
+mail -s report_$lastday -c "he.hq@joymeng.com" ismtlee@gmail.com < $output/part-r-00000
 
 find $root/output -type f -mtime +6 -exec rm {} \;
