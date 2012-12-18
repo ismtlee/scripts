@@ -29,6 +29,8 @@ config() {
 	cd $pig_home
 	sed -i '1i'pig.temp.dir=/opt/pig/tmp'' conf/pig.properties
 	sed -i '1i'pig.logfile=/logs/pig.log'' conf/pig.properties
+	mkdir /opt/pig/tmp
+	mkdir /logs
 	echo "export PATH=\$PATH:$pig_home/bin" >> /etc/profile
 	source /etc/profile
 }
