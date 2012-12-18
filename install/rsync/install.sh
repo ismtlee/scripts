@@ -56,9 +56,10 @@ reload() {
 inner_ip=$2	
  
 if [ x$1 = "xinstall" ];then
-if [ x$2 = "x" ];then
- echo 'Pls specify the inner IP, ex, 192.168.1.10'
- exit
+  if [ x$2 = "x" ];then
+    echo 'Pls specify the inner IP, ex, 192.168.1.10'
+    exit
+  fi
 fi
 inner_ip=$2	
 
