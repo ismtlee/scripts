@@ -4,11 +4,6 @@ version=3.0.9
 inner_ip=default
 
 dependencies() {
-	if [ x$2 = "x" ];then
-	 echo 'Pls specify the inner IP, ex, 192.168.1.10'
-	 exit
-  fi
-  inner_ip=$2	
 }
 
 download() {
@@ -48,5 +43,14 @@ config() {
 reload() {
 	/etc/init.d/nginx reload
 }
+
+inner_ip=$2	
+ 
+if [ x$1 = "xinstall" ];then
+if [ x$2 = "x" ];then
+ echo 'Pls specify the inner IP, ex, 192.168.1.10'
+ exit
+fi
+inner_ip=$2	
 
 main $1
