@@ -26,7 +26,7 @@ usergroup() {
 
 config() {
 	pig_home=$prefix/pig-$version
-	cd $hadoop_home
+	cd $pig_home
 	sed -i '1i'pig.temp.dir=/opt/pig/tmp'' conf/pig.properties
 	sed -i '1i'pig.logfile=/logs/pig.log'' conf/pig.properties
 	echo "export PATH=\$PATH:$pig_home/bin" >> /etc/profile
