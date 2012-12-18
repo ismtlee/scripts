@@ -1,6 +1,6 @@
 #!/bin/sh
 source ../header.sh
-version=0.10.0
+version=1.0.4
 
 dependencies() {
 	echo 'no dependencies...'
