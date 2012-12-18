@@ -39,7 +39,7 @@ config() {
 	mkdir /etc/rsyncd
 	cp $root/rsyncd /etc/init.d/
   cp $root/rsyncd.conf /etc/rsyncd/
-	sed -i 's/inner_ip/"$inner_ip"/' /etc/rsyncd/rsyncd.conf 
+	sed -i ''s/inner_ip/"$inner_ip"/'' /etc/rsyncd/rsyncd.conf 
   cp $root/rsyncd.secrets /etc/rsyncd/
   cp $root/rsyncd.motd /etc/rsyncd/
   cp $root/rsync.password /etc/rsyncd/
