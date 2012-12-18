@@ -4,6 +4,7 @@ version=3.0.9
 inner_ip=default
 
 dependencies() {
+	rpm -e --nodeps rsync 
 }
 
 download() {
@@ -17,9 +18,17 @@ download() {
 }
 
 install() {
+  installed=`rpm -qa|grep rsync`
+  if [ -n $installed ]
+    then
+	     echo "old rsync exists, deleted..."
+       rpm -e $installed --nodeps
+  fi
+
 	cd $download/rsync-$version
 	./configure --prefix=${prefix}/rsync 
 	make;make install
+	ln -s ${prefix}/rsync/bin/rsync /usr/local/bin/rsync
 }
 
 usergroup() {
