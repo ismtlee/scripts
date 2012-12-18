@@ -46,11 +46,11 @@ config() {
 	chmod 600 /etc/rsyncd/rsyncd.secrets
 	chmod 600 /etc/rsyncd/rsync.password
   chmod +x /etc/init.d/rsyncd
-  /etc/init.d/nginx restart
+  /etc/init.d/rsyncd restart
 }
 
 reload() {
-	/etc/init.d/nginx reload
+	/etc/init.d/rsyncd restart
 }
 
 inner_ip=$2	
