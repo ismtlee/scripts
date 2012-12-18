@@ -1,17 +1,17 @@
 #!/bin/sh
 source ../header.sh
-version=1.0.4
+version=0.10.0
 
 dependencies() {
 	echo 'no dependencies...'
 }
 
 download() {
-  tgz=hadoop-$version.tar.gz
+  tgz=pig-$version.tar.gz
 
 	if [ ! -f $download/$tgz ];
 	then
-		wget http://labs.mop.com/apache-mirror/hadoop/common/stable/$tgz
+		wget http://labs.mop.com/apache-mirror/pig/stable/$tgz 
 		tar zxvf $tgz -C ${prefix}
 	fi
 }
@@ -25,10 +25,11 @@ usergroup() {
 }
 
 config() {
-	hadoop_home=$prefix/hadoop-$version
+	pig_home=$prefix/pig-$version
 	cd $hadoop_home
-	sed -i '1i'"$JAVA_HOME"'' conf/hadoop-env.sh
-	echo "export PATH=\$PATH:$hadoop_home/bin" >> /etc/profile
+	sed -i '1i'pig.temp.dir=/opt/pig/tmp'' conf/pig.properties
+	sed -i '1i'pig.logfile=/logs/pig.log'' conf/pig.properties
+	echo "export PATH=\$PATH:$pig_home/bin" >> /etc/profile
 	source /etc/profile
 }
 
