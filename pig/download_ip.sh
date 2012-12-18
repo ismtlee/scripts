@@ -7,6 +7,6 @@ output=$root/output/download_ip_$lastday
 rm -rf $output
 pig -x local -param out_dir=$output -param logfile=$logfile $root/download_ip.pig 
 
-mail -s download_$lastday he.hq@joymeng.com -- -f li.jun@joymeng.com < $output/part-r-00000
+mail -s download_$lastday -c "ismtlee@gmail.com" he.hq@joymeng.com -- -f li.jun@joymeng.com < $output/part-r-00000
 echo "send mail..."
 find $root/output -type f -mtime +6 -exec rm {} \;
