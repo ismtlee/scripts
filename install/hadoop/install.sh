@@ -29,6 +29,7 @@ config() {
 	cd $hadoop_home
 	sed -i '1i'"$JAVA_HOME"'' conf/hadoop-env.sh
 	echo "export PATH=\$PATH:$hadoop_home/bin" >> /etc/profile
+	source /etc/profile
 }
 
 reload() {
