@@ -27,6 +27,7 @@ usergroup() {
 config() {
 	cd $prefix/hadoop-$version
 	sed -i '1i'"$JAVA_HOME"'' conf/hadoop-env.sh
+	echo "export PATH=$PATH:$prefix/bin" >> /etc/profile
 }
 
 reload() {
