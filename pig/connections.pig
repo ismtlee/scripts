@@ -9,5 +9,5 @@ F = foreach E generate group, COUNT(C.imei) as mycount;
 --I = foreach H generate group, COUNT(G.count) as count2;
 
 
---J = order I by count2 desc;
-STORE F INTO '$out_dir';
+J = order F by mycount desc;
+STORE J INTO '$out_dir';
