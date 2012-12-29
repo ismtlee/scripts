@@ -1,7 +1,6 @@
 A = load '$logfile' using PigStorage('\t');
 --A = load '/usr/deploy/jmmq/logs/pluginlog_20121203_00' using PigStorage('\t');
-C = foreach A generate $2 as uid, $3 as gameId, $10 as country; 
-D = filter C by uid == 0;
+C = foreach A generate $1 as uid, $3 as gameId, $10 as country; 
 E =  group D by (gameId, country);
 F = foreach E generate FLATTEN(group), COUNT(D.uid) as mycount;
 G = order F by mycount desc;
