@@ -3,5 +3,5 @@ A = load '$logfile' using PigStorage('\t');
 C = foreach A generate $1 as uid, $3 as gameId, $10 as country; 
 E =  group C by (gameId, country);
 F = foreach E generate FLATTEN(group), COUNT(C.uid) as mycount;
-#G = order F by mycount desc;
+--G = order F by mycount desc;
 STORE F INTO '$out_dir';
