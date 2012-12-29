@@ -2,7 +2,7 @@
 source /etc/profile
 root=`dirname $0`
 #lastday=`date -d yesterday +%Y%m%d`
-lastday=`20121226`
+lastday=20121226
 logfile=/usr/deploy/jmmq/logs/applog_${lastday}_*
 output=$root/output/country_game_$lastday
 rm -rf $output
