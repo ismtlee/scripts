@@ -1,0 +1,32 @@
+server {
+  listen 80 default_server;
+  server_name _;
+  return 444;
+}
+
+server {
+   listen 8080;
+   server_name 127.0.0.1;
+   root /usr/deploy/andplus;
+   access_log  /logs/nginx/access_andplus.log main;
+   location  / {
+     index index.php;
+   }
+
+   if ($fastcgi_script_name  ~* \..*\/.*php) {
+      return 404;
+   }
+
+   location ~* \.php$ {
+      fastcgi_pass  unix:/tmp/php-fpm.socket;
+      fastcgi_index  index.php;
+      fastcgi_param  SCRIPT_FILENAME $document_root/$fastcgi_script_name;
+      include        fastcgi_params;
+   }
+   location /status {
+      stub_status on;
+      allow 61.190.21.234;
+      allow 192.168.1.13;
+      #deny all;
+   }
+}
