@@ -2,7 +2,7 @@
 root=$PWD
 download=~/Downloads
 #prefix=/usr/local/cellar
-
+cd $download
 rpm -qa|grep java
 yum -y remove java
 
