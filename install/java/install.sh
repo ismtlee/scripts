@@ -11,6 +11,6 @@ wget http://204.45.120.122/dev/jdk-7u5-linux-x64.rpm
 mkdir /usr/java
 rpm -ivh jdk-7u5-linux-x64.rpm  
 echo "export JAVA_HOME=/usr/java/jdk1.7.0_05/" >> /etc/profile
-echo "export PATH=\$PATH:$JAVA_HOME/bin" >> /etc/profile
+echo "export PATH=\$PATH:\$JAVA_HOME/bin" >> /etc/profile
 source /etc/profile
 
