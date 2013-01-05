@@ -6,7 +6,7 @@ dependencies() {
 	yum -y install openssl openssl-devel
 	yum -y install glibc-headers
 	yum -y install gcc-c++
-  yum -y install ncureses-devel	
+  yum -y install ncurses-devel
 	yum -y install make
 	yum -y install cmake
 }
