@@ -2,7 +2,8 @@
 source /etc/profile
 root=`dirname $0`
 lastday=`date -d yesterday +%Y%m%d`
-logfile=/usr/deploy/jmmq/logs/log2_${lastday}_*  
+#logfile=/usr/deploy/jmmq/logs/log2_${lastday}_*  
+logfile=/usr/deploy/jmmq/logs/log2_${lastday}_01  
 output=$root/output/users_$lastday
 rm -rf $output
 pig -x local -param out_dir=$output -param logfile=$logfile $root/users.pig 
