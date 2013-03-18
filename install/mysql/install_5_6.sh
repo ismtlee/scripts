@@ -1,6 +1,6 @@
 #!/bin/sh
 source ../header.sh
-version=5.5.28
+version=5.6.10
 
 dependencies() {
 	yum -y install openssl openssl-devel
@@ -15,7 +15,7 @@ download() {
 	mysql_tgz=mysql-${version}.tar.gz
 	if [ ! -f $download/$mysql_tgz ];
 	then
-  	wget http://cdn.mysql.com/Downloads/MySQL-5.5/${mysql_tgz} -P $download
+  	wget http://cdn.mysql.com/Downloads/MySQL-5.6/${mysql_tgz} -P $download
 		tar zxvf $mysql_tgz
 	fi
 }
@@ -47,8 +47,11 @@ install() {
 		-DWITH_SSL=system \
 		-DWITH_EMBEDDED_SERVER=1 \
 		-DENABLED_LOCAL_INFILE=1 \
+		-DWITH_MYISAM_STORAGE_ENGINE=1 \
 		-DWITH_INNOBASE_STORAGE_ENGINE=1 \
-		-DWITHOUT_PARTITION_STORAGE_ENGINE=1 #5.6版本此行删除
+		-DWITH_ARCHIVE_STORAGE_ENGINE=1 \
+		-DWITH_BLACKHOLE_STORAGE_ENGINE=1 \
+		-DWITH_MEMORY_STORAGE_ENGINE=1 
 	make;make install
 }
 
