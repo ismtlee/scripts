@@ -11,7 +11,7 @@
 PATH=/opt/mysql/bin:/usr/bin:/bin
 TO_DIR=/data/bakup/mysql/
 #dump
-mysqldump -pspvfLy --all-databases|gzip > ${TO_DIR}all_`date +%Y_%m_%d_%H_%M_%S`.gz
+mysqldump -pspvfLy --all-databases|gzip > ${TO_DIR}all_`date +%Y%m%d_%H%M%S`.gz
 #mysqldump -pspvfLy lt_androidplus --ignore-table lt_androidplus.plus_reg|gzip > ${TO_DIR}lt_androidplus_`date +%Y%m%d_%H%M%S`.gz
 #check&remove
 find $TO_DIR -type f -mtime +6 -exec rm {} \;
