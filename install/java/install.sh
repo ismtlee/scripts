@@ -18,7 +18,7 @@ fi
 #wget http://download.oracle.com/otn-pub/java/jdk/7u17-b02/jdk-7u17-linux-i586.rpm --no-check-certificate --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com"
 #64 bit
 wget http://download.oracle.com/otn-pub/java/jdk/7u17-b02/$pkgname --no-check-certificate --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com"
-mkdir /usr/java -o $pkgname
+mkdir /usr/java -O $pkgname
 rpm -ivh $pkgname  
 echo "export JAVA_HOME=/usr/java/jdk1.7.0_05/" >> /etc/profile
 echo "export PATH=\$PATH:\$JAVA_HOME/bin" >> /etc/profile
