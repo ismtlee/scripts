@@ -8,7 +8,7 @@ yum -y remove java
 
 #wget http://download.oracle.com/otn-pub/java/jdk/7u3-b04/jdk-7u3-linux-x64.rpm
 #32 bit
-wget http://download.oracle.com/otn-pub/java/jdk/7u17-b02/jdk-7u17-linux-i586.rpm --no-check-certificate --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com"
+#wget http://download.oracle.com/otn-pub/java/jdk/7u17-b02/jdk-7u17-linux-i586.rpm --no-check-certificate --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com"
 #64 bit
 wget http://download.oracle.com/otn-pub/java/jdk/7u17-b02/jdk-7u17-linux-x64.rpm --no-check-certificate --no-cookies --header "Cookie: gpw_e24=http%3A%2F%2F
 www.oracle.com"
