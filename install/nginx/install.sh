@@ -36,6 +36,8 @@ config() {
   mkdir -p /logs/nginx
   chown -R www /logs
   /etc/init.d/nginx restart
+	#start when reboot
+	chkconfig nginx on
 }
 
 reload() {
