@@ -1,11 +1,12 @@
 #!/bin/sh
 root=$PWD
 download=~/Downloads
-bit=64
 #prefix=/usr/local/cellar
 cd $download
 rpm -qa|grep java
 yum -y remove java
+
+bit=`getconf LONG_BIT`
 
 if [ $bit == 32 ]; then
   pkgname=jdk-7u17-linux-i586.rpm
