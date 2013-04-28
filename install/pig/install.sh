@@ -1,6 +1,6 @@
 #!/bin/sh
 source ../header.sh
-version=0.10.0
+version=0.10.1
 
 dependencies() {
 	echo 'no dependencies...'
@@ -11,7 +11,7 @@ download() {
 
 	if [ ! -f $download/$tgz ];
 	then
-		wget http://labs.mop.com/apache-mirror/pig/stable/$tgz 
+		wget http://www.us.apache.org/dist/pig/pig-$version/$tgz 
 		tar zxvf $tgz -C ${prefix}
 	fi
 }
