@@ -11,7 +11,7 @@ download() {
 
 	if [ ! -f $download/$tgz ];
 	then
-		wget http://labs.mop.com/apache-mirror/hadoop/common/stable/$tgz
+		wget http://www.us.apache.org/dist/hadoop/common/hadoop-$version/$tgz
 		tar zxvf $tgz -C ${prefix}
 	fi
 }
