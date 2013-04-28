@@ -12,6 +12,7 @@ download() {
 	if [ ! -f $download/$tgz ];
 	then
 		wget http://www.us.apache.org/dist/hadoop/common/hadoop-$version/$tgz
+		mkdir /usr/local/cellar
 		tar zxvf $tgz -C ${prefix}
 	fi
 }
