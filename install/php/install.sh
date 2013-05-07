@@ -27,7 +27,7 @@ download() {
 
 	if [ ! -f $download/$mcrypt_tgz ];
 	then
-		wget http://nchc.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz
+		wget http://nchc.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz -O libmcrypt-2.5.8.tar.gz
 		tar zxvf libmcrypt-2.5.8.tar.gz
 	fi
 
