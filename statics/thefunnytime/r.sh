@@ -16,7 +16,7 @@ do
 	b=`sort -u $ary |wc -l`
   for ary1 in ${ACTIVE_LOGS[@]}
 	do
-    a=`join <(cat /logs/thefunnytime.bak/reg_20130613.log|sort -u) <(cat /logs/thefunnytime.bak/active_20130614.log|sort -u )|wc -l`
+    a=`/usr/bin/join <(cat /logs/thefunnytime.bak/reg_20130613.log|sort -u) <(cat /logs/thefunnytime.bak/active_20130614.log|sort -u )|wc -l`
 		echo `echo "scale=2;$a*100/$b"|bc`%
 	done	
 done
