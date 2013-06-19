@@ -15,7 +15,7 @@ for ary in ${REG_LOGS[@]}
 do 
   for ary1 in ${ACTIVE_LOGS[@]}
 	do
-		;
+	  echo "a"	
 	done	
 
 	echo $ary
