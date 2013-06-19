@@ -10,11 +10,6 @@ for i in $(seq $DAYS -1 1)
 do 
   REG=`date -d '-'$i'day' +%Y%m%d`
   REG_LOGS[$i]=$LOG_PATH'reg_'$REG.log
-done
-
-for i in $(seq 1 1 $DAYS)
-do 
-  REG=`date -d '-'$i'day' +%Y%m%d`
   ACTIVE_LOGS[$i]=$LOG_PATH'active_'$REG.log
 done
 
