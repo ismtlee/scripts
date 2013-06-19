@@ -8,11 +8,11 @@ for i in $(seq 1 1 $DAYS)
 
 do 
   REG=`date -d '-'$i'day' +%Y%m%d`
-  REG_LOGS[]=$LOG_PATH'REG_'$REG.log
-  ACTIVE_LOGS[]=$LOG_PATH'ACTIVE_'$REG.log
+  REG_LOGS[$i]=$LOG_PATH'REG_'$REG.log
+  ACTIVE_LOGS[$i]=$LOG_PATH'ACTIVE_'$REG.log
 done
 
-for ary in ${array[@]}
+for ary in ${REG_LOGS[@]}
 do 
 	echo $ary
 done
