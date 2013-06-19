@@ -13,6 +13,12 @@ do
   ACTIVE_LOGS[$i]=$LOG_PATH'active_'$REG.log
 done
 
+for i in $(seq 1 1 $DAYS)
+do 
+  REG=`date -d '-'$i'day' +%Y%m%d`
+  ACTIVE_LOGS[$i]=$LOG_PATH'active_'$REG.log
+done
+
 for ary in ${REG_LOGS[@]}
 do 
 	b=`sort -u $ary |wc -l`
