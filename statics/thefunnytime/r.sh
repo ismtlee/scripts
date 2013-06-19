@@ -20,7 +20,7 @@ do
 	b_date=${b_date:0:8}
 	text=${b_date}"\t"
 
-	for (( idx=${#ACTIVE_LOGS[@]}-1 ; idx>=0 ; idx-- )) ; do
+	for (( idx=${#ACTIVE_LOGS[@]}; idx>=1 ; idx-- )) ; do
      ary1=${ACTIVE_LOGS[idx]}
      a_date=${ary1##*_}
      a_date=${a_date:0:8}
