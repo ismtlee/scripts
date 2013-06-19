@@ -19,15 +19,17 @@ do
 	b_date=${ary##*_}
 	b_date=${b_date:0:8}
 	text=${b_date}"\t"
-  for ary1 in ${ACTIVE_LOGS[@]}
-	do
-		a_date=${ary1##*_}
-		a_date=${a_date:0:8}
-		if [ $b_date -lt $a_date ]; then
-		a=`join <(cat $ary|sort -u) <(cat $ary1|sort -u)|wc -l`
-		text=$text`echo "scale=2;$a*100/$b"|bc`%"\t"
-	  fi
-	done|tac	
+
+	for (( idx=${#ACTIVE_LOGS[@]}-1 ; idx>=0 ; idx-- )) ; do
+     ary1=${ACTIVE_LOGS[idx]}
+     a_date=${ary1##*_}
+     a_date=${a_date:0:8}
+     if [ $b_date -lt $a_date ]; then
+	     a=`join <(cat $ary|sort -u) <(cat $ary1|sort -u)|wc -l`
+       text=$text`echo "scale=2;$a*100/$b"|bc`%"\t"
+     fi
+	done
+
 	echo -e $text
 done
 
