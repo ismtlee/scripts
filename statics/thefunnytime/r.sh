@@ -7,8 +7,8 @@ LOG_PATH=/logs/thefunnytime.bak/
 for i in $(seq $DAYS -1 1)
 do 
   REG=`date -d '-'$i'day' +%Y%m%d`
-  REG_LOGS[$i]=$LOG_PATH'REG_'$REG.log
-  ACTIVE_LOGS[$i]=$LOG_PATH'ACTIVE_'$REG.log
+  REG_LOGS[$i]=$LOG_PATH'reg_'$REG.log
+  ACTIVE_LOGS[$i]=$LOG_PATH'active_'$REG.log
 done
 
 for ary in ${REG_LOGS[@]}
