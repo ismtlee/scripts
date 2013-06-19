@@ -18,7 +18,6 @@ do
 	b=`sort -u $ary |wc -l`
 	b_date=${ary##*_}
 	b_date=${b_date:0:8}
-	echo $b_date
   for ary1 in ${ACTIVE_LOGS[@]}
 	do
 		a_date=${ary1##*_}
