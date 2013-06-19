@@ -10,7 +10,7 @@ iHeader() {
 	info="统计日期\t"
   for i in $(seq 1 1 $1)
 	do
-		info=$info$i日留存"\t"
+		info=$info$i日"\t"
 	done
 	echo -e $info
 }
