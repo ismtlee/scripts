@@ -17,7 +17,6 @@ do
   for ary1 in ${ACTIVE_LOGS[@]}
 	do
     a=`/usr/bin/join < (/bin/cat /logs/thefunnytime.bak/reg_20130613.log|/bin/sort -u) < (/bin/cat /logs/thefunnytime.bak/active_20130614.log|/bin/sort -u )|wc -l`
-		echo `echo "scale=2;$a*100/$b"|bc`%
 	done	
 done
 
