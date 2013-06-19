@@ -16,12 +16,15 @@ done
 for ary in ${REG_LOGS[@]}
 do 
 	b=`sort -u $ary |wc -l`
+	b_date=${ary##*_}
+	b_date=${b_date:0:5}
   for ary1 in ${ACTIVE_LOGS[@]}
 	do
-		if [ $ary < $ary1 ]; then
+		a_date=${ary1##*_}
+		a_date=${a_date##*_}
+		if [ $b_date < $a_date ]; then
 		a=`join <(cat $ary|sort -u) <(cat $ary1|sort -u)|wc -l`
 		echo `echo "scale=2;$a*100/$b"|bc`% 
-		echo ${${ary##*_}:0:5}
 	  fi
 	done	
 done
