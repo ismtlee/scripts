@@ -4,7 +4,7 @@ BASE_DATE=`date -d '-'$DAYS'day' +%Y%m%d`
 TOP_DATE=`date -d '-1 day' +%Y%m%d`
 LOG_PATH=/logs/thefunnytime.bak/
 
-for i in $(seq $DAYS -1 1)
+for i in $(seq 1 1 $DAYS)
 
 do 
   REG=`date -d '-'$i'day' +%Y%m%d`
