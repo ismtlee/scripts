@@ -6,6 +6,17 @@ BASE_DATE=`date -d '-'$DAYS'day' +%Y%m%d`
 TOP_DATE=`date -d '-1 day' +%Y%m%d`
 LOG_PATH=/logs/thefunnytime.bak/
 
+iHeader() {
+	info="统计日期\t"
+  for i in $(seq 1 1 $1)
+	do
+		info=$info$i日留存"\t"
+	done
+	echo -e $info
+}
+
+iHeader $DAYS
+
 for i in $(seq $DAYS -1 1)
 do 
   REG=`date -d '-'$i'day' +%Y%m%d`
@@ -34,13 +45,4 @@ do
 done
 
 
-iHeader() {
-	info="统计日期\t"
-  for i in $(seq 1 1 $1)
-	do
-		info=$info$i日留存"\t"
-	done
-	echo -e $info
-}
 
-iHeader $DAYS
