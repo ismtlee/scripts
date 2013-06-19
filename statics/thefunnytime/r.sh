@@ -1,4 +1,6 @@
 #!/bin/bash
+#Pls use bash command, not sh
+
 DAYS=7
 BASE_DATE=`date -d '-'$DAYS'day' +%Y%m%d`
 TOP_DATE=`date -d '-1 day' +%Y%m%d`
@@ -16,7 +18,8 @@ do
 	b=`sort -u $ary |wc -l`
   for ary1 in ${ACTIVE_LOGS[@]}
 	do
-		a=`join <(cat /logs/thefunnytime.bak/reg_20130613.log|sort -u) <(cat /logs/thefunnytime.bak/active_20130614.log|sort -u)|wc -l`
+		a=`join <(cat $ary|sort -u) <(cat $ary1|sort -u)|wc -l`
+		echo `echo "scale=2;$a*100/$b"|bc`% 
 	done	
 done
 
