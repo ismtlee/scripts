@@ -18,11 +18,12 @@ do
 	b=`sort -u $ary |wc -l`
 	b_date=${ary##*_}
 	b_date=${b_date:0:5}
+	echo $b_date
   for ary1 in ${ACTIVE_LOGS[@]}
 	do
 		a_date=${ary1##*_}
 		a_date=${a_date##*_}
-		if [ $b_date < $a_date ]; then
+		if [ $b_date -lt $a_date ]; then
 		a=`join <(cat $ary|sort -u) <(cat $ary1|sort -u)|wc -l`
 		echo `echo "scale=2;$a*100/$b"|bc`% 
 	  fi
