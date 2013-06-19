@@ -21,6 +21,8 @@ do
 		if [ $ary < $ary1 ]; then
 		a=`join <(cat $ary|sort -u) <(cat $ary1|sort -u)|wc -l`
 		echo `echo "scale=2;$a*100/$b"|bc`% 
+		echo $ary
+		echo $ary1
 	  fi
 	done	
 done
