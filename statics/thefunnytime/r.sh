@@ -24,6 +24,7 @@ do
 		a_date=${a_date:0:8}
 		if [ $b_date -lt $a_date ]; then
 		a=`join <(cat $ary|sort -u) <(cat $ary1|sort -u)|wc -l`
+		echo reg:${a_date} active:${b_date}
 		echo `echo "scale=2;$a*100/$b"|bc`% 
 	  fi
 	done	
