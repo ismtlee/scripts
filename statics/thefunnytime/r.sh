@@ -27,7 +27,7 @@ do
 		a=`join <(cat $ary|sort -u) <(cat $ary1|sort -u)|wc -l`
 		text=$text`echo "scale=2;$a*100/$b"|bc`%"\t"
 	  fi
-	done	
+	done|tac	
 	echo -e $text
 done
 
