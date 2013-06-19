@@ -16,7 +16,8 @@ do
 	b=`sort -u $ary |wc -l`
   for ary1 in ${ACTIVE_LOGS[@]}
 	do
-    a=`/usr/bin/join  /bin/cat /logs/thefunnytime.bak/reg_20130613.log|/bin/sort -u < /bin/cat /logs/thefunnytime.bak/active_20130614.log|/bin/sort -u |wc -l`
+		a="join < (cat /logs/thefunnytime.bak/reg_20130613.log|sort -u) < (cat /logs/thefunnytime.bak/active_20130614.log|sort -u) |wc -l"
+		c=`$a`
 	done	
 done
 
