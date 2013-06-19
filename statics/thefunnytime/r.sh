@@ -6,8 +6,6 @@ BASE_DATE=`date -d '-'$DAYS'day' +%Y%m%d`
 TOP_DATE=`date -d '-1 day' +%Y%m%d`
 LOG_PATH=/logs/thefunnytime.bak/
 
-iHeader $DAYS
-
 for i in $(seq $DAYS -1 1)
 do 
   REG=`date -d '-'$i'day' +%Y%m%d`
@@ -44,3 +42,5 @@ iHeader() {
 	done
 	echo -e $info
 }
+
+iHeader $DAYS
