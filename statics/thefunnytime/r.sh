@@ -1,7 +1,7 @@
 #!/bin/bash
 #Pls use bash command, not sh
 
-DAYS=3
+DAYS=7
 BASE_DATE=`date -d '-'$DAYS'day' +%Y%m%d`
 TOP_DATE=`date -d '-1 day' +%Y%m%d`
 LOG_PATH=/logs/thefunnytime.bak/
