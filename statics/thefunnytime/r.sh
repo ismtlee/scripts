@@ -18,8 +18,10 @@ do
 	b=`sort -u $ary |wc -l`
   for ary1 in ${ACTIVE_LOGS[@]}
 	do
+		if [ $ary < $ary1 ]; then
 		a=`join <(cat $ary|sort -u) <(cat $ary1|sort -u)|wc -l`
 		echo `echo "scale=2;$a*100/$b"|bc`% 
+	  fi
 	done	
 done
 
