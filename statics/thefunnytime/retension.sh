@@ -4,7 +4,7 @@
 DAYS=7
 BASE_DATE=`date -d '-'$DAYS'day' +%Y%m%d`
 TOP_DATE=`date -d '-1 day' +%Y%m%d`
-LOG_PATH=/logs/thefunnytime.bak/
+LOG_PATH=/logs/thefunnytime/
 
 iHeader() {
 	info="统计日期\t"
