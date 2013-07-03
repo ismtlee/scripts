@@ -1,5 +1,6 @@
 #!/bin/sh
 source ../header.sh
+port=6379
 version=2.6.6
 
 dependencies() {
@@ -26,21 +27,21 @@ usergroup() {
 }
 
 config() {
-	cp $root/redis_6379 /etc/init.d/
+	cp $root/redis_$port /etc/init.d/
   mkdir -p /usr/local/etc/redis 
   cp $root/6379.conf /usr/local/etc/redis/ 
-  chmod +x /etc/init.d/redis_6379
+  chmod +x /etc/init.d/redis_$port
   mkdir -p /logs/redis
-  mkdir -p /opt/redis/var/6379 
+  mkdir -p /opt/redis/var/$port
   chown -R www /logs
-  /etc/init.d/redis_6379 stop 
-  /etc/init.d/redis_6379 start
+  /etc/init.d/redis_$port stop 
+  /etc/init.d/redis_$port start
 }
 
 reload() {
 	#warning: data would be disappear!
-  /etc/init.d/redis_6379 stop 
-  /etc/init.d/redis_6379 start
+  /etc/init.d/redis_$port stop 
+  /etc/init.d/redis_$port start
 }
 
 main $1
