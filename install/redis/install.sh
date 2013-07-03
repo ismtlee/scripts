@@ -27,9 +27,11 @@ usergroup() {
 }
 
 config() {
-	cp $root/redis_$port /etc/init.d/
+	cp $root/redis_init /etc/init.d/redis_$port
+	sed -i s/6379/$port/g /etc/init.d/redis_$port
   mkdir -p /usr/local/etc/redis 
-  cp $root/6379.conf /usr/local/etc/redis/ 
+  cp $root/redis.conf /usr/local/etc/redis/$port.conf
+	sed -i s/6379/$port/g /usr/local/etc/redis/$port.conf
   chmod +x /etc/init.d/redis_$port
   mkdir -p /logs/redis
   mkdir -p /opt/redis/var/$port
