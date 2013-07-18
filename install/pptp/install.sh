@@ -20,7 +20,8 @@ usergroup() {
 }
 
 config() {
-  #cp $root/vsftpd.conf /etc/vsftpd/
+  cp $root/pptpd.conf /etc/
+  cp $root/options.pptpd /etc/ppp/
 	sed -i s/'net.ipv4.ip_forward = 0'/'net.ipv4.ip_forward = 1'/g /etc/sysctl.conf 
 	sysctl -p
   #/etc/init.d/vsftpd restart
