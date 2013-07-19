@@ -19,7 +19,7 @@ do
   REG_LOG=$LOG_PATH'reg_'$REG.log
   ACTIVE_LOG=$LOG_PATH'active_'$REG.log
   b=`sort -u $REG_LOG |wc -l`
-  text=${b}"\t"
+  text=$REG"\t"${b}"\t"
   c=`sort -u $ACTIVE_LOG |wc -l`
   text=$text${c}"\t"
 	echo -e $text
