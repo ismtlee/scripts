@@ -1,0 +1,8 @@
+#!/bin/bash
+
+LOG_PATH=/logs/thefunnytime/
+LASTDAY=`date -d '-1 day' +%Y%m%d`
+redis-cli -h 192.168.100.18 -p 6581 -n 0 hkeys reg_$LASTDAY > ${LOG_PATH}reg_${LASTDAY} 
+redis-cli -h 192.168.100.18 -p 6581 -n 0 hkeys active_$LASTDAY > ${LOG_PATH}active_${LASTDAY} 
+
+
