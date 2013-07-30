@@ -13,6 +13,7 @@ download() {
 	if [ ! -f $download/$tgz ];
 	then
 		wget ftp://ftp.samba.org/pub/rsync/$tgz 
+		wget ftp://216.83.154.106/pub/rsync/$tgz 
 		tar zxvf $tgz 
 	fi
 }
