@@ -2,7 +2,7 @@
 case $2 in
    server)
 		 #echo "server"
-	   ./monitor.sh
+	   /bin/sh monitor.sh
     ;;
    client)
 		 echo "client"
