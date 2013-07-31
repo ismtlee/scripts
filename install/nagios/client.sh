@@ -50,7 +50,6 @@ usergroup() {
 config() {
 	#cp $root/htpasswd.users /usr/local/nagios/etc/htpasswd.users
 	/etc/init.d/xinetd restart
-	chkconfig --add nagios
 	chkconfig --level 35 xinetd on
 }
 
