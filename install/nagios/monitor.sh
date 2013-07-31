@@ -26,7 +26,8 @@ download() {
   nrpe_tgz=nrpe-$nrpe_version.tar.gz
 	if [ ! -f $download/$nrpe_tgz ];
 	then
-		wget http://nchc.dl.sourceforge.net/project/nagios/nrpe-2.x/nrpe-$nrpe_version/$nrpe_tgz
+		#wget http://nchc.dl.sourceforge.net/project/nagios/nrpe-2.x/nrpe-$nrpe_version/$nrpe_tgz
+		wget http://211.79.60.17/project/nagios/nrpe-2.x/nrpe-$nrpe_version/$nrpe_tgz
 		tar zxvf $nrpe_tgz
 	fi
 }
