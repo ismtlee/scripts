@@ -5,7 +5,7 @@ case $2 in
 	   /bin/sh monitor.sh $1
     ;;
    client)
-		 echo "client"
+	   /bin/sh client.sh $1
 		#source client.sh
     ;;
    *)

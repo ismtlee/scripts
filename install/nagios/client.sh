@@ -1,65 +1,62 @@
-#!/bin/sh 
+#!/bin/sh
 source ../header.sh
-version=3.0.9
+plugin_version=1.4.15
+nrpe_version=2.14
 
 dependencies() {
-	rpm -e --nodeps rsync 
+	yum install -y xinetd
 }
 
 download() {
-  tgz=rsync-$version.tar.gz
-
-	if [ ! -f $download/$tgz ];
+  plugin_tgz=nagios-plugins-$plugin_version.tar.gz
+	if [ ! -f $download/$plugin_tgz ];
 	then
-		wget ftp://ftp.samba.org/pub/rsync/$tgz 
-		wget ftp://216.83.154.106/pub/rsync/$tgz 
-		tar zxvf $tgz 
+		wget http://sourceforge.net/projects/nagiosplug/files/nagiosplug/$plugin_version/$plugin_tgz
+		tar zxvf $plugin_tgz 
+	fi
+
+  nrpe_tgz=nrpe-$nrpe_version.tar.gz
+	if [ ! -f $download/$nrpe_tgz ];
+	then
+		#wget http://nchc.dl.sourceforge.net/project/nagios/nrpe-2.x/nrpe-$nrpe_version/$nrpe_tgz
+		wget http://211.79.60.17/project/nagios/nrpe-2.x/nrpe-$nrpe_version/$nrpe_tgz
+		tar zxvf $nrpe_tgz
 	fi
 }
 
 install() {
-  installed=`rpm -qa|grep rsync`
-  if [ -n $installed ]
-    then
-	     echo "old rsync exists, deleted..."
-       rpm -e $installed --nodeps
-  fi
-
-	cd $download/rsync-$version
-	./configure --prefix=${prefix}/rsync 
+	#plugin
+	cd $download/nagios-plugins-$plugin_version
+  ./configure --with-nagios-user=nagios --with-nagios-group=nagios 
 	make;make install
-	ln -s ${prefix}/rsync/bin/rsync /usr/local/bin/rsync
+  chown nagios.nagios /usr/local/nagios
+	chown -R nagios.nagios /usr/local/nagios/libexec
+
+	#nrpe
+	cd $download/nrpe-$nrpe_version
+	./configure
+	make all
+	make install-plugin
+  make install-daemon
+	make install-daemon-config
+	make install-xinetd
 }
 
 usergroup() {
-	echo 'no need'
+	useradd nagios
+	passwd nagios
 }
 
 config() {
-	mkdir /etc/rsyncd
-	cp $root/rsyncd /etc/init.d/
-  cp $root/rsyncd.conf /etc/rsyncd/
-	sed -i ''s/inner_ip/"$inner_ip"/'' /etc/rsyncd/rsyncd.conf 
-  cp $root/rsyncd.secrets /etc/rsyncd/
-  cp $root/rsyncd.motd /etc/rsyncd/
-  cp $root/rsync.password /etc/rsyncd/
-	chmod 600 /etc/rsyncd/rsyncd.secrets
-	chmod 600 /etc/rsyncd/rsync.password
-  chmod +x /etc/init.d/rsyncd
-  /etc/init.d/rsyncd restart
+	#cp $root/htpasswd.users /usr/local/nagios/etc/htpasswd.users
+	/etc/init.d/xinetd restart
+	chkconfig --add nagios
+	chkconfig --level 35 xinetd on
 }
 
 reload() {
-	/etc/init.d/rsyncd restart
+	/etc/init.d/xinetd restart
 }
 
- 
-if [ x$1 = "xinstall" ];then
-  if [ x$2 = "x" ];then
-    echo 'Pls specify the role, server|client'
-    exit
-  fi
-fi
-role=$2	
 
 main $1
