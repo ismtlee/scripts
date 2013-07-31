@@ -5,7 +5,7 @@ plugin_version=1.4.15
 nrpe_version=2.14
 
 dependencies() {
-	yum install -y wget httpd php gcc glibc glibc-common gd gd-devel make net-snmp
+	yum install -y wget httpd php gcc glibc glibc-common gd gd-devel make net-snmp openssl-devel
 }
 
 download() {
