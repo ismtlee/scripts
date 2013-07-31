@@ -62,8 +62,8 @@ usergroup() {
 
 config() {
 	htpasswd –c /usr/local/nagios/etc/htpasswd.users nagiosadmin
-	/etc/init.d/nagios start
-	/etc/init.d/httpd start
+	/etc/init.d/nagios restart
+	/etc/init.d/httpd restart
 	chkconfig --add nagios
 	chkconfig --level 35 nagios on
 	chkconfig --add httpd
@@ -71,7 +71,8 @@ config() {
 }
 
 reload() {
-	/etc/init.d/rsyncd restart
+	/etc/init.d/httpd restart
+	/etc/init.d/nagios restart
 }
 
 
