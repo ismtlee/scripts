@@ -1,52 +1,72 @@
 #!/bin/sh
 source ../header.sh
-version=3.0.9
+core_version=3.4.3
+plugin_version=1.4.15
+nrpe_version=2.14
 
 dependencies() {
-	echo 'no need'
+	yum install -y wget httpd php gcc glibc glibc-common gd gd-devel make net-snmp
 }
 
 download() {
-  tgz=rsync-$version.tar.gz
-
-	if [ ! -f $download/$tgz ];
+  core_tgz=nagios-$core_version.tar.gz
+	if [ ! -f $download/$core_tgz ];
 	then
-		wget ftp://ftp.samba.org/pub/rsync/$tgz 
-		wget ftp://216.83.154.106/pub/rsync/$tgz 
-		tar zxvf $tgz 
+		wget http://prdownloads.sourceforge.net/sourceforge/nagios/$core_tgz
+		tar zxvf $core_tgz 
+	fi
+
+  plugin_tgz=nagios-plugins-$plugin_version.tar.gz
+	if [ ! -f $download/$plugin_tgz ];
+	then
+		wget http://sourceforge.net/projects/nagiosplug/files/nagiosplug/$plugin_version/$plugin_tgz
+		tar zxvf $plugin_tgz 
+	fi
+
+  nrpe_tgz=nrpe-$nrpe_version.tar.gz
+	if [ ! -f $download/$nrpe_tgz ];
+	then
+		wget http://nchc.dl.sourceforge.net/project/nagios/nrpe-2.x/nrpe-$nrpe_version/$nrpe_tgz
+		tar zxvf $nrpe_tgz
 	fi
 }
 
 install() {
-  installed=`rpm -qa|grep rsync`
-  if [ -n $installed ]
-    then
-	     echo "old rsync exists, deleted..."
-       rpm -e $installed --nodeps
-  fi
+	#core
+	cd $download/nagios-$core_version
+	./configure --with-command-group=nagcmd
+	make all;make install;make install-init;make install-config;make install-commandmode;make install-webconf
+	cp -R contrib/eventhandlers/ /usr/local/nagios/libexec/
+  chown -R nagios:nagios /usr/local/nagios/libexec/eventhandlers
+  /usr/local/nagios/bin/nagios -v /usr/local/nagios/etc/nagios.cfg
 
-	cd $download/rsync-$version
-	./configure --prefix=${prefix}/rsync 
+	#plugin
+	cd $download/nagios-plugins-$plugin_version
+  ./configure --with-nagios-user=nagios --with-nagios-group=nagios 
 	make;make install
-	ln -s ${prefix}/rsync/bin/rsync /usr/local/bin/rsync
+
+	#nrpe
+	cd $download/nrpe-$nrpe_version
+	./configure
+	make all
+	make install-plugin
+
 }
 
 usergroup() {
-	echo 'no need'
+	useradd nagios
+	groupadd nagcmd
+	usermod -a -G nagcmd nagios
 }
 
 config() {
-	mkdir /etc/rsyncd
-	cp $root/rsyncd /etc/init.d/
-  cp $root/rsyncd.conf /etc/rsyncd/
-	sed -i ''s/inner_ip/"$inner_ip"/'' /etc/rsyncd/rsyncd.conf 
-  cp $root/rsyncd.secrets /etc/rsyncd/
-  cp $root/rsyncd.motd /etc/rsyncd/
-  cp $root/rsync.password /etc/rsyncd/
-	chmod 600 /etc/rsyncd/rsyncd.secrets
-	chmod 600 /etc/rsyncd/rsync.password
-  chmod +x /etc/init.d/rsyncd
-  /etc/init.d/rsyncd restart
+	htpasswd –c /usr/local/nagios/etc/htpasswd.users nagiosadmin
+	/etc/init.d/nagios start
+	/etc/init.d/httpd start
+	chkconfig --add nagios
+	chkconfig --level 35 nagios on
+	chkconfig --add httpd
+	chkconfig --level 35 httpd on
 }
 
 reload() {
