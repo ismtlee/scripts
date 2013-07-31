@@ -61,7 +61,8 @@ usergroup() {
 }
 
 config() {
-	htpasswd –c /usr/local/nagios/etc/htpasswd.users nagiosadmin
+	#htpasswd –c /usr/local/nagios/etc/htpasswd.users nagiosadmin
+	cp $root/htpasswd.users /usr/local/nagios/etc/htpasswd.users
 	/etc/init.d/nagios restart
 	/etc/init.d/httpd restart
 	chkconfig --add nagios
