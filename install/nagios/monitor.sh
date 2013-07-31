@@ -73,13 +73,5 @@ reload() {
 	/etc/init.d/rsyncd restart
 }
 
- 
-if [ x$1 = "xinstall" ];then
-  if [ x$2 = "x" ];then
-    echo 'Pls specify the role, server|client'
-    exit
-  fi
-fi
-role=$2	
 
 main $1
