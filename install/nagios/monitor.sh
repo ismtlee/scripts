@@ -34,7 +34,7 @@ download() {
 
 install() {
 	#core
-	cd $download/nagios-$core_version
+	cd $download/nagios
 	./configure --with-command-group=nagcmd
 	make all;make install;make install-init;make install-config;make install-commandmode;make install-webconf
 	cp -R contrib/eventhandlers/ /usr/local/nagios/libexec/
