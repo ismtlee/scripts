@@ -1,10 +1,9 @@
 #!/bin/sh
 source ../header.sh
 version=3.0.9
-inner_ip=default
 
 dependencies() {
-	rpm -e --nodeps rsync 
+	echo 'no need'
 }
 
 download() {
@@ -12,7 +11,7 @@ download() {
 
 	if [ ! -f $download/$tgz ];
 	then
-		#wget ftp://ftp.samba.org/pub/rsync/$tgz 
+		wget ftp://ftp.samba.org/pub/rsync/$tgz 
 		wget ftp://216.83.154.106/pub/rsync/$tgz 
 		tar zxvf $tgz 
 	fi
@@ -54,14 +53,13 @@ reload() {
 	/etc/init.d/rsyncd restart
 }
 
-inner_ip=$2	
  
 if [ x$1 = "xinstall" ];then
   if [ x$2 = "x" ];then
-    echo 'Pls specify the inner IP, ex, 192.168.1.10'
+    echo 'Pls specify the role, server|client'
     exit
   fi
 fi
-inner_ip=$2	
+role=$2	
 
 main $1
