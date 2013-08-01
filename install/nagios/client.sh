@@ -49,8 +49,12 @@ usergroup() {
 
 config() {
 	#cp $root/htpasswd.users /usr/local/nagios/etc/htpasswd.users
+	echo -e "nrpe\t5666/tcp\t#nrpe" >> /etc/services
 	/etc/init.d/xinetd restart
 	chkconfig --level 35 xinetd on
+	echo "+++++++++++++++++++++++++++++++++++++++++++++++++"
+	echo "pls vi /etc/xinetd.d/nrpe only from 127.0.0.1 204.45.38.42"
+	echo "/usr/local/nagios/etc/nrpe.cfg your's command"
 }
 
 reload() {
