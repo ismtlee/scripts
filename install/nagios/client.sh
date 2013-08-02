@@ -44,7 +44,7 @@ install() {
 
 usergroup() {
 	useradd nagios
-	passwd nagios
+	#passwd nagios
 }
 
 config() {
