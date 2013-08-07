@@ -19,6 +19,7 @@ zmq() {
 	#libzeromq
 	git clone https://github.com/zeromq/zeromq2-x.git
 	cd zeromq2-x
+	yum install libtool -y
 	./autogen.sh
 	yum -y install libuuid-devel
 	./configure --with-pgm;make;make install
