@@ -1,6 +1,7 @@
 #!/bin/sh
 YAF_V=2.2.9
 CMD_PHPIZE=/usr/local/cellar/php54/bin/phpize
+CMD_PHPCONFIG=/usr/local/cellar/php54/bin/php-config
 cd ~/Downloads
 
 yaf() {
@@ -8,7 +9,7 @@ yaf() {
 	tar zxvf yaf-$YAF_V.tgz
 	cd yaf-$YAF_V
 	$CMD_PHPIZE 
-	./configure;make;make install
+	./configure --with-php-config=$CMD_PHPCONFIG;make;make install
 }
 
 case $1 in
