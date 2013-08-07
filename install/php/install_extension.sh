@@ -19,7 +19,7 @@ case $2 in
 		all
 		;;
    *)
-    echo 'Pls specify the role, server|client'
+    echo 'yaf|zmq|igbinary|yaf|all'
     ;;
 esac
 	
