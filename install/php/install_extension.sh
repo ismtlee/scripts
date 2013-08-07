@@ -72,7 +72,7 @@ case $1 in
 		all
 		;;
    *)
-    echo 'yaf|zmq|igbinary|yaf|all'
+    echo 'yaf|zmq|igbinary|redis|all'
     ;;
 esac
 	
