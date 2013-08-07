@@ -3,7 +3,7 @@ YAF_V=2.2.9
 CMD_PHPIZE=/usr/local/cellar/php54/bin/phpize
 cd ~/Downloads
 
-case $2 in
+case $1 in
    yaf)
 		 yaf
     ;;
