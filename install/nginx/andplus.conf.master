@@ -8,7 +8,8 @@ upstream andplus {
 server {
    listen 80;
    server_name data.cnappbox.com data.letanginc.com data.mobappbox.com;
-   proxy_set_header   X-Forwarded-For  $remote_addr;
+	 proxy_set_header   X-Real-IP  $remote_addr;
+   proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
    access_log  off;
    location  / {
      proxy_pass http://andplus;
