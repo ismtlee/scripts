@@ -4,7 +4,7 @@
 host=204.45.0.66
 
 src=/usr/deploy/statics/adpic/
-dst=adpic
+dst=andplus
 
 
 sync() {
