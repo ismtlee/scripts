@@ -3,7 +3,7 @@
 #-- sh sample.sh& -- 
 host=204.45.0.66
 
-src=/usr/deploy/statics/adpic/
+src=/usr/deploy/andplus/androidplus/
 dst=andplus
 
 
