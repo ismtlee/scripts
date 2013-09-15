@@ -29,7 +29,7 @@ usergroup() {
 }
 
 config() {
-	echo 'no need'
+	 echo "export PATH=\$PATH:${prefix}/inotify/bin" >> /etc/profile
 }
 
 reload() {
