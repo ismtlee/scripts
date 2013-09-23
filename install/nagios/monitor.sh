@@ -62,6 +62,7 @@ usergroup() {
 
 config() {
 	#htpasswd –c /usr/local/nagios/etc/htpasswd.users nagiosadmin
+	# pass: windtalker
 	cp $root/htpasswd.users /usr/local/nagios/etc/htpasswd.users
 	/etc/init.d/nagios restart
 	/etc/init.d/httpd restart
