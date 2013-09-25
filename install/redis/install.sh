@@ -4,7 +4,7 @@ port=6379
 version=2.6.6
 
 dependencies() {
-  echo no dependencies...
+	yum install gcc gcc-c++ -y
 }
 
 download() {
