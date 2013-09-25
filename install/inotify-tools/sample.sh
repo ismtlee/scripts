@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#-- sh sample.sh& -- 
+#-- nohup sh sample.sh& -- 
 host=204.45.0.66
 
 src=/usr/deploy/andplus/androidplus/

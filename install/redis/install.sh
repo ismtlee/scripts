@@ -23,7 +23,8 @@ install() {
 }
 
 usergroup() {
-  echo no user group...	
+	groupadd www
+  useradd -g www www
 }
 
 config() {
