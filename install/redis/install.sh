@@ -12,7 +12,7 @@ download() {
 
 	if [ ! -f $download/$redis_tgz ];
 	then
-		wget http://redis.googlecode.com/files/$redis_tgz
+		wget http://download.redis.io/releases/$redis_tgz
 		tar zxvf $redis_tgz -C $prefix
 	fi
 }
