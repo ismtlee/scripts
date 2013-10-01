@@ -1,6 +1,6 @@
 #!/bin/sh
 source ../header.sh
-version=3.0.9
+version=3.1.0
 inner_ip=default
 
 dependencies() {
