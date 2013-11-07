@@ -7,6 +7,7 @@ moniter_server=204.45.38.42
 
 dependencies() {
 	yum install -y xinetd
+	yum install -y openssl-devel
 }
 
 download() {
