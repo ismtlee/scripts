@@ -1,6 +1,7 @@
 #!/bin/sh
 source ../header.sh
-plugin_version=1.4.15
+#plugin_version=1.4.15
+plugin_version=1.5
 nrpe_version=2.14
 moniter_server=204.45.38.42
 
@@ -12,7 +13,8 @@ download() {
   plugin_tgz=nagios-plugins-$plugin_version.tar.gz
 	if [ ! -f $download/$plugin_tgz ];
 	then
-		wget http://sourceforge.net/projects/nagiosplug/files/nagiosplug/$plugin_version/$plugin_tgz
+		wget https://www.nagios-plugins.org/download/$plugin_tgz
+		#wget http://sourceforge.net/projects/nagiosplug/files/nagiosplug/$plugin_version/$plugin_tgz
 		tar zxvf $plugin_tgz 
 	fi
 
