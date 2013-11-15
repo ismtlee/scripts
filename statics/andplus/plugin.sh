@@ -8,6 +8,6 @@ dst=${log_path}plugin_${LASTDAY}
 #sed -i 's/\w*=//g' $dst
 
 
-source ./common.sh packname $9
+source ./packname.sh 
 
 find $log_path/output -type f -mtime +6 -exec rm {} \;
