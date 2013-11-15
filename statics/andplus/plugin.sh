@@ -10,5 +10,7 @@ dst=${log_path}plugin_${LASTDAY}
 
 source ./packname.sh 
 source ./operator.sh 
+source ./lang.sh 
+source ./android.sh 
 
 find $log_path/output -type f -mtime +6 -exec rm {} \;
