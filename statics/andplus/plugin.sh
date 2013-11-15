@@ -13,4 +13,4 @@ source ./operator.sh
 source ./lang.sh 
 source ./android.sh 
 
-find $log_path/output -type f -mtime +6 -exec rm {} \;
+find $log_path/output -type f -mtime +15 -exec rm {} \;
