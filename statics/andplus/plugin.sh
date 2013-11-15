@@ -10,5 +10,4 @@ sed -i 's/\w*=//g' $dst
 
 source ./packname.sh
 
-
 find $log_path/output -type f -mtime +6 -exec rm {} \;
