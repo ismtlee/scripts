@@ -1,6 +1,6 @@
-A = load '$logfile' using PigStorage('\t');
+A = load '$logfile' using PigStorage(' ');
 --A = load '/usr/deploy/jmmq/logs/pluginlog_20121203_00' using PigStorage('\t');
-C = foreach A generate $10 as packname, $11 as uuid;
+C = foreach A generate $9 as packname, $10 as uuid;
 D = distinct C;
 E =  group D by packname;
 F = foreach E generate group, COUNT(D.packname) as mycount;
