@@ -11,7 +11,8 @@ download() {
 
 	if [ ! -f $download/$tgz ];
 	then
-		wget http://www.us.apache.org/dist/pig/pig-$version/$tgz 
+#		wget http://www.us.apache.org/dist/pig/pig-$version/$tgz 
+		wget https://archive.apache.org/dist/pig/pig-$version/$tgz
 		tar zxvf $tgz -C ${prefix}
 	fi
 }
