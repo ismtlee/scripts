@@ -13,5 +13,6 @@ source $basedir/packname.sh
 source $basedir/operator.sh 
 source $basedir/lang.sh 
 source $basedir/android.sh 
+source $basedir/users.sh 
 
 find $log_path/output -type f -mtime +15 -exec rm {} \;
