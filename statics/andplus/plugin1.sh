@@ -9,7 +9,7 @@ basedir=`dirname $0`
 #sed -i 's/\w*=//g' $dst
 
 
-source $basedir/packname_imei.sh 
+source $basedir/users.sh 
 #source $basedir/operator.sh 
 #source $basedir/lang.sh 
 #source $basedir/android.sh 
