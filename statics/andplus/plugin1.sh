@@ -9,9 +9,9 @@ basedir=`dirname $0`
 #sed -i 's/\w*=//g' $dst
 
 
-source $basedir/packname.sh 
-source $basedir/operator.sh 
-source $basedir/lang.sh 
-source $basedir/android.sh 
+source $basedir/packname_imei.sh 
+#source $basedir/operator.sh 
+#source $basedir/lang.sh 
+#source $basedir/android.sh 
 
 find $log_path/output -type f -mtime +15 -exec rm {} \;
