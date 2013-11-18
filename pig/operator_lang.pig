@@ -5,4 +5,5 @@ D = distinct C;
 E =  group D by (operator, lang);
 F = foreach E generate FLATTEN(group), COUNT(D.imei) as mycount;
 G = order F by mycount desc;
+
 STORE G INTO '$out_dir';
