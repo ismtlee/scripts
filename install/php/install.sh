@@ -1,6 +1,6 @@
 #!/bin/sh
 source ../header.sh
-version=5.4.19
+version=5.4.23
 suffix=`echo $version|awk -F"." '{print $1$2}'`
 
 dependencies() {
