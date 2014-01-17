@@ -23,8 +23,8 @@ vmore=`grep -v 218.104.71.178 $LOG_PATH/promote_static_$LASTDAY.log|grep "click_
 vfigure=`grep -v 218.104.71.178 $LOG_PATH/promote_static_$LASTDAY.log|grep "click_figure"|grep -oE "imei=(\w|-)*"|sort -u|wc -l`
 vstart=`grep -v 218.104.71.178 $LOG_PATH/promote_static_$LASTDAY.log|grep "game_launch"|grep -oE "imei=(\w|-)*"|sort -u|wc -l`
 
-echo -e "-----------------------------不排重统计--------------------------------->>>>>"
-echo -e "时间未到\t"$vv0 > $LOG_PATH/output/promote_$LASTDAY
+echo -e "-----------------------------不排重统计--------------------------------->>>>>" > $LOG_PATH/output/promote_$LASTDAY
+echo -e "时间未到\t"$vv0 >> $LOG_PATH/output/promote_$LASTDAY
 echo -e "10s已到\t"$vv10 >> $LOG_PATH/output/promote_$LASTDAY
 echo -e "60s已到\t"$vv60 >> $LOG_PATH/output/promote_$LASTDAY
 echo -e "110s已到\t"$vv110 >> $LOG_PATH/output/promote_$LASTDAY
@@ -33,7 +33,7 @@ echo -e "点击获取金币\t"$vvobtain >> $LOG_PATH/output/promote_$LASTDAY
 echo -e "点击moregame\t"$vvmore >> $LOG_PATH/output/promote_$LASTDAY
 echo -e "点击大图跳至gp\t"$vvfigure >> $LOG_PATH/output/promote_$LASTDAY
 echo -e "启动游戏\t"$vvstart >> $LOG_PATH/output/promote_$LASTDAY
-echo -e "-----------------------------排重统计----------------------------------->>>>>"
+echo -e "-----------------------------排重统计----------------------------------->>>>>" >> $LOG_PATH/output/promote_$LASTDAY
 echo -e "时间未到\t"$v0 >> $LOG_PATH/output/promote_$LASTDAY
 echo -e "10s已到\t"$v10 >> $LOG_PATH/output/promote_$LASTDAY
 echo -e "60s已到\t"$v60 >> $LOG_PATH/output/promote_$LASTDAY
