@@ -1,6 +1,7 @@
 #!/bin/sh
-log_path=/logs/nginx/2013/rsyncd/
+YEAR=`date -d '-1 day' +%Y`
 LASTDAY=`date -d '-1 day' +%Y%m%d`
+log_path=/logs/nginx/${YEAR}/rsyncd/
 src=${log_path}access_andplus_all_${LASTDAY}.log
 dst=${log_path}plugin_${LASTDAY}
 basedir=`dirname $0`
