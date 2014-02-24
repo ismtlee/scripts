@@ -44,4 +44,4 @@ echo -e "点击moregame\t"$vmore >> $LOG_PATH/output/promote_$LASTDAY
 echo -e "点击大图跳至gp\t"$vfigure >> $LOG_PATH/output/promote_$LASTDAY
 echo -e "启动游戏\t"$vstart >> $LOG_PATH/output/promote_$LASTDAY
 
-#mail -s box_$LASTDAY -S sendcharsets=utf-8 rui.cy@joymeng.com < $LOG_PATH/output/promote_$LASTDAY
+#mail -s box_$LASTDAY -S sendcharsets=utf-8 ismtlee@gmail.com < $LOG_PATH/output/promote_$LASTDAY
