@@ -21,7 +21,7 @@ download() {
 
 	if [ ! -f $download/$php_tgz ];
 	then
-		wget http://www.php.net/get/$php_tgz/from/us1.php.net/mirror
+		wget http://www.php.net/get/$php_tgz/from/us1.php.net/mirror -O $php_tgz
 		tar zxvf $php_tgz
 	fi
 
