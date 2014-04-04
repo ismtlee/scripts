@@ -34,7 +34,7 @@ zmq() {
 igbinary() {
 	cd $SRC_DIR
 	wget https://github.com/igbinary/igbinary/archive/$IG_V.tar.gz 
-	tar zxvf $IG_V
+	tar zxvf $IG_V.tar.gz
 	cd igbinary-$IG_V
   $CMD_PHPIZE 
 	./configure --with-php-config=$CMD_PHPCONFIG;make;make install
