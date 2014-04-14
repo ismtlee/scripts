@@ -3,8 +3,9 @@
 #00 00 * * * /bin/bash  /usr/local/nginx/sbin/NginxLogCut.sh
 
 logs_path=/logs/nginx/
+LASTYEAR=`date -d '-1 day' +%Y`
 LASTDAY=`date -d '-1 day' +%Y%m%d`
-save_path=${logs_path}$LASTDAY/
+save_path=${logs_path}$LASTYEAR/
 
 
 mkdir -p ${save_path}
