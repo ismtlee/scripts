@@ -9,9 +9,9 @@ yum -y remove java
 bit=`getconf LONG_BIT`
 
 if [ $bit == 32 ]; then
-  pkgname=jdk-7u17-linux-i586.rpm
+  pkgname=jdk-7u55-linux-i586.rpm
 else
-  pkgname=jdk-7u17-linux-x64.rpm
+  pkgname=jdk-7u55-linux-x64.rpm
 fi
 
 #doesn't work anymore
