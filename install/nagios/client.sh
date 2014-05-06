@@ -3,7 +3,7 @@ source ../header.sh
 #plugin_version=1.4.15
 plugin_version=1.5
 nrpe_version=2.14
-moniter_server=204.45.38.42
+moniter_server=50.7.52.50
 
 dependencies() {
 	yum install -y xinetd
@@ -57,7 +57,7 @@ config() {
 	/etc/init.d/xinetd restart
 	chkconfig --level 35 xinetd on
 
-	sed -i s/"only_from.*"/"only_from=$moniter_server 127.0.0.1"/g /etc/xinetd.d/nrpe
+	sed -i s/"only_from.*"/"only_from = $moniter_server 127.0.0.1"/g /etc/xinetd.d/nrpe
 	echo "+++++++++++++++++++++++++++++++++++++++++++++++++"
 	echo "/usr/local/nagios/etc/nrpe.cfg your's command"
 }
