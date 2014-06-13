@@ -3,7 +3,7 @@
 if(isset($_REQUEST['from']) && $_REQUEST['from']) {
   $source = $_REQUEST['from'];
 } else {
-  $source = 2
+  $source = 2;
 }
 if(isset($_REQUEST['date']) && $_REQUEST['date']) {
   $date = $_REQUEST['date'];
