@@ -109,3 +109,16 @@ function writeCell($objActSheet, $value, $x, $y, $back_color) {
         'type' => PHPExcel_Style_Fill::FILL_SOLID,
         'color' => array('rgb' => $back_color))));
 }
+
+function initExcel($objPHPExcel) {
+  $objPHPExcel->getProperties()->setCreator("Lee")
+            ->setLastModifiedBy("Lee")
+            ->setTitle("promotion")
+            ->setSubject("promotion")
+            ->setDescription("")
+            ->setCategory("safety ledger");
+  $objActSheet = $objPHPExcel->setActiveSheetIndex(0);
+  $objActSheet->setTitle("promotion");
+  return $objActSheet;
+}
+
