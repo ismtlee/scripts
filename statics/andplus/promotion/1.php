@@ -16,7 +16,7 @@ $a = `awk '{print $2,$3,$7}' $file |sort |uniq -c`;
 $a = explode("\n", $a);
 foreach($a as $e) {
   $b = explode(" ", $e);
-  if(count($b) == 7 && substr($b[4]) == $source) {
+  if(count($b) == 7 && substr($b[4], -1) == $source) {
     $c = array('carrier' => $b[5], 
       'promotion' => $b[6],
       'total' => $b[3],
