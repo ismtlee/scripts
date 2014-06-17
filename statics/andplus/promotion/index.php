@@ -28,10 +28,10 @@ foreach($a as $e) {
 }
 foreach($d as &$e) {
   #$e['ip'] = `grep ${e['carrier']} $file |grep ${e['promotion']} |grep ${e['func']}|awk '{print $1}'|sort -u|wc -l`; 
-  $e['ip'] = `awk '{print $1, $2, "c="$3, "p="$7}'|grep c=${e['carrier']} $file |grep p=${e['promotion']} |grep ${e['func']}|awk '{print $1}'|sort -u|wc -l`; 
-  $e['imei'] = `awk '{print $4, $2, "c="$3, "p="$7}'|grep c=${e['carrier']} $file |grep p=${e['promotion']} |grep ${e['func']}|awk '{print $1}'|sort -u|wc -l`; 
-  $e['imsi'] = `awk '{print $5, $2, "c="$3, "p="$7}'|grep c=${e['carrier']} $file |grep p=${e['promotion']} |grep ${e['func']}|awk '{print $1}'|sort -u|wc -l`; 
-  $e['uuid'] = `awk '{print $6, $2, "c="$3, "p="$7}'|grep c=${e['carrier']} $file |grep p=${e['promotion']} |grep ${e['func']}|awk '{print $1}'|sort -u|wc -l`; 
+  $e['ip'] = `awk '{print $1, $2, "c="$3, "p="$7}' $file |grep c=${e['carrier']} |grep p=${e['promotion']} |grep ${e['func']}|awk '{print $1}'|sort -u|wc -l`; 
+  $e['imei'] = `awk '{print $4, $2, "c="$3, "p="$7}' $file |grep c=${e['carrier']} |grep p=${e['promotion']} |grep ${e['func']}|awk '{print $1}'|sort -u|wc -l`; 
+  $e['imsi'] = `awk '{print $5, $2, "c="$3, "p="$7}' $file |grep c=${e['carrier']} |grep p=${e['promotion']} |grep ${e['func']}|awk '{print $1}'|sort -u|wc -l`; 
+  $e['uuid'] = `awk '{print $6, $2, "c="$3, "p="$7}' $file |grep c=${e['carrier']} |grep p=${e['promotion']} |grep ${e['func']}|awk '{print $1}'|sort -u|wc -l`; 
 }
 write2Excel($d, $date);
 
