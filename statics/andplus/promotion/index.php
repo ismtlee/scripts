@@ -32,7 +32,6 @@ foreach($d as &$e) {
   $e['imsi'] = `grep ${e['carrier']} $file |grep ${e['promotion']} |grep ${e['func']}|awk '{print $5}'|sort -u|wc -l`; 
   $e['uuid'] = `grep ${e['carrier']} $file |grep ${e['promotion']} |grep ${e['func']}|awk '{print $6}'|sort -u|wc -l`; 
 }
-exit("go here.");
 write2Excel($d, $date);
 
 
