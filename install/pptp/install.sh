@@ -1,6 +1,8 @@
 #!/bin/sh
 source ../header.sh
 
+PPTPD_VERSION=1.4.0-1
+
 dependencies() {
 	echo 'no need';
 }
@@ -11,7 +13,7 @@ download() {
 
 install() {
 	yum -y install ppp
-	rpm -Uhv http://poptop.sourceforge.net/yum/stable/packages/pptpd-1.3.4-2.el6.x86_64.rpm
+	rpm -Uhv http://poptop.sourceforge.net/yum/stable/packages/pptpd-${PPTPD_VERSION}.el6.x86_64.rpm
 
 }
 
