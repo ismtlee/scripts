@@ -14,16 +14,25 @@
           ['2007',  1030,      540]
         ]);
 	 **/ 
+     function drawChart() {
+ 		var jsonData = $.ajax({
+          url: "getUsers.php",
+          dataType:"json",
+          async: false
+          }).responseText;
+          
+       // Create our data table out of JSON data loaded from server.
+       var data = new google.visualization.DataTable(jsonData);
 
-	 var options = {
-      title: 'Company Performance',
-      curveType: 'function',
-      legend: { position: 'bottom' }
-     };
-        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+	   var options = {
+         title: '用户数',
+         curveType: 'function',
+         legend: { position: 'bottom' }
+       };
+       var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
 
-        chart.draw(data, options);
-      }
+       chart.draw(data, options);
+     }
     </script>
   </head>
   <body>
