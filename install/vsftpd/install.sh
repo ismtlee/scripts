@@ -15,7 +15,7 @@ install() {
 
 usergroup() {
 	echo 'need later.';
-	echo 'useradd -g www -s /sbin/nologin -d /usr/deploy/lsx lsx';
+	echo 'useradd -g www -s /sbin/nologin -d /usr/deploy/lee lee';
 }
 
 config() {
