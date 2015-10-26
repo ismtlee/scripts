@@ -1,0 +1,4 @@
+0 */2 * * * /usr/sbin/ntpdate -s pool.ntp.org
+0 0 * * * /bin/bash  /usr/local/cellar/nginx/sbin/NginxLogCut.sh
+30 0 * * * /bin/sh /data/scripts/statics/andplus/promotion/promotion.sh
+30 1 * * * /usr/local/cellar/php54/bin/php /usr/deploy/promotion/index_local.php  

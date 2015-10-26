@@ -1,0 +1,10 @@
+use andplus_stat;
+LOAD DATA LOCAL INFILE '/logs/nginx/2015/rsyncd/output/packname_20150730/part-r-00000' REPLACE INTO TABLE package;
+LOAD DATA LOCAL INFILE '/logs/nginx/2015/rsyncd/output/users_20150730/part-r-00000' REPLACE INTO TABLE users;
+LOAD DATA LOCAL INFILE '/logs/nginx/2015/rsyncd/output/lang_20150730/part-r-00000' REPLACE INTO TABLE lang;
+LOAD DATA LOCAL INFILE '/logs/nginx/2015/rsyncd/output/android_20150730/part-r-00000' REPLACE INTO TABLE android;
+LOAD DATA LOCAL INFILE '/logs/nginx/2015/rsyncd/output/country_20150730/part-r-00000' REPLACE INTO TABLE country;
+delete from package where num <= 1;
+delete from  lang where num < 10;
+delete from  android where num < 10;
+delete from  country where num < 10;
