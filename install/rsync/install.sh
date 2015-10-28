@@ -44,6 +44,7 @@ config() {
   cp $root/rsyncd.secrets /etc/rsyncd/
   cp $root/rsyncd.motd /etc/rsyncd/
   cp $root/rsync.password /etc/rsyncd/
+  cp $root/excludes /etc/rsyncd/
 	chmod 600 /etc/rsyncd/rsyncd.secrets
 	chmod 600 /etc/rsyncd/rsync.password
   chmod +x /etc/init.d/rsyncd
