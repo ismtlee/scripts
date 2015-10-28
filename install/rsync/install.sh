@@ -59,7 +59,7 @@ inner_ip=$2
  
 if [ x$1 = "xinstall" ];then
   if [ x$2 = "x" ];then
-    echo 'Pls specify the inner IP, ex, 192.168.1.10'
+    echo 'Pls specify the inner IP, ex, 192.168.1.10. Note, Address is not neccserry, however.'
     exit
   fi
 fi
