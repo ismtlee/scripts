@@ -1,2 +1,4 @@
 - .git/***
 - .svn/***
++ /etc/sysconfig/iptables
+- /etc/sysconfig/*
