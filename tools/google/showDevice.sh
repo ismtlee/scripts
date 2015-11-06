@@ -52,6 +52,8 @@
     adb shell getprop ro.build.type
     echo "> Build user"
     adb shell getprop ro.build.user
+    echo "> Operator"
+    adb shell getprop gsm.apn.sim.operator.numeric
     echo "----------------------------"
     echo "That is all folks."
 
