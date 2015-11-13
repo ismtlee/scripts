@@ -30,7 +30,7 @@ function execCmd(req, res, shFile, arg, tip) {
 		res.write("更新失败！");
 		res.end();
   });
-  cmd.on('exit', function(code) {
+  cmd.on('exit', function(code) {// 新版exit要改成close
     //console.log("end....");
     res.write(tip);
     res.end();
