@@ -1,0 +1,21 @@
+#nginx configuration
+server {
+  listen       80;
+  server_name domain.name;
+  root /Library/usr/workshop/zend/station/public;
+  location /  {
+    index index.php;
+  }
+
+  location ~* \.php {
+      fastcgi_pass unix:/tmp/php-fpm.socket; 
+      fastcgi_index  index.php;
+      fastcgi_param  SCRIPT_FILENAME $document_root/$fastcgi_script_name;
+      include        fastcgi_params;
+   }
+
+   if (!-e $request_filename) {
+     rewrite ^/(.*\.(js|ico|gif|jpg|png|css|bmp|html|xls)$) /$1 last;
+     rewrite ^/(.*)  /index.php/$1 last;
+   }
+}
