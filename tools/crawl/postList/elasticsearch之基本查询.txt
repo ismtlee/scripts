@@ -1,0 +1,451 @@
+序
+本文主要记录es的基本查询api的使用
+基本查询种类
+term查询
+{ 
+    "query": {
+        "term": {
+            "title": "crime"
+        }
+    }
+}
+{ 
+    "query": {
+        "term": {
+            "title": "crime"
+        }
+    }
+}
+指定权重
+指定权重
+指定权重
+{ 
+    "query": {
+        "term": {
+            "title": {
+                "value":"crime",
+                "boost":10.0
+             }
+        }
+    }
+}
+{ 
+    "query": {
+        "term": {
+            "title": {
+                "value":"crime",
+                "boost":10.0
+             }
+        }
+    }
+}
+多term查询查询tags中包含novel或book
+多term查询查询tags中包含novel或book
+多term查询查询tags中包含novel或book
+
+{ 
+    "query": {
+        "terms": {
+            "tags": ["novel","book"]
+        }
+    }
+}
+{ 
+    "query": {
+        "terms": {
+            "tags": ["novel","book"]
+        }
+    }
+}
+常用词查询
+简单理解就是去除停用词的高权限，分高低频两组去查询，像停用词就是高频的，cutoff_frequency表示低于这个概率的词将出现在低频组中。
+{ 
+    "query": {
+        "common": {
+             "title":{
+                 "query":"crime and punishment",
+                 "cutoff_frequency":0.001
+             }
+        }
+    }
+}
+{ 
+    "query": {
+        "common": {
+             "title":{
+                 "query":"crime and punishment",
+                 "cutoff_frequency":0.001
+             }
+        }
+    }
+}
+match查询(不支持lucene查询语法)
+不支持lucene查询语法
+查询title包含crime或and或punishment的文档
+{ 
+    "query": {
+        "match": {
+            "title": "crime and punishment"
+        }
+    }
+}
+{ 
+    "query": {
+        "match": {
+            "title": "crime and punishment"
+        }
+    }
+}
+operator操作符
+要求and或者or匹配文本的分词
+{ 
+    "query": {
+        "match": {
+            "title": {
+                 "query":"crime and punishment",
+                 "operator":"and"
+            }
+        }
+    }
+}
+{ 
+    "query": {
+        "match": {
+            "title": {
+                 "query":"crime and punishment",
+                 "operator":"and"
+            }
+        }
+    }
+}
+短语查询
+{ 
+    "query": {
+        "match_phrase": {
+            "title": {
+                 "query":"crime  punishment",
+                 "slop":1
+            }
+        }
+    }
+}
+{ 
+    "query": {
+        "match_phrase": {
+            "title": {
+                 "query":"crime  punishment",
+                 "slop":1
+            }
+        }
+    }
+}
+前缀查询
+对查询关键词的最后一个词条做前缀匹配
+{ 
+    "query": {
+        "match_phrase_prefix": {
+            "title": {
+                 "query":"crime  punish",
+                 "slop":1,
+                 "max_expansions":20
+            }
+        }
+    }
+}
+{ 
+    "query": {
+        "match_phrase_prefix": {
+            "title": {
+                 "query":"crime  punish",
+                 "slop":1,
+                 "max_expansions":20
+            }
+        }
+    }
+}
+multi_match(针对多个字段查询)
+针对多个字段查询
+{ 
+    "query": {
+        "multi_match": {
+             "query":"crime  heller",
+             "fields":["title","author"]
+        }
+    }
+}
+{ 
+    "query": {
+        "multi_match": {
+             "query":"crime  heller",
+             "fields":["title","author"]
+        }
+    }
+}
+query_string查询(支持lucene的查询语法)
+支持lucene的查询语法
+title字段包含crime，且权重为10，也要包含punishment，但是otitle不包含cat，同事author字段包含Fyodor和dostoevsky。
+{ 
+    "query": {
+        "query_string": {
+             "query":"title:crime^10 +title:punishment -otitle:cat +author:(+Fyodor +dostoevsky)",
+             "default_field":"title"
+        }
+    }
+}
+{ 
+    "query": {
+        "query_string": {
+             "query":"title:crime^10 +title:punishment -otitle:cat +author:(+Fyodor +dostoevsky)",
+             "default_field":"title"
+        }
+    }
+}
+针对多字段查询
+use_dis_max使用最大分查询，max指对于给定的关键词，只有最高分才会包括在最后的文档的评分中，而不是所有包含该词条的所有字段分数之和。
+{ 
+    "query": {
+        "query_string": {
+             "query":"crime heller",
+             "fields":["title","author"],
+              "use_dis_max":true
+        }
+    }
+}
+{ 
+    "query": {
+        "query_string": {
+             "query":"crime heller",
+             "fields":["title","author"],
+              "use_dis_max":true
+        }
+    }
+}
+simple_query_string查询
+解析出错时不抛异常，丢弃查询无效的部分
+{ 
+    "query": {
+        "simple_query_string": {
+             "query":"title:crime^10 +title:punishment -otitle:cat +author:(+Fyodor +dostoevsky)",
+             "default_operator":"or"
+        }
+    }
+}
+{ 
+    "query": {
+        "simple_query_string": {
+             "query":"title:crime^10 +title:punishment -otitle:cat +author:(+Fyodor +dostoevsky)",
+             "default_operator":"or"
+        }
+    }
+}
+标识符查询
+使用唯一表示uid来说查找
+{ 
+    "query": {
+        "ids": {
+             "type":"book",
+             "values":["1","2","3"]
+        }
+    }
+}
+{ 
+    "query": {
+        "ids": {
+             "type":"book",
+             "values":["1","2","3"]
+        }
+    }
+}
+前缀查询
+前缀匹配给定的关键词
+{ 
+    "query": {
+        "prefix": {
+             "title":"cri"
+        }
+    }
+}
+{ 
+    "query": {
+        "prefix": {
+             "title":"cri"
+        }
+    }
+}
+指定权重
+指定权重
+指定权重
+{ 
+    "query": {
+        "prefix": {
+             "title":{
+                 "value":"cri",
+                 "boost":3.0
+             }
+        }
+    }
+}
+{ 
+    "query": {
+        "prefix": {
+             "title":{
+                 "value":"cri",
+                 "boost":3.0
+             }
+        }
+    }
+}
+fuzzy查询
+使用编辑距离的模糊查询，计算量较大，但是对用户拼写错的场景比较有用
+{ 
+    "query": {
+        "fuzzy": {
+             "title":"crme"
+        }
+    }
+}
+{ 
+    "query": {
+        "fuzzy": {
+             "title":"crme"
+        }
+    }
+}
+指定最小相似度偏差
+指定最小相似度偏差
+指定最小相似度偏差
+{ 
+    "query": {
+        "fuzzy": {
+             "title":{
+                 "value":"crme",
+                 "min_similarity":1
+              }
+        }
+    }
+}
+{ 
+    "query": {
+        "fuzzy": {
+             "title":{
+                 "value":"crme",
+                 "min_similarity":1
+              }
+        }
+    }
+}
+通配符查询
+支持*和?等通配符
+{ 
+    "query": {
+        "wildcard": {
+             "title": "cr?me"
+        }
+    }
+}
+{ 
+    "query": {
+        "wildcard": {
+             "title": "cr?me"
+        }
+    }
+}
+范围查询
+只能针对单个字段，可以是数值型的，也可以是基于字符串的。
+{ 
+    "query": {
+        "range": {
+             "year": {
+                  "gte" :1890,
+                  "lte":1900
+              }
+        }
+    }
+}
+{ 
+    "query": {
+        "range": {
+             "year": {
+                  "gte" :1890,
+                  "lte":1900
+              }
+        }
+    }
+}
+正则表达式查询
+查询性能取决于正则表达式
+{ 
+    "query": {
+        "regexp": {
+             "title": {
+                  "value" :"cr.m[ae]",
+                  "boost":10.0
+              }
+        }
+    }
+}
+{ 
+    "query": {
+        "regexp": {
+             "title": {
+                  "value" :"cr.m[ae]",
+                  "boost":10.0
+              }
+        }
+    }
+}
+布尔查询(组合查询)
+组合查询
+{
+    "query": {
+        "bool": {
+            "must": {
+                "term": {
+                    "title": "crime"
+                }
+            }, 
+            "should": {
+                "range": {
+                    "year": {
+                        "from": 1900, 
+                        "to": 2000
+                    }
+                }
+            }, 
+            "must_not": {
+                "term": {
+                    "otitle": "nothing"
+                }
+            }
+        }
+    }
+}
+{
+    "query": {
+        "bool": {
+            "must": {
+                "term": {
+                    "title": "crime"
+                }
+            }, 
+            "should": {
+                "range": {
+                    "year": {
+                        "from": 1900, 
+                        "to": 2000
+                    }
+                }
+            }, 
+            "must_not": {
+                "term": {
+                    "otitle": "nothing"
+                }
+            }
+        }
+    }
+}
+参考
+elasticsearch-search
+elasticsearch-search
+elasticsearch-search
+elasticsearch-search

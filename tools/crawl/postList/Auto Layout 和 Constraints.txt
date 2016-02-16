@@ -1,0 +1,179 @@
+自动布局Auto Layout
+Auto Layout通过通过设置在View上的约束，动态计算视图层次结构中所有的View的尺寸和位置。举个栗子，你约束一个Button，令它的水平中心线和一个ImageView相同，并且它的上边缘距离ImageView的下边缘有8个像素。如果ImageView的尺寸或者位置改变，Button会自动调整，以符合之前设置的约束。  
+这种基于约束的设计，允许我们搭建能够动态响应内部和外部变化的用户界面。
+外部变化
+外部变化发生于superview的尺寸或者位置改变，比如，
+
+设备屏幕旋转
+支持不同屏幕大小的设备
+
+设备屏幕旋转
+设备屏幕旋转
+支持不同屏幕大小的设备
+支持不同屏幕大小的设备
+这时，所有的View都要重新计算尺寸和位置。每一次变化，都会刷新视图层级结构的布局。这些变化大部分发生在运行时，它们需要APP能够动态响应。
+内部变化
+内部变化发生于你的界面中的View的尺寸或者位置发生改变。比如，
+
+APP中显示的内容的改变，新的内容可能需要一个新的布局。一般，在显示文字或者图片时会出现这种情况。
+APP支持动态设置。如果用户可以设置字体大小，这将会改变任何与文本相关的控件的高度或者宽度，布局必须能够适应变化。
+
+APP中显示的内容的改变，新的内容可能需要一个新的布局。一般，在显示文字或者图片时会出现这种情况。
+APP中显示的内容的改变，新的内容可能需要一个新的布局。一般，在显示文字或者图片时会出现这种情况。
+APP支持动态设置。如果用户可以设置字体大小，这将会改变任何与文本相关的控件的高度或者宽度，布局必须能够适应变化。
+APP支持动态设置。如果用户可以设置字体大小，这将会改变任何与文本相关的控件的高度或者宽度，布局必须能够适应变化。
+约束Constraints
+Auto Layout的实现是基于设置在View上的一系列约束的。每一条约束都是一个表达式。
+下图是官方文档给的示例图：  
+
+
+这个约束表明，Red View的左边缘与Blud View的右边缘的距离为8。这个等式由以下几个部分组成：
+Red View
+左边缘
+Blud View
+右边缘
+
+Item 1 ：表达式中的第一个物件。在这个例子中是Red View。
+Attribute 1 ：第一个物件的一个属性。在这个例子中是Red View的leading edge。
+Relationship ：表达式左右两边的关系，可以使等于，大于等于或者小于等于。在这个例子中，两边的关系是相等的。
+Multiplier ：和第二个物件的属性相乘的乘数，是一个浮点型。在这个例子中是1.0。一般情况下，这个值不可置为0.0。
+Item 2 ：表达式中的第二个物件。在这个例子中是Blue View。它是可以为空的，即表达式变成Item 1 * Attribute 1 = 0.0 * NotAnAttribute + Constant。
+Attribute 2 ：第二个物件的一个属性。在这个例子中是Blue View的trailing edge。
+Constant ：一个浮点型的常数。在这个例子中是8.0。
+
+Item 1 ：表达式中的第一个物件。在这个例子中是Red View。
+Item 1 ：表达式中的第一个物件。在这个例子中是Red View。
+Item 1
+Red View
+Attribute 1 ：第一个物件的一个属性。在这个例子中是Red View的leading edge。
+Attribute 1 ：第一个物件的一个属性。在这个例子中是Red View的leading edge。
+Attribute 1
+Red View
+leading edge
+Relationship ：表达式左右两边的关系，可以使等于，大于等于或者小于等于。在这个例子中，两边的关系是相等的。
+Relationship ：表达式左右两边的关系，可以使等于，大于等于或者小于等于。在这个例子中，两边的关系是相等的。
+Relationship
+等于
+大于等于
+小于等于
+Multiplier ：和第二个物件的属性相乘的乘数，是一个浮点型。在这个例子中是1.0。一般情况下，这个值不可置为0.0。
+Multiplier ：和第二个物件的属性相乘的乘数，是一个浮点型。在这个例子中是1.0。一般情况下，这个值不可置为0.0。
+Multiplier
+1.0
+0.0
+Item 2 ：表达式中的第二个物件。在这个例子中是Blue View。它是可以为空的，即表达式变成Item 1 * Attribute 1 = 0.0 * NotAnAttribute + Constant。
+Item 2 ：表达式中的第二个物件。在这个例子中是Blue View。它是可以为空的，即表达式变成Item 1 * Attribute 1 = 0.0 * NotAnAttribute + Constant。
+Item 2
+Blue View
+Item 1 * Attribute 1 = 0.0 * NotAnAttribute + Constant
+Attribute 2 ：第二个物件的一个属性。在这个例子中是Blue View的trailing edge。
+Attribute 2 ：第二个物件的一个属性。在这个例子中是Blue View的trailing edge。
+Attribute 2
+Blue View
+trailing edge
+Constant ：一个浮点型的常数。在这个例子中是8.0。
+Constant ：一个浮点型的常数。在这个例子中是8.0。
+Constant
+8.0
+大部分的约束是定义两个物件之间的关系。这些物件必须是View或者Layout Guide。约束也可以定义一个物件的两个属性之间的关系，比如设置一个物件的高度或者宽度。当第二个物件为空时，它的属性必须被设为Not An Attribute，并且Multiplier为置为0.0。
+View
+Layout Guide
+Not An Attribute
+Multiplier
+0.0
+约束中用到的属性
+通常情况下，包含四个边（leading，trailing，top和bottom），以及高度（height），宽度（width），水平中心点（CenterY），垂直中心点（CenterX）。文本类型的物件还有一个基线（baseline）属性。
+
+
+属性说明
+属性说明
+
+Height和Width。这两个属性可以被直接赋值，可以是一个常数，也可以是其他View的Height或者Width值。但是，不可以为负数。
+Top、Bottom、Baseline。可以和Top、Bottom、Baseline、CenterY组合。
+Leading和Trailing。可以和Leading、Trailing、CenterX组合。
+Left和Right。避免使用这两个属性，而使用Leading和Trailing来替代它们。
+CenterX和CenterY。CenterX可以和Leading、Trailing、Left、Right组合。CenterY可以和Top、Bottom、Baseline组合。
+
+Height和Width。这两个属性可以被直接赋值，可以是一个常数，也可以是其他View的Height或者Width值。但是，不可以为负数。
+Height和Width。这两个属性可以被直接赋值，可以是一个常数，也可以是其他View的Height或者Width值。但是，不可以为负数。
+Top、Bottom、Baseline。可以和Top、Bottom、Baseline、CenterY组合。
+Top、Bottom、Baseline。可以和Top、Bottom、Baseline、CenterY组合。
+Top
+Bottom
+Baseline
+CenterY
+Leading和Trailing。可以和Leading、Trailing、CenterX组合。
+Leading和Trailing。可以和Leading、Trailing、CenterX组合。
+Leading
+Trailing
+CenterX
+Left和Right。避免使用这两个属性，而使用Leading和Trailing来替代它们。
+Left和Right。避免使用这两个属性，而使用Leading和Trailing来替代它们。
+Leading
+Trailing
+CenterX和CenterY。CenterX可以和Leading、Trailing、Left、Right组合。CenterY可以和Top、Bottom、Baseline组合。
+CenterX和CenterY。CenterX可以和Leading、Trailing、Left、Right组合。CenterY可以和Top、Bottom、Baseline组合。
+Leading
+Trailing
+Left
+Right
+Top
+Bottom
+Baseline
+使用属性定义约束
+上面提到的属性可以分为两类，尺寸相关和位置相关。尺寸相关（如height、width）用来定义物件的大小。位置相关（如leading，top）的属性用来表明该物件和其他物件之间的位置关系。使用这些属性时需要注意：
+尺寸相关
+位置相关
+
+不要使用尺寸相关的属性去约束一个位置相关的属性。
+只可以给尺寸相关的属性直接赋值一个常量。
+
+不要使用尺寸相关的属性去约束一个位置相关的属性。
+不要使用尺寸相关的属性去约束一个位置相关的属性。
+只可以给尺寸相关的属性直接赋值一个常量。
+只可以给尺寸相关的属性直接赋值一个常量。
+举几个简单的例子：
+// 设置一个固定高度
+View.height = 0.0 * NotAnAttribute + 40.0
+
+// 设置两个按钮之间的固定距离
+Button_2.leading = 1.0 * Button_1.trailing + 8.0
+
+// 让两个按钮的左边缘对齐
+Button_1.leading = 1.0 * Button_2.leading + 0.0
+
+// 给两个按钮相同的宽度
+Button_1.width = 1.0 * Button_2.width + 0.0
+
+// 让View的中心和父类的中心相同
+View.centerX = 1.0 * Superview.centerX + 0.0
+View.centerY = 1.0 * Superview.centerY + 0.0
+
+// 设置一个View的宽高比
+View.height = 2.0 * View.width + 0.0
+// 设置一个固定高度
+View.height = 0.0 * NotAnAttribute + 40.0
+
+// 设置两个按钮之间的固定距离
+Button_2.leading = 1.0 * Button_1.trailing + 8.0
+
+// 让两个按钮的左边缘对齐
+Button_1.leading = 1.0 * Button_2.leading + 0.0
+
+// 给两个按钮相同的宽度
+Button_1.width = 1.0 * Button_2.width + 0.0
+
+// 让View的中心和父类的中心相同
+View.centerX = 1.0 * Superview.centerX + 0.0
+View.centerY = 1.0 * Superview.centerY + 0.0
+
+// 设置一个View的宽高比
+View.height = 2.0 * View.width + 0.0
+约束的设置没有最好的，只有最适合的。
+约束的设置没有最好的，只有最适合的。
+约束的优先级
+优先级是Auto Layout在计算的时候用到的参数。优先级的值可以是1-1000任意整数。系统定义了low（250）、medium（500）、high（750）和required（1000）四个等级。一般情况下，我们手动设置的优先级的值也会集中在这四个等级下。  
+关于Auto Layout是如何通过优先级来计算出解决方案，我在看完官方文档后还是一头雾水。希望有大神可以指点一二。  
+参考内容：  苹果官方文档：Auto Layout Guide
+
+Auto Layout Guide

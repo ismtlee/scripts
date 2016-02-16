@@ -1,0 +1,14 @@
+
+
+北京时间 1 月 29 日，Facebook 宣布将于 2017 年 1 月 28 日正式关闭旗下的云端服务器 Parse。在这期间，Parse 为开发者提供数据转移工具和一年的时间将储存于 Parse 服务器上的数据转移到任何 MongoDB 数据库上（详情见此）。
+详情见此
+为了更好的帮助用户转移他们的数据，Parse 的 API 会在新的数据库上持续运行，保证应用程序不会停止服务。与此同时，Parse 开源了 Parse Server，用户可以在自己的 Node.js 服务器上使用大部分 Parse API。只要用户的数据在自己的数据库里，Parse Server 可以让应用程序在不改变客户端代码的情况下持续运行。虽然消息突然，但是 Parse 为其用户转移数据做出的努力，也可谓业界良心。
+Parse Server
+但是 Facebook 为什么决定关闭 Parse？2013 年 Facebook 收购了 Parse，可以说是 Facebook 当初想加入云服务市场的一步棋。3 年前的 Facebook，没有发展出较为完善的移动端广告业务，还处于探索盈利方式的状态，而以 Parse 代表的移动端云服务看起来是一个不错的商业方向。然而相比亚马逊，微软等提供的云服务，Facebook 缺少了复杂的商业数据库服务，如果要和这些巨头竞争，Facebook 还需要投入巨大的财力和人力。相较于如今发展成熟的移动端广告业务，Parse 并不是一个很好的盈利工具。
+来源
+http://blog.parse.com/announcements/moving-on/http://blog.parse.com/announcements/introducing-parse-server-and-the-database-migration-tool/http://bits.blogs.nytimes.com/2016/01/28/facebook-to-shut-down-parse-its-platform-for-mobile-developers/?_r=0
+http://blog.parse.com/announcements/moving-on/
+
+http://blog.parse.com/announcements/introducing-parse-server-and-the-database-migration-tool/
+
+http://bits.blogs.nytimes.com/2016/01/28/facebook-to-shut-down-parse-its-platform-for-mobile-developers/?_r=0

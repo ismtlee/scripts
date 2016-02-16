@@ -1,0 +1,1476 @@
+Trie树主要分为两类，一类是静态的，一次性构建，构建完成后只读，另一类是动态的，随时可以加入新的key。当然，对于动态构建，其写过程，是不一定保证线程安全的。对于trie的详细分析，见这篇老外的文章：http://www.tkl.iis.u-tokyo.ac.jp/~ynaga/cedar/
+
+http://www.tkl.iis.u-tokyo.ac.jp/~ynaga/cedar/
+性能分析
+此部分内容为上边文章的摘要
+此部分内容为上边文章的摘要
+因为大多数trie都是静态的，所以作者还加入了标准库的map等非trie的数据结构作为横向对比静态的包括：
+
+
+libdatrie 0.2.8: double-array trie
+libtrie 0.1.1: double-array trie
+dary 0.1.1: double-array trie
+doar 0.0.13: double-array trie
+Darts 0.32: double-array trie
+Darts-clone 0.32g: directed acyclic word graph
+Darts-clone 0.32e5: Compacted double-array trie
+DASTrie 1.0: Compacted double-array trie
+tx-trie* 0.18: LOUDS (Level-Order Unary Degree Sequence) trie
+ux-trie* 0.1.9: LOUDS double-trie
+marisa-trie* 0.2.4: LOUDS nested patricia trie
+
+libdatrie 0.2.8: double-array trie
+libdatrie 0.2.8: double-array trie
+libtrie 0.1.1: double-array trie
+libtrie 0.1.1: double-array trie
+dary 0.1.1: double-array trie
+dary 0.1.1: double-array trie
+doar 0.0.13: double-array trie
+doar 0.0.13: double-array trie
+Darts 0.32: double-array trie
+Darts 0.32: double-array trie
+Darts-clone 0.32g: directed acyclic word graph
+Darts-clone 0.32g: directed acyclic word graph
+Darts-clone 0.32e5: Compacted double-array trie
+Darts-clone 0.32e5: Compacted double-array trie
+DASTrie 1.0: Compacted double-array trie
+DASTrie 1.0: Compacted double-array trie
+tx-trie* 0.18: LOUDS (Level-Order Unary Degree Sequence) trie
+tx-trie* 0.18: LOUDS (Level-Order Unary Degree Sequence) trie
+ux-trie* 0.1.9: LOUDS double-trie
+ux-trie* 0.1.9: LOUDS double-trie
+marisa-trie* 0.2.4: LOUDS nested patricia trie
+marisa-trie* 0.2.4: LOUDS nested patricia trie
+动态的包括
+
+libdatrie 0.2.8: double-array trie
+libtrie 0.1.1: double-array trie
+dary 0.1.1: double-array trie
+doar 0.0.13: double-array trie
+critbit: crit-bit (patricia) tree [4]
+libdict: splay tree [5], treap [6], skiplist [7]
+C Containers library: scapegoat tree [8]
+Andersson tree library: AA tree [9]
+tst_vanilla: ternary search tree [10]
+Judy Array 1.0.5: Judy trie SL [11]
+hat-trie 0.1.0: HAT-trie [12]
+array-hash Array Hash: (cache-conscious) hash table [13]
+CMPH 2.0: hash table (w/ minimal perfect hash function [14])
+std::map <std::string, int> (gcc 4.9.0): red-black tree
+std::unordered_map <std::string, int> (gcc 4.9.0): hash table
+cpp-btree 1.0.1: B-tree
+sparsehash 2.0.2: hash table (sparsetable)
+
+libdatrie 0.2.8: double-array trie
+libdatrie 0.2.8: double-array trie
+libtrie 0.1.1: double-array trie
+libtrie 0.1.1: double-array trie
+dary 0.1.1: double-array trie
+dary 0.1.1: double-array trie
+doar 0.0.13: double-array trie
+doar 0.0.13: double-array trie
+critbit: crit-bit (patricia) tree [4]
+critbit: crit-bit (patricia) tree [4]
+libdict: splay tree [5], treap [6], skiplist [7]
+libdict: splay tree [5], treap [6], skiplist [7]
+C Containers library: scapegoat tree [8]
+C Containers library: scapegoat tree [8]
+Andersson tree library: AA tree [9]
+Andersson tree library: AA tree [9]
+tst_vanilla: ternary search tree [10]
+tst_vanilla: ternary search tree [10]
+Judy Array 1.0.5: Judy trie SL [11]
+Judy Array 1.0.5: Judy trie SL [11]
+hat-trie 0.1.0: HAT-trie [12]
+hat-trie 0.1.0: HAT-trie [12]
+array-hash Array Hash: (cache-conscious) hash table [13]
+array-hash Array Hash: (cache-conscious) hash table [13]
+CMPH 2.0: hash table (w/ minimal perfect hash function [14])
+CMPH 2.0: hash table (w/ minimal perfect hash function [14])
+std::map <std::string, int> (gcc 4.9.0): red-black tree
+std::map <std::string, int> (gcc 4.9.0): red-black tree
+std::unordered_map <std::string, int> (gcc 4.9.0): hash table
+std::unordered_map <std::string, int> (gcc 4.9.0): hash table
+cpp-btree 1.0.1: B-tree
+cpp-btree 1.0.1: B-tree
+sparsehash 2.0.2: hash table (sparsetable)
+sparsehash 2.0.2: hash table (sparsetable)
+
+
+Software
+Data Structure
+Space [MiB]
+Insert [ns/key]
+Lookup [ns/key]
+
+
+
+cedar
+Double-array trie
+1173.02
+631.06
+50.40
+
+
+
+cedar ORDERED=false
+Double-array prefix trie
+671.66
+786.02
+49.99
+
+
+libdatrie 0.2.8
+Double-array prefix trie
+n/a
+n/a
+n/a
+
+
+libtrie 0.1.1
+Double-array two-trie
+2756.30
+8116.16
+185.85
+
+
+dary
+Double-array trie
+1119.04
+1786.93
+79.96
+
+
+doar 0.0.13
+Compacted double-array trie
+2285.21
+17687.60
+83.41
+
+
+critbit
+Crit-bit (patricia) tree
+1457.02
+1713.69
+752.49
+
+
+libdict
+Splay tree
+1823.12
+1541.48
+229.34
+
+
+libdict
+Treap
+1823.13
+1682.26
+902.43
+
+
+libdict
+Skip list
+1852.86
+1907.25
+1265.79
+
+
+Andersson tree library
+AA tree
+1457.02
+2100.03
+337.14
+
+
+C Containers library
+Scapegoat tree
+1891.74
+2380.65
+254.34
+
+
+tst_vanilla
+ternary search tree
+3318.75
+1109.25
+129.12
+
+
+Judy 1.0.5
+Judy trie SL
+897.59
+580.67
+142.64
+
+
+hat-trie 0.1.0
+HAT-trie
+695.49
+916.02
+75.51
+
+
+std::map
+
+Red-black tree
+2506.27
+1617.60
+851.33
+
+
+std::unordered_map
+
+Hash table
+2471.60
+615.30
+170.41
+
+
+array hash
+Array Hash
+1725.56
+17273.22
+330.76
+
+
+CMPH 2.0
+Hash table
+2741.03
+2744.92
+285.11
+
+
+cpp-btree 1.0.1
+B-tree
+1744.96
+1749.96
+1080.04
+
+
+
+sparsetable 2.0.2
+Sparse hash table
+1685.41
+2635.32
+157.63
+
+
+
+sparsetable 2.0.2 (dense)
+Hash table
+2335.04
+502.66
+123.3
+
+
+
+
+Software
+Data Structure
+Space [MiB]
+Insert [ns/key]
+Lookup [ns/key]
+
+
+Software
+Data Structure
+Space [MiB]
+Insert [ns/key]
+Lookup [ns/key]
+
+Software
+Data Structure
+Space [MiB]
+Insert [ns/key]
+Lookup [ns/key]
+
+
+cedar
+Double-array trie
+1173.02
+631.06
+50.40
+
+
+
+cedar ORDERED=false
+Double-array prefix trie
+671.66
+786.02
+49.99
+
+
+libdatrie 0.2.8
+Double-array prefix trie
+n/a
+n/a
+n/a
+
+
+libtrie 0.1.1
+Double-array two-trie
+2756.30
+8116.16
+185.85
+
+
+dary
+Double-array trie
+1119.04
+1786.93
+79.96
+
+
+doar 0.0.13
+Compacted double-array trie
+2285.21
+17687.60
+83.41
+
+
+critbit
+Crit-bit (patricia) tree
+1457.02
+1713.69
+752.49
+
+
+libdict
+Splay tree
+1823.12
+1541.48
+229.34
+
+
+libdict
+Treap
+1823.13
+1682.26
+902.43
+
+
+libdict
+Skip list
+1852.86
+1907.25
+1265.79
+
+
+Andersson tree library
+AA tree
+1457.02
+2100.03
+337.14
+
+
+C Containers library
+Scapegoat tree
+1891.74
+2380.65
+254.34
+
+
+tst_vanilla
+ternary search tree
+3318.75
+1109.25
+129.12
+
+
+Judy 1.0.5
+Judy trie SL
+897.59
+580.67
+142.64
+
+
+hat-trie 0.1.0
+HAT-trie
+695.49
+916.02
+75.51
+
+
+std::map
+
+Red-black tree
+2506.27
+1617.60
+851.33
+
+
+std::unordered_map
+
+Hash table
+2471.60
+615.30
+170.41
+
+
+array hash
+Array Hash
+1725.56
+17273.22
+330.76
+
+
+CMPH 2.0
+Hash table
+2741.03
+2744.92
+285.11
+
+
+cpp-btree 1.0.1
+B-tree
+1744.96
+1749.96
+1080.04
+
+
+
+sparsetable 2.0.2
+Sparse hash table
+1685.41
+2635.32
+157.63
+
+
+
+sparsetable 2.0.2 (dense)
+Hash table
+2335.04
+502.66
+123.3
+
+
+
+cedar
+Double-array trie
+1173.02
+631.06
+50.40
+
+cedar
+cedar
+Double-array trie
+1173.02
+1173.02
+631.06
+631.06
+50.40
+50.40
+
+
+cedar ORDERED=false
+Double-array prefix trie
+671.66
+786.02
+49.99
+
+
+cedar ORDERED=false
+cedar
+Double-array prefix trie
+671.66
+671.66
+786.02
+786.02
+49.99
+49.99
+
+libdatrie 0.2.8
+Double-array prefix trie
+n/a
+n/a
+n/a
+
+libdatrie 0.2.8
+Double-array prefix trie
+n/a
+n/a
+n/a
+
+libtrie 0.1.1
+Double-array two-trie
+2756.30
+8116.16
+185.85
+
+libtrie 0.1.1
+Double-array two-trie
+2756.30
+8116.16
+185.85
+
+dary
+Double-array trie
+1119.04
+1786.93
+79.96
+
+dary
+Double-array trie
+1119.04
+1786.93
+79.96
+
+doar 0.0.13
+Compacted double-array trie
+2285.21
+17687.60
+83.41
+
+doar 0.0.13
+Compacted double-array trie
+2285.21
+17687.60
+83.41
+
+critbit
+Crit-bit (patricia) tree
+1457.02
+1713.69
+752.49
+
+critbit
+Crit-bit (patricia) tree
+1457.02
+1713.69
+752.49
+
+libdict
+Splay tree
+1823.12
+1541.48
+229.34
+
+libdict
+Splay tree
+1823.12
+1541.48
+229.34
+
+libdict
+Treap
+1823.13
+1682.26
+902.43
+
+libdict
+Treap
+1823.13
+1682.26
+902.43
+
+libdict
+Skip list
+1852.86
+1907.25
+1265.79
+
+libdict
+Skip list
+1852.86
+1907.25
+1265.79
+
+Andersson tree library
+AA tree
+1457.02
+2100.03
+337.14
+
+Andersson tree library
+AA tree
+1457.02
+2100.03
+337.14
+
+C Containers library
+Scapegoat tree
+1891.74
+2380.65
+254.34
+
+C Containers library
+Scapegoat tree
+1891.74
+2380.65
+254.34
+
+tst_vanilla
+ternary search tree
+3318.75
+1109.25
+129.12
+
+tst_vanilla
+ternary search tree
+3318.75
+1109.25
+129.12
+
+Judy 1.0.5
+Judy trie SL
+897.59
+580.67
+142.64
+
+Judy 1.0.5
+Judy trie SL
+897.59
+580.67
+142.64
+
+hat-trie 0.1.0
+HAT-trie
+695.49
+916.02
+75.51
+
+hat-trie 0.1.0
+HAT-trie
+695.49
+916.02
+75.51
+
+std::map
+
+Red-black tree
+2506.27
+1617.60
+851.33
+
+std::map
+
+map
+Red-black tree
+2506.27
+2506.27
+1617.60
+1617.60
+851.33
+851.33
+
+std::unordered_map
+
+Hash table
+2471.60
+615.30
+170.41
+
+std::unordered_map
+
+unordered_map
+Hash table
+2471.60
+2471.60
+615.30
+615.30
+170.41
+170.41
+
+array hash
+Array Hash
+1725.56
+17273.22
+330.76
+
+array hash
+Array Hash
+1725.56
+17273.22
+330.76
+
+CMPH 2.0
+Hash table
+2741.03
+2744.92
+285.11
+
+CMPH 2.0
+Hash table
+2741.03
+2744.92
+285.11
+
+cpp-btree 1.0.1
+B-tree
+1744.96
+1749.96
+1080.04
+
+cpp-btree 1.0.1
+B-tree
+1744.96
+1749.96
+1080.04
+
+
+sparsetable 2.0.2
+Sparse hash table
+1685.41
+2635.32
+157.63
+
+
+sparsetable 2.0.2
+sparsetable
+Sparse hash table
+1685.41
+1685.41
+2635.32
+2635.32
+157.63
+157.63
+
+
+sparsetable 2.0.2 (dense)
+Hash table
+2335.04
+502.66
+123.3
+
+
+sparsetable 2.0.2 (dense)
+sparsetable
+Hash table
+2335.04
+2335.04
+502.66
+502.66
+123.3
+123.3
+可以看出cedar在动态trie中有是有明显优势的，唯一的败像不太难看的是google的sparsetable，不过sparsetable是hash表，在查询和容量上都更差一些。同样的hash表的unordered map因为实现臃肿，速度更慢。
+cedar
+sparsetable
+sparsetable
+unordered map
+
+
+Software
+Data Structure
+Space [MiB]
+Size [MiB]
+Build [ns/key]
+Lookup [ns/key]
+
+
+
+cedar
+Double-array trie
+832.82
+816.54
+183.57
+38.95
+
+
+
+cedar ORDERED=false
+Double-array prefix trie
+490.59
+488.35
+221.87
+39.07
+
+
+libdatrie 0.2.8
+Double-array prefix trie
+1229.12
+644.97
+209955.04
+124.66
+
+
+libtrie 0.1.1
+Double-array two-trie
+2312.11
+654.39
+5401.59
+181.95
+
+
+dary
+Double-array trie
+897.75
+895.54
+51144.92
+57.90
+
+
+doar 0.0.13
+Compacted double-array trie
+1937.25
+334.59
+990.51
+48.00
+
+
+Darts 0.32
+Double-array trie
+4306.02
+858.93
+2387.87
+40.89
+
+
+
+Darts-clone 0.32g
+Directed-acyclic word graph
+2311.39
+409.17
+1339.14
+36.39
+
+
+Darts-clone 0.32e5
+Compacted double-array trie
+2779.10
+309.31
+1011.92
+59.42
+
+
+DASTrie 1.0
+Compacted double-array trie
+2626.16
+383.37
+92634.88
+85.02
+
+
+tx-trie 0.18
+LOUDS trie
+1791.10
+113.11
+626.90
+972.32
+
+
+ux-trie 0.1.9
+LOUDS two-trie
+2223.80
+92.39
+1229.11
+1975.28
+
+
+marisa-trie 0.2.4
+LOUDS nested patricia trie
+2036.49
+87.27
+698.76
+194.87
+
+
+
+
+Software
+Data Structure
+Space [MiB]
+Size [MiB]
+Build [ns/key]
+Lookup [ns/key]
+
+
+Software
+Data Structure
+Space [MiB]
+Size [MiB]
+Build [ns/key]
+Lookup [ns/key]
+
+Software
+Data Structure
+Space [MiB]
+Size [MiB]
+Build [ns/key]
+Lookup [ns/key]
+
+
+cedar
+Double-array trie
+832.82
+816.54
+183.57
+38.95
+
+
+
+cedar ORDERED=false
+Double-array prefix trie
+490.59
+488.35
+221.87
+39.07
+
+
+libdatrie 0.2.8
+Double-array prefix trie
+1229.12
+644.97
+209955.04
+124.66
+
+
+libtrie 0.1.1
+Double-array two-trie
+2312.11
+654.39
+5401.59
+181.95
+
+
+dary
+Double-array trie
+897.75
+895.54
+51144.92
+57.90
+
+
+doar 0.0.13
+Compacted double-array trie
+1937.25
+334.59
+990.51
+48.00
+
+
+Darts 0.32
+Double-array trie
+4306.02
+858.93
+2387.87
+40.89
+
+
+
+Darts-clone 0.32g
+Directed-acyclic word graph
+2311.39
+409.17
+1339.14
+36.39
+
+
+Darts-clone 0.32e5
+Compacted double-array trie
+2779.10
+309.31
+1011.92
+59.42
+
+
+DASTrie 1.0
+Compacted double-array trie
+2626.16
+383.37
+92634.88
+85.02
+
+
+tx-trie 0.18
+LOUDS trie
+1791.10
+113.11
+626.90
+972.32
+
+
+ux-trie 0.1.9
+LOUDS two-trie
+2223.80
+92.39
+1229.11
+1975.28
+
+
+marisa-trie 0.2.4
+LOUDS nested patricia trie
+2036.49
+87.27
+698.76
+194.87
+
+
+
+cedar
+Double-array trie
+832.82
+816.54
+183.57
+38.95
+
+cedar
+cedar
+Double-array trie
+832.82
+832.82
+816.54
+816.54
+183.57
+183.57
+38.95
+38.95
+
+
+cedar ORDERED=false
+Double-array prefix trie
+490.59
+488.35
+221.87
+39.07
+
+
+cedar ORDERED=false
+cedar
+Double-array prefix trie
+490.59
+490.59
+488.35
+488.35
+221.87
+221.87
+39.07
+39.07
+
+libdatrie 0.2.8
+Double-array prefix trie
+1229.12
+644.97
+209955.04
+124.66
+
+libdatrie 0.2.8
+Double-array prefix trie
+1229.12
+644.97
+209955.04
+124.66
+
+libtrie 0.1.1
+Double-array two-trie
+2312.11
+654.39
+5401.59
+181.95
+
+libtrie 0.1.1
+Double-array two-trie
+2312.11
+654.39
+5401.59
+181.95
+
+dary
+Double-array trie
+897.75
+895.54
+51144.92
+57.90
+
+dary
+Double-array trie
+897.75
+895.54
+51144.92
+57.90
+
+doar 0.0.13
+Compacted double-array trie
+1937.25
+334.59
+990.51
+48.00
+
+doar 0.0.13
+Compacted double-array trie
+1937.25
+334.59
+990.51
+48.00
+
+Darts 0.32
+Double-array trie
+4306.02
+858.93
+2387.87
+40.89
+
+Darts 0.32
+Double-array trie
+4306.02
+858.93
+2387.87
+40.89
+
+
+Darts-clone 0.32g
+Directed-acyclic word graph
+2311.39
+409.17
+1339.14
+36.39
+
+
+Darts-clone 0.32g
+Darts-clone
+Directed-acyclic word graph
+2311.39
+2311.39
+409.17
+409.17
+1339.14
+1339.14
+36.39
+36.39
+
+Darts-clone 0.32e5
+Compacted double-array trie
+2779.10
+309.31
+1011.92
+59.42
+
+Darts-clone 0.32e5
+Compacted double-array trie
+2779.10
+309.31
+1011.92
+59.42
+
+DASTrie 1.0
+Compacted double-array trie
+2626.16
+383.37
+92634.88
+85.02
+
+DASTrie 1.0
+Compacted double-array trie
+2626.16
+383.37
+92634.88
+85.02
+
+tx-trie 0.18
+LOUDS trie
+1791.10
+113.11
+626.90
+972.32
+
+tx-trie 0.18
+LOUDS trie
+1791.10
+113.11
+626.90
+972.32
+
+ux-trie 0.1.9
+LOUDS two-trie
+2223.80
+92.39
+1229.11
+1975.28
+
+ux-trie 0.1.9
+LOUDS two-trie
+2223.80
+92.39
+1229.11
+1975.28
+
+marisa-trie 0.2.4
+LOUDS nested patricia trie
+2036.49
+87.27
+698.76
+194.87
+
+marisa-trie 0.2.4
+LOUDS nested patricia trie
+2036.49
+87.27
+698.76
+194.87
+ceder是动态的，如果传入的key是有序的，会减少内部的操作，所以速度也会提高。静态trie中比较突出的是darts系列。但是cedar与其相比并不逊色，两者最终内存占用和查询速度相差无几，但是cedar的构建时间不到darts的1/5。并且，darts系的构建过程会耗费大量内存，即峰值内存是cedar的3倍以上。
+ceder
+darts
+cedar
+cedar
+darts
+cedar
+综上，选择cedar作为trie是可行的。
+使用
+使用cedar十分简单，直接包含头文件即可。
+cedar
+template <typename value_type,
+          const int     NO_VALUE  = nan<value_type>::N1,
+          const int     NO_PATH   = nan<value_type>::N2,
+          const bool    ORDERED   = true,
+          const int     MAX_TRIAL = 1,
+          const size_t  NUM_TRACKING_NODES = 0>
+class da;
+template <typename value_type,
+          const int     NO_VALUE  = nan<value_type>::N1,
+          const int     NO_PATH   = nan<value_type>::N2,
+          const bool    ORDERED   = true,
+          const int     MAX_TRIAL = 1,
+          const size_t  NUM_TRACKING_NODES = 0>
+class da;
+NO_VALUE的值是-1，NO_PATH的值是-2因为其他的模版参数都有默认值，一般只特化value_type即可。
+
+value_type
+cedar::da<int> trie;
+trie.update("hello", strlen("hello"), 1);
+cedar::da<int> trie;
+trie.update("hello", strlen("hello"), 1);
+接口
+cedar的接口如下，选择一些常用的进行介绍。需要说明的是原始代码中的很多参数有歧义性。这里我对参数名称进行了修改，更符合直观的含义。
+cedar
+template <...>
+class da {
+  size_t capacity() const;
+  size_t size() const;
+  size_t total_size() const;
+  size_t unit_size() const;
+  size_t nonzero_size() const; // warning: O(size)
+  size_t num_keys() const; // warning: O(size)
+  
+  template <typename T>
+  T exactMatchSearch(const char* key) const;
+  template <typename T>
+  T exactMatchSearch(const char* key, size_t len, size_t from=0) const;
+  
+  template <typename T>
+  size_t commonPrefixSearch(const char* str, T* result, size_t result_len) const;
+  template <typename T>
+  size_t commonPrefixSearch(const char* str, T* result, size_t result_len, size_t len,
+                            size_t from=0) const;
+  
+  template <typename T>
+  size_t commonPrefixPredict(const char* str, T* result, size_t result_len);
+  template <typename T>
+  size_t commonPrefixPredict(const char* str, T* result, size_t result_len, size_t len,
+                             size_t from = 0);
+  
+  void suffix(char* key, size_t len, size_t to) const;
+  value_type traverse(const char* key, size_t& from, size_t& pos) const;
+  value_type traverse(const char* key, size_t& from, size_t& pos, size_t end_pos) const;
+  
+  value_type& update(const char* key);
+  value_type& update(const char* key, size_t len, value_type val=value_type(0));
+  value_type& update(const char* key, size_t& from, size_t& pos, size_t len, 
+                      value_type val=value_type(0));
+  template <typename T>
+  value_type& update(const char* key, size_t& from, size_t& pos, size_t len, 
+                     value_type val, T& cf) 
+  
+  int erase(const char* key);
+  int erase(const char* key, size_t len, size_t from = 0);
+  void erase(size_t from);
+  
+  int build(size_t num, const char** key, const size_t* len = 0, const value_type* val = 0);
+  
+  template <typename T>
+  void dump(T* result, const size_t result_len);
+  
+  int save(const char* fn, const char* mode = "wb") const;
+  int open(const char* fn, const char* mode = "rb",
+           const size_t offset = 0, size_t size_ = 0);
+  
+  void restore()
+  void set_array(void* p, size_t size_ = 0);
+  const void* array() const;
+  void clear(const bool reuse = true);
+  
+  int begin(size_t& from, size_t& len);
+  int next(size_t& from, size_t& len, const size_t root=0);
+  
+  void test(const size_t from=0) const;
+};
+template <...>
+class da {
+  size_t capacity() const;
+  size_t size() const;
+  size_t total_size() const;
+  size_t unit_size() const;
+  size_t nonzero_size() const; // warning: O(size)
+  size_t num_keys() const; // warning: O(size)
+  
+  template <typename T>
+  T exactMatchSearch(const char* key) const;
+  template <typename T>
+  T exactMatchSearch(const char* key, size_t len, size_t from=0) const;
+  
+  template <typename T>
+  size_t commonPrefixSearch(const char* str, T* result, size_t result_len) const;
+  template <typename T>
+  size_t commonPrefixSearch(const char* str, T* result, size_t result_len, size_t len,
+                            size_t from=0) const;
+  
+  template <typename T>
+  size_t commonPrefixPredict(const char* str, T* result, size_t result_len);
+  template <typename T>
+  size_t commonPrefixPredict(const char* str, T* result, size_t result_len, size_t len,
+                             size_t from = 0);
+  
+  void suffix(char* key, size_t len, size_t to) const;
+  value_type traverse(const char* key, size_t& from, size_t& pos) const;
+  value_type traverse(const char* key, size_t& from, size_t& pos, size_t end_pos) const;
+  
+  value_type& update(const char* key);
+  value_type& update(const char* key, size_t len, value_type val=value_type(0));
+  value_type& update(const char* key, size_t& from, size_t& pos, size_t len, 
+                      value_type val=value_type(0));
+  template <typename T>
+  value_type& update(const char* key, size_t& from, size_t& pos, size_t len, 
+                     value_type val, T& cf) 
+  
+  int erase(const char* key);
+  int erase(const char* key, size_t len, size_t from = 0);
+  void erase(size_t from);
+  
+  int build(size_t num, const char** key, const size_t* len = 0, const value_type* val = 0);
+  
+  template <typename T>
+  void dump(T* result, const size_t result_len);
+  
+  int save(const char* fn, const char* mode = "wb") const;
+  int open(const char* fn, const char* mode = "rb",
+           const size_t offset = 0, size_t size_ = 0);
+  
+  void restore()
+  void set_array(void* p, size_t size_ = 0);
+  const void* array() const;
+  void clear(const bool reuse = true);
+  
+  int begin(size_t& from, size_t& len);
+  int next(size_t& from, size_t& len, const size_t root=0);
+  
+  void test(const size_t from=0) const;
+};
+update
+value_type& update(const char* key);
+// update(key, from=0, len=strlen(key), val=0)
+value_type& update(const char* key, size_t len, value_type val=value_type(0));
+// update(key, from=0, len, val)
+value_type& update(const char* key, size_t& from, size_t& pos, size_t len, 
+                   value_type val=value_type(0));
+value_type& update(const char* key);
+// update(key, from=0, len=strlen(key), val=0)
+value_type& update(const char* key, size_t len, value_type val=value_type(0));
+// update(key, from=0, len, val)
+value_type& update(const char* key, size_t& from, size_t& pos, size_t len, 
+                   value_type val=value_type(0));
+
+插入key，value为0
+插入key的[0,len)子串
+附加key的[pos,len)子串，到from对应的前缀后
+
+插入key，value为0
+插入key，value为0
+插入key的[0,len)子串
+插入key的[0,len)子串
+附加key的[pos,len)子串，到from对应的前缀后
+附加key的[pos,len)子串，到from对应的前缀后
+关于from 表示附加到代表节点所对应的前缀后。例如，如果from==0，表示从root开始附加，即以子串作为key。如果from=1000表示的节点是abc，则插入的key是abc+子串。关于val  update的代码中，没有设置val的节点value为0，如果设置了节点则value += val。这样会有一个很致命的细节，如果多次更新同一个key，那么val值不是覆盖而是累加!这是一个很大的坑，一定要注意。
+关于from
+
+关于val
+value += val
+不是覆盖而是累加
+erase
+int erase(const char* key);
+int erase(const char* key, size_t len, size_t from = 0);
+void erase(size_t from);
+int erase(const char* key);
+int erase(const char* key, size_t len, size_t from = 0);
+void erase(size_t from);
+
+找到key对应的节点，并删除(清空value)
+找到节点：以from为前缀，附加key的[0, len)子串的key对应的节点。并删除
+删除节点
+
+找到key对应的节点，并删除(清空value)
+找到key对应的节点，并删除(清空value)
+找到节点：以from为前缀，附加key的[0, len)子串的key对应的节点。并删除
+找到节点：以from为前缀，附加key的[0, len)子串的key对应的节点。并删除
+删除节点
+删除节点
+build
+int build(size_t num, const char** key, const size_t* len=NULL,
+          const value_type* val=NULL);
+int build(size_t num, const char** key, const size_t* len=NULL,
+          const value_type* val=NULL);
+仿照darts的接口。num为数组的大小。key是cstr的数组。len是key对应的长度列表。val是key对应的值列表关于排序 cedar是不需要死板的build的，这里只是为了兼容darts的接口，内层其实是循环调用update。所以key是不需要有序的。关于val `build内层其实是循环调用update。于是，update中关于val的细节依然适用。如果有重复的key，那么val值不是覆盖而是累加
+
+关于排序
+cedar
+darts
+
+关于val
+不是覆盖而是累加
+exactMatchSearch
+template <typename T>
+T exactMatchSearch(const char* key) const;
+// exactMatchSearch(key, len=strlen(key), from=0);
+template <typename T>
+T exactMatchSearch(const char* key, size_t len, size_t from=0) const;
+template <typename T>
+T exactMatchSearch(const char* key) const;
+// exactMatchSearch(key, len=strlen(key), from=0);
+template <typename T>
+T exactMatchSearch(const char* key, size_t len, size_t from=0) const;
+在内部查找中，无论是NO_PATH(N2)，还是NO_VALUE(N1)，都返回NO_VALUE(N1)。这个和darts的行为是一致的。需要注意的是，这个函数是模板函数，并且无法通过参数推算模版，所以必须显式的指定类型:exactMatchSearch<int>(...)
+
+
+exactMatchSearch<int>(...)
+commonPrefixSearch
+template <typename T>
+size_t commonPrefixSearch(const char* str, T* result, size_t result_len) const;
+// commonPrefixSearch(str, result, result_len, len=strlen(key), from=0);
+template <typename T>
+size_t commonPrefixSearch(const char* str, T* result, size_t result_len, size_t len,
+                          size_t from=0) const;
+template <typename T>
+size_t commonPrefixSearch(const char* str, T* result, size_t result_len) const;
+// commonPrefixSearch(str, result, result_len, len=strlen(key), from=0);
+template <typename T>
+size_t commonPrefixSearch(const char* str, T* result, size_t result_len, size_t len,
+                          size_t from=0) const;
+返回的是恰好为str的前缀的key的集合。例如"helloworld" -> ["hell", "hello"]返回的是找到的结果数，参数中的result_len是result的容量。如果有10个结果，但是result_len为5的话，只会写出5个结果，但是返回值是10
+"helloworld" -> ["hell", "hello"]
+
+commonPrefixPredict
+template <typename T>
+size_t commonPrefixPredict(const char* str, T* result, size_t result_len);
+// commonPrefixPredict(str, result, result_len, len=strlen(key), from=0);
+template <typename T>
+size_t commonPrefixPredict(const char* str, T* result, size_t result_len, size_t len,
+                           size_t from = 0);
+template <typename T>
+size_t commonPrefixPredict(const char* str, T* result, size_t result_len);
+// commonPrefixPredict(str, result, result_len, len=strlen(key), from=0);
+template <typename T>
+size_t commonPrefixPredict(const char* str, T* result, size_t result_len, size_t len,
+                           size_t from = 0);
+返回的以给定的str为前缀的key的集合。例如"he" -> ["hell", "hello", "help"]返回的是找到的结果数，参数中的result_len是result的容量。如果有10个结果，但是result_len为5的话，只会写出5个结果，但是返回值是10
+"he" -> ["hell", "hello", "help"]
+
+traverse
+value_type traverse(const char* key, size_t& from, size_t& pos) const;
+// traverse(key, form, pos, end_pos=strlen(key))
+value_type traverse(const char* key, size_t& from, size_t& pos, size_t end_pos) const;
+value_type traverse(const char* key, size_t& from, size_t& pos) const;
+// traverse(key, form, pos, end_pos=strlen(key))
+value_type traverse(const char* key, size_t& from, size_t& pos, size_t end_pos) const;
+trie中最重要的函数，可以最灵活的查找trie重点是依据返回值来判定traverse的结果如果返回NO_VALUE(N1)，说明有key的前缀是当前[pos, end_pos)子串，但没有精确匹配。如果返回NO_PATH(N2)，说明当前子串对应的路径在trie中不存在。如果返回其他值，说明当前子串对应表示的key恰好在trie中。
+
+
+
+

@@ -1,0 +1,418 @@
+SpringBoot应用系列文章
+SpringBoot应用系列文章
+
+SpringBoot应用之配置中心
+SpringBoot应用之分布式会话
+SpringBoot应用之分布式索引
+
+SpringBoot应用之配置中心
+SpringBoot应用之配置中心
+SpringBoot应用之配置中心
+SpringBoot应用之分布式会话
+SpringBoot应用之分布式会话
+SpringBoot应用之分布式会话
+SpringBoot应用之分布式索引
+SpringBoot应用之分布式索引
+SpringBoot应用之分布式索引
+序
+本文主要讲怎么在SpringBoot中使用elasticsearch。elasticsearch呢，从其根源来讲，是索引服务，但是讲高端一点，就是分布式的实时文件存储、分布式的实时分析搜索引擎。
+准备es
+详见docker环境搭建elasticsearch这篇。
+docker环境搭建elasticsearch
+新建项目
+
+
+application.properties
+spring.data.elasticsearch.repositories.enabled=true
+spring.data.elasticsearch.cluster-name=cn-out-of-box
+spring.data.elasticsearch.cluster-nodes=192.168.99.100:9300
+spring.data.elasticsearch.repositories.enabled=true
+spring.data.elasticsearch.cluster-name=cn-out-of-box
+spring.data.elasticsearch.cluster-nodes=192.168.99.100:9300
+模型
+@Document(indexName = "post", type = "post", shards = 1, replicas = 0)
+public class Post {
+    @Id
+    private String id;
+
+    private String title;
+
+    private Double rating;
+
+    @Field(type= FieldType.Nested)
+    private List<Tag> tags;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
+}
+@Document(indexName = "post", type = "post", shards = 1, replicas = 0)
+public class Post {
+    @Id
+    private String id;
+
+    private String title;
+
+    private Double rating;
+
+    @Field(type= FieldType.Nested)
+    private List<Tag> tags;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
+    }
+
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
+}
+内嵌对象
+public class Tag {
+    private String id;
+    private String name;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+public class Tag {
+    private String id;
+    private String name;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+repository
+public interface PostRepository extends ElasticsearchRepository<Post, String> {
+
+    Page<Post> findByTagsName(String name, Pageable pageable);
+
+    List<Post> findByRatingBetween(Double beginning, Double end);
+
+}
+public interface PostRepository extends ElasticsearchRepository<Post, String> {
+
+    Page<Post> findByTagsName(String name, Pageable pageable);
+
+    List<Post> findByRatingBetween(Double beginning, Double end);
+
+}
+service层
+@Service
+public class PostService {
+
+    @Autowired
+    PostRepository postRepository;
+
+    public Post save(Post post){
+        postRepository.save(post);
+        return post;
+    }
+
+    public Post findOne(String id) {
+        return postRepository.findOne(id);
+    }
+
+    public Iterable<Post> findAll() {
+        return postRepository.findAll();
+    }
+
+    public Page<Post> findByTagsName(String tagName, PageRequest pageRequest) {
+        return postRepository.findByTagsName(tagName, pageRequest);
+    }
+
+    List<Post> findByRatingBetween(Double beginning, Double end){
+        return postRepository.findByRatingBetween(beginning,end);
+    }
+}
+@Service
+public class PostService {
+
+    @Autowired
+    PostRepository postRepository;
+
+    public Post save(Post post){
+        postRepository.save(post);
+        return post;
+    }
+
+    public Post findOne(String id) {
+        return postRepository.findOne(id);
+    }
+
+    public Iterable<Post> findAll() {
+        return postRepository.findAll();
+    }
+
+    public Page<Post> findByTagsName(String tagName, PageRequest pageRequest) {
+        return postRepository.findByTagsName(tagName, pageRequest);
+    }
+
+    List<Post> findByRatingBetween(Double beginning, Double end){
+        return postRepository.findByRatingBetween(beginning,end);
+    }
+}
+Test
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes = EsdemoApplication.class)
+public class EsdemoApplicationTests {
+
+    @Autowired
+    private PostService postService;
+
+    @Autowired
+    private ElasticsearchTemplate elasticsearchTemplate;
+
+    @Before
+    public void before() {
+        elasticsearchTemplate.deleteIndex(Post.class);
+        elasticsearchTemplate.createIndex(Post.class);
+        elasticsearchTemplate.putMapping(Post.class);
+        elasticsearchTemplate.refresh(Post.class, true);
+    }
+
+    @Test
+    public void testSave() throws Exception {
+        Tag tag = new Tag();
+        tag.setId("1");
+        tag.setName("tech");
+        Tag tag2 = new Tag();
+        tag2.setId("2");
+        tag2.setName("elasticsearch");
+
+        Post post = new Post();
+        post.setId("1");
+        post.setTitle("Bigining with spring boot application and elasticsearch");
+        post.setRating(9.5);
+        post.setTags(Arrays.asList(tag, tag2));
+        postService.save(post);
+
+        assertThat(post.getId(), notNullValue());
+
+        Post post2 = new Post();
+        post2.setId("2");
+        post2.setTitle("Bigining with spring boot application");
+        post2.setTags(Arrays.asList(tag));
+        post2.setRating(7.5);
+        postService.save(post2);
+        assertThat(post2.getId(), notNullValue());
+    }
+
+    @Test //tag必须不是nested的
+    public void testFindByTagsName() throws Exception {
+        Tag tag = new Tag();
+        tag.setId("1");
+        tag.setName("tech");
+        Tag tag2 = new Tag();
+        tag2.setId("2");
+        tag2.setName("elasticsearch");
+
+        Post post = new Post();
+        post.setId("1");
+        post.setTitle("Bigining with spring boot application and elasticsearch");
+        post.setRating(9.4);
+        post.setTags(Arrays.asList(tag, tag2));
+        postService.save(post);
+
+
+
+        Post post2 = new Post();
+        post2.setId("1");
+        post2.setTitle("Bigining with spring boot application");
+        post2.setTags(Arrays.asList(tag));
+        post2.setRating(9.6);
+        postService.save(post2);
+
+        Page<Post> posts  = postService.findByTagsName("tech", new PageRequest(0,10));
+        Page<Post> posts2  = postService.findByTagsName("tech", new PageRequest(0,10));
+        Page<Post> posts3  = postService.findByTagsName("maz", new PageRequest(0,10));
+
+
+        assertThat(posts.getTotalElements(), is(1L));
+        assertThat(posts2.getTotalElements(), is(1L));
+        assertThat(posts3.getTotalElements(), is(0L));
+    }
+
+}
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes = EsdemoApplication.class)
+public class EsdemoApplicationTests {
+
+    @Autowired
+    private PostService postService;
+
+    @Autowired
+    private ElasticsearchTemplate elasticsearchTemplate;
+
+    @Before
+    public void before() {
+        elasticsearchTemplate.deleteIndex(Post.class);
+        elasticsearchTemplate.createIndex(Post.class);
+        elasticsearchTemplate.putMapping(Post.class);
+        elasticsearchTemplate.refresh(Post.class, true);
+    }
+
+    @Test
+    public void testSave() throws Exception {
+        Tag tag = new Tag();
+        tag.setId("1");
+        tag.setName("tech");
+        Tag tag2 = new Tag();
+        tag2.setId("2");
+        tag2.setName("elasticsearch");
+
+        Post post = new Post();
+        post.setId("1");
+        post.setTitle("Bigining with spring boot application and elasticsearch");
+        post.setRating(9.5);
+        post.setTags(Arrays.asList(tag, tag2));
+        postService.save(post);
+
+        assertThat(post.getId(), notNullValue());
+
+        Post post2 = new Post();
+        post2.setId("2");
+        post2.setTitle("Bigining with spring boot application");
+        post2.setTags(Arrays.asList(tag));
+        post2.setRating(7.5);
+        postService.save(post2);
+        assertThat(post2.getId(), notNullValue());
+    }
+
+    @Test //tag必须不是nested的
+    public void testFindByTagsName() throws Exception {
+        Tag tag = new Tag();
+        tag.setId("1");
+        tag.setName("tech");
+        Tag tag2 = new Tag();
+        tag2.setId("2");
+        tag2.setName("elasticsearch");
+
+        Post post = new Post();
+        post.setId("1");
+        post.setTitle("Bigining with spring boot application and elasticsearch");
+        post.setRating(9.4);
+        post.setTags(Arrays.asList(tag, tag2));
+        postService.save(post);
+
+
+
+        Post post2 = new Post();
+        post2.setId("1");
+        post2.setTitle("Bigining with spring boot application");
+        post2.setTags(Arrays.asList(tag));
+        post2.setRating(9.6);
+        postService.save(post2);
+
+        Page<Post> posts  = postService.findByTagsName("tech", new PageRequest(0,10));
+        Page<Post> posts2  = postService.findByTagsName("tech", new PageRequest(0,10));
+        Page<Post> posts3  = postService.findByTagsName("maz", new PageRequest(0,10));
+
+
+        assertThat(posts.getTotalElements(), is(1L));
+        assertThat(posts2.getTotalElements(), is(1L));
+        assertThat(posts3.getTotalElements(), is(0L));
+    }
+
+}
+save的截图
+
+
+坑
+NoNodeAvailableException
+NoNodeAvailableException
+NoNodeAvailableException
+org.elasticsearch.client.transport.NoNodeAvailableException: None of the configured nodes are available: []
+org.elasticsearch.client.transport.NoNodeAvailableException: None of the configured nodes are available: []
+应用中指定的cluster-name与集群中的cluster.name不一致的缘故。
+本工程github
+本工程github
+github
+参考
+
+First Step with Spring Boot and Elasticsearch
+Head first elastic search on java with spring boot and data features
+
+First Step with Spring Boot and Elasticsearch
+First Step with Spring Boot and Elasticsearch
+First Step with Spring Boot and Elasticsearch
+Head first elastic search on java with spring boot and data features
+Head first elastic search on java with spring boot and data features
+Head first elastic search on java with spring boot and data features

@@ -1,0 +1,117 @@
+参考资料
+参考资料
+首先，网页大小与浏览器窗口大小从来都不是一回事！！！这尼玛最近才明白，坑~
+所以，要知道以下常:
+网页的范围我们在代码里面设置的CSS或者js脚本，改变的样式就是网页范围下的改变，也就是说，我们设置的CSS大小是网页的不是浏览器窗口的大小。
+网页的范围
+
+浏览器窗口浏览器窗口中看到的那部分实时动态的网页面积，又叫做viewport（视口）。
+浏览器窗口
+
+实时动态
+为什么说是实时动态的窗口？比如，我上班时偷偷的新窗口打开淘宝，然后把窗口调的很小，这样老大就不会发觉拉。这样一来，本来全屏的窗口变成了小窗口，因此浏览器的窗口大小也就被改变了。
+为什么说是实时动态的窗口？
+
+在不出现各种滚动条的情况下，viewport的大小和网页的大小是相同的。
+获取网页的大小的方法1
+clientHeight和clientWidth属性。这两个属性指元素的内容部分再加上padding的所占据的视觉面积，不包括border和滚动条占用的空间。获取body的这两个属性，可以得出网页的大小。
+
+盗个图说明一下：
+
+
+再盗个代码
+function getViewport(){
+　　　　if (document.compatMode == "BackCompat"){
+　　　　　　return {
+　　　　　　　　width: document.body.clientWidth,
+　　　　　　　　height: document.body.clientHeight
+　　　　　　}
+　　　　} else {
+　　　　　　return {
+　　　　　　　　width: document.documentElement.clientWidth,
+　　　　　　　　height: document.documentElement.clientHeight
+　　　　　　}
+　　　　}
+　　}
+function getViewport(){
+　　　　if (document.compatMode == "BackCompat"){
+　　　　　　return {
+　　　　　　　　width: document.body.clientWidth,
+　　　　　　　　height: document.body.clientHeight
+　　　　　　}
+　　　　} else {
+　　　　　　return {
+　　　　　　　　width: document.documentElement.clientWidth,
+　　　　　　　　height: document.documentElement.clientHeight
+　　　　　　}
+　　　　}
+　　}
+注意事项
+
+这个函数必须在页面加载完成后才能运行，否则document对象还没生成，浏览器会报错。
+大多数情况下，都是document.documentElement.clientWidth返回正确值。但是，在IE6的quirks模式中，document.body.clientWidth返回正确的值，因此函数中加入了对文档模式的判断。
+clientWidth和clientHeight都是只读属性，不能对它们赋值。
+
+这个函数必须在页面加载完成后才能运行，否则document对象还没生成，浏览器会报错。
+这个函数必须在页面加载完成后才能运行，否则document对象还没生成，浏览器会报错。
+大多数情况下，都是document.documentElement.clientWidth返回正确值。但是，在IE6的quirks模式中，document.body.clientWidth返回正确的值，因此函数中加入了对文档模式的判断。
+大多数情况下，都是document.documentElement.clientWidth返回正确值。但是，在IE6的quirks模式中，document.body.clientWidth返回正确的值，因此函数中加入了对文档模式的判断。
+clientWidth和clientHeight都是只读属性，不能对它们赋值。
+clientWidth和clientHeight都是只读属性，不能对它们赋值。
+获取网页的大小的方法2
+document对象的scrollHeight和scrollWidth属性就是网页的大小，意思就是滚动条滚过的所有长度和宽度。
+function getPagearea(){
+　　　　if (document.compatMode == "BackCompat"){
+　　　　　　return {
+　　　　　　　　width: Math.max(document.body.scrollWidth,
+　　　　　　　　　　　　　　　　document.body.clientWidth),
+　　　　　　　　height: Math.max(document.body.scrollHeight,
+　　　　　　　　　　　　　　　　document.body.clientHeight)
+　　　　　　}
+　　　　} else {
+　　　　　　return {
+　　　　　　　　width: Math.max(document.documentElement.scrollWidth,
+　　　　　　　　　　　　　　　　document.documentElement.clientWidth),
+　　　　　　　　height: Math.max(document.documentElement.scrollHeight,
+　　　　　　　　　　　　　　　　document.documentElement.clientHeight)
+　　　　　　}
+　　　　}
+　　}
+function getPagearea(){
+　　　　if (document.compatMode == "BackCompat"){
+　　　　　　return {
+　　　　　　　　width: Math.max(document.body.scrollWidth,
+　　　　　　　　　　　　　　　　document.body.clientWidth),
+　　　　　　　　height: Math.max(document.body.scrollHeight,
+　　　　　　　　　　　　　　　　document.body.clientHeight)
+　　　　　　}
+　　　　} else {
+　　　　　　return {
+　　　　　　　　width: Math.max(document.documentElement.scrollWidth,
+　　　　　　　　　　　　　　　　document.documentElement.clientWidth),
+　　　　　　　　height: Math.max(document.documentElement.scrollHeight,
+　　　　　　　　　　　　　　　　document.documentElement.clientHeight)
+　　　　　　}
+　　　　}
+　　}
+元素的绝对位置
+详见参考资料里面的函数
+
+
+网页元素的相对位置
+详见参考资料里面的函数
+
+
+获取元素位置的快速方法
+getBoundingClientRect():返回一个对象，其中包含了left、right、top、bottom四个属性，分别对应了该元素的左上角和右下角相对于浏览器窗口（viewport）左上角的距离。
+getBoundingClientRect()
+　　var X= this.getBoundingClientRect().left;
+　　var Y =this.getBoundingClientRect().top;
+　　var X= this.getBoundingClientRect().left;
+　　var Y =this.getBoundingClientRect().top;
+再加上滚动距离，就可以得到绝对位置
+　　var X= this.getBoundingClientRect().left+document.documentElement.scrollLeft;
+　　var Y =this.getBoundingClientRect().top+document.documentElement.scrollTop;
+　　var X= this.getBoundingClientRect().left+document.documentElement.scrollLeft;
+　　var Y =this.getBoundingClientRect().top+document.documentElement.scrollTop;
+目前，IE、Firefox 3.0+、Opera 9.5+都支持该方法，而Firefox 2.x、Safari、Chrome、Konqueror不支持。

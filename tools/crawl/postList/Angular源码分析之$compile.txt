@@ -1,0 +1,339 @@
+@(Angular)
+$compile，在Angular中即“编译”服务，它涉及到Angular应用的“编译”和“链接”两个阶段，根据从DOM树遍历Angular的根节点（ng-app）和已构造完毕的 \$rootScope对象，依次解析根节点后代，根据多种条件查找指令，并完成每个指令相关的操作（如指令的作用域，控制器绑定以及transclude等），最终返回每个指令的链接函数，并将所有指令的链接函数合成为一个处理后的链接函数，返回给Angluar的bootstrap模块，最终启动整个应用程序。
+$compile
+\$rootScope
+
+[TOC]
+Angular的compileProvider
+抛开Angular的MVVM实现方式不谈，Angular给前端带来了一个软件工程的理念－依赖注入DI。依赖注入从来只是后端领域的实现机制，尤其是javaEE的spring框架。采用依赖注入的好处就是无需开发者手动创建一个对象，这减少了开发者相关的维护操作，让开发者无需关注业务逻辑相关的对象操作。那么在前端领域呢，采用依赖注入有什么与之前的开发不一样的体验呢？
+我认为，前端领域的依赖注入，则大大减少了命名空间的使用，如著名的YUI框架的命名空间引用方式，在极端情况下对象的引用可能会非常长。而采用注入的方式，则消耗的仅仅是一个局部变量，好处自然可见。而且开发者仅仅需要相关的“服务”对象的名称，而不需要知道该服务的具体引用方式，这样开发者就完全集中在了对象的借口引用上，专注于业务逻辑的开发，避免了反复的查找相关的文档。
+前面废话一大堆，主要还是为后面的介绍做铺垫。在Angular中，依赖注入对象的方式依赖与该对象的Provider，正如小结标题的compileProvider一样，该对象提供了compile服务，可通过injector.invoke(compileProvider.$get,compileProvider)函数完成compile服务的获取。因此，问题转移到分析compileProvider.\$get的具体实现上。
+compileProvider.\$get
+compileProvider.\$get
+this.\$get = ['\$injector', '\$parse', '\$controller', '\$rootScope', '\$http', '\$interpolate',
+      function(\$injector, \$parse, \$controller, \$rootScope, \$http, \$interpolate) {
+  ...
+  return compile;
+}
+this.\$get = ['\$injector', '\$parse', '\$controller', '\$rootScope', '\$http', '\$interpolate',
+      function(\$injector, \$parse, \$controller, \$rootScope, \$http, \$interpolate) {
+  ...
+  return compile;
+}
+上述代码采用了依赖注入的方式注入了\$injector,\$parse,\$controller,\$rootScope,\$http,\$interpolate五个服务，分别用于实现“依赖注入的注入器（\$injector），js代码解析器（\$parse），控制器服务（\$controller）,根作用域（\$rootScope）,http服务和指令解析服务”。compileProvider通过这几个服务单例，完成了从抽象语法树的解析到DOM树构建，作用域绑定并最终返回合成的链接函数，实现了Angular应用的开启。
+\$injector,\$parse,\$controller,\$rootScope,\$http,\$interpolate
+\$get方法最终返回compile函数，compile函数就是\$compile服务的具体实现。下面我们深入compile函数：
+function compile(\$compileNodes, maxPriority) {
+      var compositeLinkFn = compileNodes(\$compileNodes, maxPriority);
+
+      return function publicLinkFn(scope, cloneAttachFn, options) {
+        options = options || {};
+        var parentBoundTranscludeFn = options.parentBoundTranscludeFn;
+        var transcludeControllers = options.transcludeControllers;
+        if (parentBoundTranscludeFn && parentBoundTranscludeFn.$$boundTransclude) {
+          parentBoundTranscludeFn = parentBoundTranscludeFn.$$boundTransclude;
+        }
+        var $linkNodes;
+        if (cloneAttachFn) {
+          $linkNodes = $compileNodes.clone();
+          cloneAttachFn($linkNodes, scope);
+        } else {
+          $linkNodes = $compileNodes;
+        }
+        _.forEach(transcludeControllers, function(controller, name) {
+          $linkNodes.data('$' + name + 'Controller', controller.instance);
+        });
+        $linkNodes.data('$scope', scope);
+        compositeLinkFn(scope, $linkNodes, parentBoundTranscludeFn);
+        return $linkNodes;
+      };
+    }
+function compile(\$compileNodes, maxPriority) {
+      var compositeLinkFn = compileNodes(\$compileNodes, maxPriority);
+
+      return function publicLinkFn(scope, cloneAttachFn, options) {
+        options = options || {};
+        var parentBoundTranscludeFn = options.parentBoundTranscludeFn;
+        var transcludeControllers = options.transcludeControllers;
+        if (parentBoundTranscludeFn && parentBoundTranscludeFn.$$boundTransclude) {
+          parentBoundTranscludeFn = parentBoundTranscludeFn.$$boundTransclude;
+        }
+        var $linkNodes;
+        if (cloneAttachFn) {
+          $linkNodes = $compileNodes.clone();
+          cloneAttachFn($linkNodes, scope);
+        } else {
+          $linkNodes = $compileNodes;
+        }
+        _.forEach(transcludeControllers, function(controller, name) {
+          $linkNodes.data('$' + name + 'Controller', controller.instance);
+        });
+        $linkNodes.data('$scope', scope);
+        compositeLinkFn(scope, $linkNodes, parentBoundTranscludeFn);
+        return $linkNodes;
+      };
+    }
+首先，通过compileNodes函数，针对所需要遍历的根节点开始，完成指令的解析，并生成合成之后的链接函数，返回一个publicLinkFn函数，该函数完成根节点与根作用域的绑定，并在根节点缓存指令的控制器实例，最终执行合成链接函数。
+根节点
+根节点与根作用域的绑定，并在根节点缓存指令的控制器实例，最终执行合成链接函数
+合成链接函数的生成
+通过上一小结，可以看出\$compile服务的核心在于compileNodes函数的执行及其返回的合成链接函数的执行。下面，我们深入到compileNodes的具体逻辑中去：
+function compileNodes($compileNodes, maxPriority) {
+      var linkFns = [];
+      _.times($compileNodes.length, function(i) {
+        var attrs = new Attributes($($compileNodes[i]));
+        var directives = collectDirectives($compileNodes[i], attrs, maxPriority);
+        var nodeLinkFn;
+        if (directives.length) {
+          nodeLinkFn = applyDirectivesToNode(directives, $compileNodes[i], attrs);
+        }
+        var childLinkFn;
+        if ((!nodeLinkFn || !nodeLinkFn.terminal) &&
+            $compileNodes[i].childNodes && $compileNodes[i].childNodes.length) {
+          childLinkFn = compileNodes($compileNodes[i].childNodes);
+        }
+        if (nodeLinkFn && nodeLinkFn.scope) {
+          attrs.$$element.addClass('ng-scope');
+        }
+        if (nodeLinkFn || childLinkFn) {
+          linkFns.push({
+            nodeLinkFn: nodeLinkFn,
+            childLinkFn: childLinkFn,
+            idx: i
+          });
+        }
+      });
+
+      // 执行指令的链接函数
+      function compositeLinkFn(scope, linkNodes, parentBoundTranscludeFn) {
+        var stableNodeList = [];
+        _.forEach(linkFns, function(linkFn) {
+          var nodeIdx = linkFn.idx;
+          stableNodeList[linkFn.idx] = linkNodes[linkFn.idx];
+        });
+
+        _.forEach(linkFns, function(linkFn) {
+          var node = stableNodeList[linkFn.idx];
+          if (linkFn.nodeLinkFn) {
+            var childScope;
+            if (linkFn.nodeLinkFn.scope) {
+              childScope = scope.$new();
+              $(node).data('$scope', childScope);
+            } else {
+              childScope = scope;
+            }
+
+            var boundTranscludeFn;
+            if (linkFn.nodeLinkFn.transcludeOnThisElement) {
+              boundTranscludeFn = function(transcludedScope, cloneAttachFn, transcludeControllers, containingScope) {
+                if (!transcludedScope) {
+                  transcludedScope = scope.$new(false, containingScope);
+                }
+                var didTransclude = linkFn.nodeLinkFn.transclude(transcludedScope, cloneAttachFn, {
+                  transcludeControllers: transcludeControllers,
+                  parentBoundTranscludeFn: parentBoundTranscludeFn
+                });
+                if (didTransclude.length === 0 && parentBoundTranscludeFn) {
+                  didTransclude = parentBoundTranscludeFn(transcludedScope, cloneAttachFn);
+                }
+                return didTransclude;
+              };
+            } else if (parentBoundTranscludeFn) {
+              boundTranscludeFn = parentBoundTranscludeFn;
+            }
+
+            linkFn.nodeLinkFn(
+              linkFn.childLinkFn,
+              childScope,
+              node,
+              boundTranscludeFn
+            );
+          } else {
+            linkFn.childLinkFn(
+              scope,
+              node.childNodes,
+              parentBoundTranscludeFn
+            );
+          }
+        });
+      }
+
+      return compositeLinkFn;
+    }
+function compileNodes($compileNodes, maxPriority) {
+      var linkFns = [];
+      _.times($compileNodes.length, function(i) {
+        var attrs = new Attributes($($compileNodes[i]));
+        var directives = collectDirectives($compileNodes[i], attrs, maxPriority);
+        var nodeLinkFn;
+        if (directives.length) {
+          nodeLinkFn = applyDirectivesToNode(directives, $compileNodes[i], attrs);
+        }
+        var childLinkFn;
+        if ((!nodeLinkFn || !nodeLinkFn.terminal) &&
+            $compileNodes[i].childNodes && $compileNodes[i].childNodes.length) {
+          childLinkFn = compileNodes($compileNodes[i].childNodes);
+        }
+        if (nodeLinkFn && nodeLinkFn.scope) {
+          attrs.$$element.addClass('ng-scope');
+        }
+        if (nodeLinkFn || childLinkFn) {
+          linkFns.push({
+            nodeLinkFn: nodeLinkFn,
+            childLinkFn: childLinkFn,
+            idx: i
+          });
+        }
+      });
+
+      // 执行指令的链接函数
+      function compositeLinkFn(scope, linkNodes, parentBoundTranscludeFn) {
+        var stableNodeList = [];
+        _.forEach(linkFns, function(linkFn) {
+          var nodeIdx = linkFn.idx;
+          stableNodeList[linkFn.idx] = linkNodes[linkFn.idx];
+        });
+
+        _.forEach(linkFns, function(linkFn) {
+          var node = stableNodeList[linkFn.idx];
+          if (linkFn.nodeLinkFn) {
+            var childScope;
+            if (linkFn.nodeLinkFn.scope) {
+              childScope = scope.$new();
+              $(node).data('$scope', childScope);
+            } else {
+              childScope = scope;
+            }
+
+            var boundTranscludeFn;
+            if (linkFn.nodeLinkFn.transcludeOnThisElement) {
+              boundTranscludeFn = function(transcludedScope, cloneAttachFn, transcludeControllers, containingScope) {
+                if (!transcludedScope) {
+                  transcludedScope = scope.$new(false, containingScope);
+                }
+                var didTransclude = linkFn.nodeLinkFn.transclude(transcludedScope, cloneAttachFn, {
+                  transcludeControllers: transcludeControllers,
+                  parentBoundTranscludeFn: parentBoundTranscludeFn
+                });
+                if (didTransclude.length === 0 && parentBoundTranscludeFn) {
+                  didTransclude = parentBoundTranscludeFn(transcludedScope, cloneAttachFn);
+                }
+                return didTransclude;
+              };
+            } else if (parentBoundTranscludeFn) {
+              boundTranscludeFn = parentBoundTranscludeFn;
+            }
+
+            linkFn.nodeLinkFn(
+              linkFn.childLinkFn,
+              childScope,
+              node,
+              boundTranscludeFn
+            );
+          } else {
+            linkFn.childLinkFn(
+              scope,
+              node.childNodes,
+              parentBoundTranscludeFn
+            );
+          }
+        });
+      }
+
+      return compositeLinkFn;
+    }
+代码有些长，我们一点一点分析。首先，linkFns数组用于存储每个DOM节点上所有指令的处理后的链接函数和子节点上所有指令的处理后的链接函数，具体使用递归的方式实现。随后，在返回的compositeLinkFn中，则是遍历linkFns，针对每个链接函数，创建起对应的作用域对象（针对创建隔离作用域的指令，创建隔离作用域对象，并保存在节点的缓存中），并处理指令是否设置了transclude属性，生成相关的transclude处理函数，最终执行链接函数；如果当前指令并没有链接函数，则调用其子元素的链接函数，完成当前元素的处理。
+
+处理后的链接函数
+处理后的链接函数
+在具体的实现中，通过collectDirectives函数完成所有节点的指令扫描。它会根据节点的类型（元素节点，注释节点和文本节点）分别按特定规则处理，对于元素节点，默认存储当前元素的标签名为一个指令，同时扫描元素的属性和CSS class名，判断是否满足指令定义。
+紧接着，执行applyDirectivesToNode函数，执行指令相关操作，并返回处理后的链接函数。由此可见，applyDirectivesToNode则是\$compile服务的核心，重中之重！
+applyDirectivesToNode函数
+applyDirectivesToNode函数过于复杂，因此只通过简单代码说明问题。上文也提到，在该函数中执行用户定义指令的相关操作。
+
+首先则是初始化相关属性，通过遍历节点的所有指令，针对每个指令，依次判断$$start属性，优先级，隔离作用域，控制器，transclude属性判断并编译其模板，构建元素的DOM结构，最终执行用户定义的compile函数，将生成的链接函数添加到preLinkFns和postLinkFns数组中，最终根据指令的terminal属性判断是否递归其子元素指令，完成相同的操作。
+其中，针对指令的transclude处理则需特殊说明：
+if (directive.transclude === 'element') {
+            hasElementTranscludeDirective = true;
+            var $originalCompileNode = $compileNode;
+            $compileNode = attrs.$$element = $(document.createComment(' ' + directive.name + ': ' + attrs[directive.name] + ' '));
+            $originalCompileNode.replaceWith($compileNode);
+            terminalPriority = directive.priority;
+            childTranscludeFn = compile($originalCompileNode, terminalPriority);
+          } else {
+            var $transcludedNodes = $compileNode.clone().contents();
+            childTranscludeFn = compile($transcludedNodes);
+            $compileNode.empty();
+          }
+if (directive.transclude === 'element') {
+            hasElementTranscludeDirective = true;
+            var $originalCompileNode = $compileNode;
+            $compileNode = attrs.$$element = $(document.createComment(' ' + directive.name + ': ' + attrs[directive.name] + ' '));
+            $originalCompileNode.replaceWith($compileNode);
+            terminalPriority = directive.priority;
+            childTranscludeFn = compile($originalCompileNode, terminalPriority);
+          } else {
+            var $transcludedNodes = $compileNode.clone().contents();
+            childTranscludeFn = compile($transcludedNodes);
+            $compileNode.empty();
+          }
+如果指令的transclude属性设置为字符串“element”时，则会用注释comment替换当前元素节点，再重新编译原先的DOM节点，而如果transclude设置为默认的true时，则会继续编译其子节点，并通过transcludeFn传递编译后的DOM对象，完成用户自定义的DOM处理。
+在返回的nodeLinkFn中，根据用户指令的定义，如果指令带有隔离作用域，则创建一个隔离作用域，并在当前的dom节点上绑定ng-isolate-scope类名，同时将隔离作用域缓存到dom节点上；
+接下来，如果dom节点上某个指令定义了控制器，则会调用\$cotroller服务，通过依赖注入的方式（\$injector.invoke）获取该控制器的实例，并缓存该控制器实例；随后，调用initializeDirectiveBindings，完成隔离作用域属性的单向绑定（@），双向绑定（＝）和函数的引用（&），针对隔离作用域的双向绑定模式（＝）的实现，则是通过自定义的编译器完成简单Angular语法的编译，在指定作用域下获取表达式（标示符）的值，保存为lastValue，并通过设置parentValueFunction添加到当前作用域的$watch数组中，每次\$digest循环，判断双向绑定的属性是否变脏（dirty），完成值的同步。
+
+最后，根据applyDirectivesToNode第一步的初始化操作，将遍历执行指令compile函数返回的链接函数构造出成的preLinkFns和postLinkFns数组，依次执行，如下所示：
+_.forEach(preLinkFns, function(linkFn) {
+          linkFn(
+            linkFn.isolateScope ? isolateScope : scope,
+            $element,
+            attrs,
+            linkFn.require && getControllers(linkFn.require, $element),
+            scopeBoundTranscludeFn
+          );
+        });
+        if (childLinkFn) {
+          var scopeToChild = scope;
+          if (newIsolateScopeDirective && newIsolateScopeDirective.template) {
+            scopeToChild = isolateScope;
+          }
+          childLinkFn(scopeToChild, linkNode.childNodes, boundTranscludeFn);
+        }
+        _.forEachRight(postLinkFns, function(linkFn) {
+          linkFn(
+            linkFn.isolateScope ? isolateScope : scope,
+            $element,
+            attrs,
+            linkFn.require && getControllers(linkFn.require, $element),
+            scopeBoundTranscludeFn
+          );
+        });
+_.forEach(preLinkFns, function(linkFn) {
+          linkFn(
+            linkFn.isolateScope ? isolateScope : scope,
+            $element,
+            attrs,
+            linkFn.require && getControllers(linkFn.require, $element),
+            scopeBoundTranscludeFn
+          );
+        });
+        if (childLinkFn) {
+          var scopeToChild = scope;
+          if (newIsolateScopeDirective && newIsolateScopeDirective.template) {
+            scopeToChild = isolateScope;
+          }
+          childLinkFn(scopeToChild, linkNode.childNodes, boundTranscludeFn);
+        }
+        _.forEachRight(postLinkFns, function(linkFn) {
+          linkFn(
+            linkFn.isolateScope ? isolateScope : scope,
+            $element,
+            attrs,
+            linkFn.require && getControllers(linkFn.require, $element),
+            scopeBoundTranscludeFn
+          );
+        });
+可以看出，首先执行preLinkFns的函数；紧接着遍历子节点的链接函数，并执行；最后执行postLinkFns的函数，完成当前dom元素的链接函数的执行。指令的compile函数默认返回postLink函数，可以通过compile函数返回一个包含preLink和postLink函数的对象设置preLinkFns和postLinkFns数组，如在preLink针对子元素进行DOM操作，效率会远远高于在postLink中执行，原因在于preLink函数执行时并未构建子元素的DOM，在当子元素是个拥有多个项的li时尤为明显。
+li
+end of compile－publicLinkFn
+终于，到了快结束的阶段了。通过compileNodes返回从根节点（ng-app所在节点）开始的所有指令的最终合成链接函数，最终在publicLinkFn函数中执行。在publicLinkFn中，完成根节点与根作用域的绑定，并在根节点缓存指令的控制器实例，最终执行合成链接函数，完成了Angular最重要的编译，链接两个阶段，从而开始了真正意义上的双向绑定。
+编译，链接

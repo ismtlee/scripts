@@ -1,0 +1,8 @@
+sites:
+    - url: http://segmentfault.com/blogs
+      list: h2.title a
+      single: .article *
+    - url: http://segmentfault.com/blogs
+      list: h2.title a
+      single: .article *
+

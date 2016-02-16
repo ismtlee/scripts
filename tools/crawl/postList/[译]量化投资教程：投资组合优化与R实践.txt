@@ -1,0 +1,1082 @@
+概述
+最近，我在研究投资组合优化的问题，主要针对的是股票持仓的组合优化，我们会在这个分析过程中发现一些有意思的现象，并一步一步优化、检验我们的风控模型。本文将有四个部分分别阐述具体步骤。
+
+在第一部分（原文）中，我将解释什么是杠铃策略，并初步建立风控模型，比较持仓策略和风险收益的关系。
+在第二部分（原文）中，我将解释什么是无风险利率假定，讨论多项式拟合的情形。
+在第三部分（原文）中，我将解释如何通过放松约束最优化求解过程以避免非凹的情形，并做了实例演示。
+在第四部分（原文）中，我将对比大盘策略、等权策略以及之前的优化策略之间的优劣。
+
+在第一部分（原文）中，我将解释什么是杠铃策略，并初步建立风控模型，比较持仓策略和风险收益的关系。
+在第一部分（原文）中，我将解释什么是杠铃策略，并初步建立风控模型，比较持仓策略和风险收益的关系。
+第一部分（原文）
+在第二部分（原文）中，我将解释什么是无风险利率假定，讨论多项式拟合的情形。
+在第二部分（原文）中，我将解释什么是无风险利率假定，讨论多项式拟合的情形。
+第二部分（原文）
+在第三部分（原文）中，我将解释如何通过放松约束最优化求解过程以避免非凹的情形，并做了实例演示。
+在第三部分（原文）中，我将解释如何通过放松约束最优化求解过程以避免非凹的情形，并做了实例演示。
+第三部分（原文）
+在第四部分（原文）中，我将对比大盘策略、等权策略以及之前的优化策略之间的优劣。
+在第四部分（原文）中，我将对比大盘策略、等权策略以及之前的优化策略之间的优劣。
+第四部分（原文）
+请注意,本文不应该被作为投资建议。本文数据是基于之前观察到的收益来模拟的，和历史上的数据并不太一致。这些技术可以帮助了解如何更好地分配一个投资组合。它不应该被用作唯一的投资决策，如果你正在寻找的建议应该找到一个合格的专业机构。
+第一部分
+数字特征计算
+当看到三个政府 ETF 债券(TLT、IEF、SHY)调整后的股息回报率,我注意到中间到期债券(IEF)风险收益情况比长期债券(TLT)更好。我以表格形式显示结果。在本文中,我们将重新分析和图形化展示我们的结果：
+首先，用如下函数来获取ETF的回报序列
+require(fImport)
+require(PerformanceAnalytics)
+
+# 将股票数据加载到一个时间序列对象的函数
+importSeries = function (symbol,from,to) {
+
+    # 从雅虎读取金融数据
+    input = yahooSeries(symbol,from=from,to=to)
+
+    # 列名
+    adjClose = paste(symbol,".Adj.Close",sep="")
+    inputReturn = paste(symbol,".Return",sep="")
+    CReturn = paste(symbol,".CReturn",sep="")
+
+    # 计算收益率并生成时间序列
+    input.Return = returns(input[,adjClose])
+    colnames(input.Return)[1] = inputReturn
+    input = merge(input,input.Return)
+
+    # 计算累积收益率并生成时间序列
+    input.first = input[,adjClose][1]
+    input.CReturn = fapply(input[,adjClose],FUN=function(x) log(x) - log(input.first))
+    colnames(input.CReturn)[1] = CReturn
+    input = merge(input,input.CReturn)
+
+    # 删掉一些没用的东西，如果你不知道就不用删除
+    rm(input.first,input.Return,input.CReturn,adjClose,inputReturn,CReturn)
+
+    # 返回时间序列
+    return(input)
+}
+require(fImport)
+require(PerformanceAnalytics)
+
+# 将股票数据加载到一个时间序列对象的函数
+importSeries = function (symbol,from,to) {
+
+    # 从雅虎读取金融数据
+    input = yahooSeries(symbol,from=from,to=to)
+
+    # 列名
+    adjClose = paste(symbol,".Adj.Close",sep="")
+    inputReturn = paste(symbol,".Return",sep="")
+    CReturn = paste(symbol,".CReturn",sep="")
+
+    # 计算收益率并生成时间序列
+    input.Return = returns(input[,adjClose])
+    colnames(input.Return)[1] = inputReturn
+    input = merge(input,input.Return)
+
+    # 计算累积收益率并生成时间序列
+    input.first = input[,adjClose][1]
+    input.CReturn = fapply(input[,adjClose],FUN=function(x) log(x) - log(input.first))
+    colnames(input.CReturn)[1] = CReturn
+    input = merge(input,input.CReturn)
+
+    # 删掉一些没用的东西，如果你不知道就不用删除
+    rm(input.first,input.Return,input.CReturn,adjClose,inputReturn,CReturn)
+
+    # 返回时间序列
+    return(input)
+}
+计算年化收益、标准差和夏普率。
+# 获取短中期和长期政府债券的收益率序列
+from = “2001-01-01″
+to = “2011-12-16″
+tlt = importSeries(“tlt”,from,to)
+shy = importSeries(“shy”,from,to)
+ief = importSeries(“ief”,from,to)
+merged = merge(tlt,shy)
+merged = merge(merged,ief)
+vars = c(“tlt.Return”,“shy.Return”,“ief.Return”)
+# 计算年回报率
+t = table.AnnualizedReturns(merged[,vars],Rf=mean(merged[,“shy.Return”],na.rm=TRUE))
+t
+# 获取短中期和长期政府债券的收益率序列
+from = “2001-01-01″
+to = “2011-12-16″
+tlt = importSeries(“tlt”,from,to)
+shy = importSeries(“shy”,from,to)
+ief = importSeries(“ief”,from,to)
+merged = merge(tlt,shy)
+merged = merge(merged,ief)
+vars = c(“tlt.Return”,“shy.Return”,“ief.Return”)
+# 计算年回报率
+t = table.AnnualizedReturns(merged[,vars],Rf=mean(merged[,“shy.Return”],na.rm=TRUE))
+t
+结果如下：
+
+
+标的
+年化收益率
+年化波动率
+年化夏普率 (Rf=2.81%)
+
+
+
+tlt.Return
+0.0772
+0.0283
+0.0645
+
+
+shy.Return
+0.1404
+0.0173
+0.0740
+
+
+ief.Return
+0.3378
+-0.0086
+0.4729
+
+
+
+
+标的
+年化收益率
+年化波动率
+年化夏普率 (Rf=2.81%)
+
+
+标的
+年化收益率
+年化波动率
+年化夏普率 (Rf=2.81%)
+
+标的
+年化收益率
+年化波动率
+年化夏普率 (Rf=2.81%)
+
+
+tlt.Return
+0.0772
+0.0283
+0.0645
+
+
+shy.Return
+0.1404
+0.0173
+0.0740
+
+
+ief.Return
+0.3378
+-0.0086
+0.4729
+
+
+
+tlt.Return
+0.0772
+0.0283
+0.0645
+
+tlt.Return
+0.0772
+0.0283
+0.0645
+
+shy.Return
+0.1404
+0.0173
+0.0740
+
+shy.Return
+0.1404
+0.0173
+0.0740
+
+ief.Return
+0.3378
+-0.0086
+0.4729
+
+ief.Return
+0.3378
+-0.0086
+0.4729
+杠铃策略
+如果你经常看娱乐投资电视台,你最终会听到“杠铃策略”这个术语。这是指一个极端的投资组合分配方案。所有的权重都是极端情况,你可以想象这是一个杠铃。在政府债券的投资组合,这将意味着购买期限长或短而不是持有中间。那么什么样的风险收益情况下你会采用这个策略?
+首先,我们将风险定义为投资组合的方差。有各种各样的理由不使用方差,但它是从最古老的50年代开始这种类型的分析都是全新的。我们将定义收益为预期收益。在上面的表中,年回报率表示持有资产的预期收益为1年,标准差的平方表示风险。
+假设投资组合只包括持有长期和短期债券,我们便需要计算投资组合的预期收益和风险。收益的计算是很容易的,这是两种持仓的加权平均收益,权重就是每个资产的投入资本百分比。
+RP = WTLT* RTLT + WSHY * RSHY
+Where: WTLT + WSHY= 1
+RP = WTLT* RTLT + WSHY * RSHY
+Where: WTLT + WSHY= 1
+显然这两种资产具有相关性(在马科维茨于1952年的博士论文发表之前,投资经理不了解相关性并且默认假设为1 -马科维茨因此获得了诺贝尔奖)。假设回报是正态分布的，那么投资组合方差将是：
+Vp = WTLT 2*σ2TLT+ WSHY 2* σ2SHY + WTLT* WSHY * σTLT * σSHY *CorrTLT,SHY
+Where:  WTLT+ WSHY = 1
+Vp = WTLT 2*σ2TLT+ WSHY 2* σ2SHY + WTLT* WSHY * σTLT * σSHY *CorrTLT,SHY
+Where:  WTLT+ WSHY = 1
+风控模型
+我们可以根据这两个部分的知识改变持仓权重并为我们的杠铃策略建立风险收益模型。
+# 检查相关性
+corr = cor(merged[,vars],use=‘complete.obs’)
+c = corr[‘tlt.Return’,‘shy.Return’]
+# 假设一个杠铃策略是持有长期和短期资产
+# 定义风险、收益
+ws = NULL
+wt = NULL
+mu = NULL
+sigma = NULL
+# 50个观察
+n=50
+# 遍历杠铃策略的权重
+for (i in 0:n){
+      wsi = i/n;
+      wti = 1–wsi;
+     
+      mui = wsi * rSHY + wti * rTLT
+      sigmai = wsi*wsi*sSHY*sSHY + wti*wti*sTLT*sTLT + wsi*wti*sSHY*sTLT*c
+     
+     
+      ws = c(ws,wsi)
+      wt = c(wt,wti)
+      mu = c(mu,mui)
+      sigma = c(sigma,sigmai)
+}
+# 风险收益的数据集
+rrProfile = data.frame(ws=ws,wt=wt,mu=mu,sigma=sigma)
+# 绘图
+plot(rrProfile$sigma,
+     rrProfile$mu,
+       xlim=c(0,.022),
+       ylim=c(0,.08),
+       ylab=“Expected Yearly Return”,
+       xlab=“Expected Yearly Variance”,
+       main=“Efficient Frontier for Government Bond Portfolios”)
+# 检查相关性
+corr = cor(merged[,vars],use=‘complete.obs’)
+c = corr[‘tlt.Return’,‘shy.Return’]
+# 假设一个杠铃策略是持有长期和短期资产
+# 定义风险、收益
+ws = NULL
+wt = NULL
+mu = NULL
+sigma = NULL
+# 50个观察
+n=50
+# 遍历杠铃策略的权重
+for (i in 0:n){
+      wsi = i/n;
+      wti = 1–wsi;
+     
+      mui = wsi * rSHY + wti * rTLT
+      sigmai = wsi*wsi*sSHY*sSHY + wti*wti*sTLT*sTLT + wsi*wti*sSHY*sTLT*c
+     
+     
+      ws = c(ws,wsi)
+      wt = c(wt,wti)
+      mu = c(mu,mui)
+      sigma = c(sigma,sigmai)
+}
+# 风险收益的数据集
+rrProfile = data.frame(ws=ws,wt=wt,mu=mu,sigma=sigma)
+# 绘图
+plot(rrProfile$sigma,
+     rrProfile$mu,
+       xlim=c(0,.022),
+       ylim=c(0,.08),
+       ylab=“Expected Yearly Return”,
+       xlab=“Expected Yearly Variance”,
+       main=“Efficient Frontier for Government Bond Portfolios”)
+注意,上面的方程是二次的。我们可以配合我们刚刚创建的点画出抛物线。注意,而习惯上把风险放在X轴上,而把拟合方差(风险)作为因变量放在Y轴。
+# 为模型拟合一个二次函数
+fit = lm(rrProfile$sigma ~ rrProfile$mu + I(rrProfile$mu^2))
+# 为模型拟合一个二次函数
+fit = lm(rrProfile$sigma ~ rrProfile$mu + I(rrProfile$mu^2))
+接下来,我们图上添加拟合线。
+# 得到回归系数
+coe = fit$coefficients
+# 得到每个回归预测的风险值
+muf = NULL
+sfit = NULL
+for (i in seq(0,.08,by=.001)){
+      muf = c(muf,i)
+     
+      s = coe[1] + coe[2]*i + coe[3]*i^2
+      sfit = c(sfit,s)
+}
+# 画出预测边值
+lines(sfit,muf,col=‘red’)
+# 得到回归系数
+coe = fit$coefficients
+# 得到每个回归预测的风险值
+muf = NULL
+sfit = NULL
+for (i in seq(0,.08,by=.001)){
+      muf = c(muf,i)
+     
+      s = coe[1] + coe[2]*i + coe[3]*i^2
+      sfit = c(sfit,s)
+}
+# 画出预测边值
+lines(sfit,muf,col=‘red’)
+tseries包中的portfolio.optim也许是一个更好的选择。我们只需要输入预期收益率,它会直接返回出来最优组合权重。我们可以在最低预期回报率(比如 100% 持有 SHY)到最高预期回报率(比如 100% 持有 TLT)之间修改输入的收益。注意,portfolio.optim使用日回报率做计算,因此代码将不得不做一些处理。我们假设一年255个交易日。
+tseries
+portfolio.optim
+portfolio.optim
+# 现在让我们添加第三个标的。
+# 除非我们想做一个格点搜索,否则我们需要对每个级别的回报减少风险来优化投资组合。
+# portfolio.optim 在时间序列中不能有 NA 值。
+
+m2 = removeNA(merged[,vars])
+wSHY = NULL
+wIEF = NULL
+wTLT = NULL
+er = NULL
+eStd = NULL
+
+# 在回报水平之间不断循环搜索找到最优的投资组合，包括最小值(rSHY)和最大值(rTLT)
+# portfolio.optim 使用日回报数据，因此我们不得不做出相应的调整
+
+for (i in seq((rSHY+.001),(rTLT–.001),length.out=100)){
+      pm = 1+i
+      pm = log(pm)/255
+      opt = portfolio.optim(m2,pm=pm)
+      er = c(er,exp(pm*255)–1)
+      eStd = c(eStd,opt$ps*sqrt(255))
+      wTLT = c(wTLT,opt$pw[1])
+      wSHY = c(wSHY,opt$pw[2])
+      wIEF = c(wIEF,opt$pw[3])
+}
+
+# 画出三个标的的有效边界。
+
+lines(eStd^2,er,col=‘blue’)
+legend(.014,0.015,c(“‘Barbell’ Strategy”,“All Assets”),
+            col=c(“red”,“blue”),
+            lty=c(1,1))
+solution = data.frame(wTLT,wSHY,wIEF,er,eStd)
+# 现在让我们添加第三个标的。
+# 除非我们想做一个格点搜索,否则我们需要对每个级别的回报减少风险来优化投资组合。
+# portfolio.optim 在时间序列中不能有 NA 值。
+
+m2 = removeNA(merged[,vars])
+wSHY = NULL
+wIEF = NULL
+wTLT = NULL
+er = NULL
+eStd = NULL
+
+# 在回报水平之间不断循环搜索找到最优的投资组合，包括最小值(rSHY)和最大值(rTLT)
+# portfolio.optim 使用日回报数据，因此我们不得不做出相应的调整
+
+for (i in seq((rSHY+.001),(rTLT–.001),length.out=100)){
+      pm = 1+i
+      pm = log(pm)/255
+      opt = portfolio.optim(m2,pm=pm)
+      er = c(er,exp(pm*255)–1)
+      eStd = c(eStd,opt$ps*sqrt(255))
+      wTLT = c(wTLT,opt$pw[1])
+      wSHY = c(wSHY,opt$pw[2])
+      wIEF = c(wIEF,opt$pw[3])
+}
+
+# 画出三个标的的有效边界。
+
+lines(eStd^2,er,col=‘blue’)
+legend(.014,0.015,c(“‘Barbell’ Strategy”,“All Assets”),
+            col=c(“red”,“blue”),
+            lty=c(1,1))
+solution = data.frame(wTLT,wSHY,wIEF,er,eStd)
+结论
+如下图:
+
+
+总资产组合中有效边界的蓝线表示其优于杠铃策略。对于每个风险水平,预期回报都是更高的。从图表上看,这表明添加 IEF 到组合将优化组合。进一步,我们看到杠铃策略回报的逼近最大值,用三个标的组合的组合策略比之前的风险少了一半。
+相关代码
+相关代码
+第二部分
+在前面的文章中,我们构建了一个投资组合的有效边界的债券，下一步，我们要找到超级有效的(或市场)的投资组合。如果您有不熟悉的概念,第二部分可以在维基百科上参考一些资料。
+无风险利率假定
+如果你不愿意看维基百科,我也会解释相关概念的。如果你有一个保底回报率(无风险利率),那么资产位于图表的y轴。在边界的切点处画一条切线，切点代表着非常有效的投资组合。你可以混合持有一定权重的组合标的和无风险资产,实现比边界曲线更好的风险回报比。
+明白了吗?非常棒！
+所以我们需要找到线和切点。首先,让我们假定一个无风险利率。有些人会使用3个月的国债收益率。为了和数据匹配，我们需要将它处理成一年期的。我的银行给我一个2%的年保底收益率，所以我将用2%。
+多项式拟合
+我们如何找到切点?当我们有两个标的时,我们知道我们有一个二阶多项式。当我们有三个标的时有一些存在缺陷的面（非凸时求极值较困难），在这种情况下我们停止投资 SHY，转向投资 TLT。我们可以拟合高阶多项式,但我们不能确保我们有一个凹面。或者我可以说,我们不能保证我们的切点总是高于边值。同样地，我们也可以想象一下二次的情形或许有切点存在负值。
+作为一个例子,这里虽然六阶多项式的拟合符合缺陷,但我们的切线点不是有用的。
+
+
+只有一个实根,其余的都是虚根，我们需要另一种方法。
+我们可以为第一部分里的边值拟合一个多项式;此时在持仓组合中只有 SHY 和 IEF。虽然这样也行得通，但是这不太通用。我想找到一个可以不管是什么边值形状都适用的通用解决方案。下个部分，我们会继续讨论这个问题。
+第三部分
+上一节，我们讨论了用拟合曲线寻找有效边值来建立投资组合所存在的问题。由于边值存在的缺陷，我们不能保证你和曲线在投资组合的解空间内是凹的。我们需要其他方法来解决这个问题。
+放松约束
+本文所用方法是在无风险利率和每个边值之间都画一条线来计算这条线和边值的差值是多少。资本市场线应该是不超过所有边值的。
+CMLi <= EFi
+CMLi <= EFi
+我们所找到的这个边值的尺度意味着我们也许不能找到准确地市场投资组合。为避开这一点，我放松了上述约束：
+Portfolioj that max Count(CMLi < EFi)
+Portfolioj that max Count(CMLi < EFi)
+我整理以下R函数。注意,我已经转向使用标准差作为风险度量尺度，这是更传统的选择。
+marketPortfolio = function(merged,rf,returnNames, weightNames,graph=FALSE){
+     
+      # 为投资组合创建空数据框以初始化
+      weights = data.frame(t(rep(NA,length(weightNames))))
+      colnames(weights) = weightNames
+      weights = weights[–1,]
+      # 计算年化收益
+      t = table.AnnualizedReturns(merged[,returnNames])
+     
+      # 优化范围
+      maxRet = max(t[‘Annualized Return’,]) – .005
+      minRet = min(t[‘Annualized Return’,]) + .005
+     
+      #portfolio.optim 没有 NA 值，进行过滤
+      m2 = removeNA(merged[,returnNames])
+     
+      er = NULL
+      eStd = NULL
+     
+      # 在每个收益水平上循环搜索最优组合
+      # portfolio.optim 是日收益，做出相应调整
+
+      for (i inseq(minRet,maxRet,length.out=500)){
+            pm = 1+i
+            pm = log(pm)/255
+            opt = portfolio.optim(m2,pm=pm)
+            er = c(er,exp(pm*255)–1)
+            eStd = c(eStd,opt$ps*sqrt(255))
+            w = t(opt$pw)
+            colnames(w) = weightNames
+            weights = rbind(weights,w)
+      }
+     
+      solution = weights
+      solution$er = er
+      solution$eStd = eStd
+     
+      #找到最小 Std 和最大 Er 的下标
+      minIdx = which(solution$eStd == min(solution$eStd))
+      maxIdx = which(solution$er == max(solution$er))
+     
+      # 获取结果子集
+      subset = solution[minIdx:maxIdx,c(“er”,“eStd”)]
+      subset$nAbove = NA
+     
+      #对于子集中的每一个值, 计算点的总数，在下面的点和RF资产之间画线
+      for (i in seq(1,maxIdx–minIdx+1)){
+            toFit = data.frame(er=rf,eStd=0)
+            toFit = rbind(toFit,subset[i,c(“er”,“eStd”)])
+            fit = lm(toFit$er ~ toFit$eStd)
+            poly = polynomial(coef = fit$coefficients)
+            toPred = subset
+            colnames(toPred) = c(“actEr”,“eStd”)
+            toPred$er = predict(poly,toPred[,“eStd”])
+            toPred$diff = toPred$er – toPred$actEr
+            subset[i,“nAbove”] = nrow(toPred[which(toPred$diff > 0),])
+      }
+     
+      # 得到切点
+      # 线以下是最大化
+      max = max(subset$nAbove)
+      er = subset[which(subset$nAbove == max),“er”]
+      eStd = subset[which(subset$nAbove == max),“eStd”]
+     
+      # 市场投资组合的下标
+      idx = which(solution$er == er & solution$eStd == eStd)
+     
+      # 画线
+      if (graph){
+            maxStd = max(solution$eStd) + .02
+            maxRetg = max(solution$er) + .02
+            plot(solution$eStd,
+                        solution$er,
+                        xlim=c(0,maxStd),
+                        ylim=c(0,maxRetg),
+                        ylab=“Expected Yearly Return”,
+                        xlab=“Expected Yearly Std Dev”,
+                        main=“Efficient Frontier”,
+                        col=“red”,
+                        type=“l”,
+                        lwd=2)
+            abline(v=c(0), col=“black”, lty=“dotted”)
+            abline(h=c(0), col =“black”, lty=“dotted”)
+           
+            toFit = data.frame(er=rf,eStd=0)
+            toFit = rbind(toFit,solution[idx,c(“er”,“eStd”)])
+            fit = lm(toFit$er ~ toFit$eStd)
+            abline(coef=fit$coefficients,col=“blue”,lwd=2)
+      }
+     
+      # 返回投资组合权重、eStd 和 eR
+      out = solution[idx,]
+      return (out)
+}
+marketPortfolio = function(merged,rf,returnNames, weightNames,graph=FALSE){
+     
+      # 为投资组合创建空数据框以初始化
+      weights = data.frame(t(rep(NA,length(weightNames))))
+      colnames(weights) = weightNames
+      weights = weights[–1,]
+      # 计算年化收益
+      t = table.AnnualizedReturns(merged[,returnNames])
+     
+      # 优化范围
+      maxRet = max(t[‘Annualized Return’,]) – .005
+      minRet = min(t[‘Annualized Return’,]) + .005
+     
+      #portfolio.optim 没有 NA 值，进行过滤
+      m2 = removeNA(merged[,returnNames])
+     
+      er = NULL
+      eStd = NULL
+     
+      # 在每个收益水平上循环搜索最优组合
+      # portfolio.optim 是日收益，做出相应调整
+
+      for (i inseq(minRet,maxRet,length.out=500)){
+            pm = 1+i
+            pm = log(pm)/255
+            opt = portfolio.optim(m2,pm=pm)
+            er = c(er,exp(pm*255)–1)
+            eStd = c(eStd,opt$ps*sqrt(255))
+            w = t(opt$pw)
+            colnames(w) = weightNames
+            weights = rbind(weights,w)
+      }
+     
+      solution = weights
+      solution$er = er
+      solution$eStd = eStd
+     
+      #找到最小 Std 和最大 Er 的下标
+      minIdx = which(solution$eStd == min(solution$eStd))
+      maxIdx = which(solution$er == max(solution$er))
+     
+      # 获取结果子集
+      subset = solution[minIdx:maxIdx,c(“er”,“eStd”)]
+      subset$nAbove = NA
+     
+      #对于子集中的每一个值, 计算点的总数，在下面的点和RF资产之间画线
+      for (i in seq(1,maxIdx–minIdx+1)){
+            toFit = data.frame(er=rf,eStd=0)
+            toFit = rbind(toFit,subset[i,c(“er”,“eStd”)])
+            fit = lm(toFit$er ~ toFit$eStd)
+            poly = polynomial(coef = fit$coefficients)
+            toPred = subset
+            colnames(toPred) = c(“actEr”,“eStd”)
+            toPred$er = predict(poly,toPred[,“eStd”])
+            toPred$diff = toPred$er – toPred$actEr
+            subset[i,“nAbove”] = nrow(toPred[which(toPred$diff > 0),])
+      }
+     
+      # 得到切点
+      # 线以下是最大化
+      max = max(subset$nAbove)
+      er = subset[which(subset$nAbove == max),“er”]
+      eStd = subset[which(subset$nAbove == max),“eStd”]
+     
+      # 市场投资组合的下标
+      idx = which(solution$er == er & solution$eStd == eStd)
+     
+      # 画线
+      if (graph){
+            maxStd = max(solution$eStd) + .02
+            maxRetg = max(solution$er) + .02
+            plot(solution$eStd,
+                        solution$er,
+                        xlim=c(0,maxStd),
+                        ylim=c(0,maxRetg),
+                        ylab=“Expected Yearly Return”,
+                        xlab=“Expected Yearly Std Dev”,
+                        main=“Efficient Frontier”,
+                        col=“red”,
+                        type=“l”,
+                        lwd=2)
+            abline(v=c(0), col=“black”, lty=“dotted”)
+            abline(h=c(0), col =“black”, lty=“dotted”)
+           
+            toFit = data.frame(er=rf,eStd=0)
+            toFit = rbind(toFit,solution[idx,c(“er”,“eStd”)])
+            fit = lm(toFit$er ~ toFit$eStd)
+            abline(coef=fit$coefficients,col=“blue”,lwd=2)
+      }
+     
+      # 返回投资组合权重、eStd 和 eR
+      out = solution[idx,]
+      return (out)
+}
+例子
+让我们使用埃克森美孚(XOM),IBM(IBM),中期政府债券ETF(IEF)这个组合做测试。这里假定你有importSeries()函数的定义。
+require(polynom)
+require(fImport)
+require(PerformanceAnalytics)
+require(tseries)
+require(stats)
+from = “2003-01-01″
+to = “2011-12-16″
+xom = importSeries(“xom”,from,to)
+ibm = importSeries(“ibm”,from,to)
+ief = importSeries(“ief”,from,to)
+merged = merge(xom,ibm)
+merged = merge(merged,ief)
+vars = c(“xom.Return”,“ibm.Return”,“ief.Return”)
+vars2 = c(“xom”,“ibm”,“ief”)
+mp = marketPortfolio(merged,.02,vars,vars2,graph=TRUE)
+mp
+require(polynom)
+require(fImport)
+require(PerformanceAnalytics)
+require(tseries)
+require(stats)
+from = “2003-01-01″
+to = “2011-12-16″
+xom = importSeries(“xom”,from,to)
+ibm = importSeries(“ibm”,from,to)
+ief = importSeries(“ief”,from,to)
+merged = merge(xom,ibm)
+merged = merge(merged,ief)
+vars = c(“xom.Return”,“ibm.Return”,“ief.Return”)
+vars2 = c(“xom”,“ibm”,“ief”)
+mp = marketPortfolio(merged,.02,vars,vars2,graph=TRUE)
+mp
+日志的输出是:
+
+
+xom
+ibm
+ief
+er
+eStd
+
+
+0.09395
+0.1378
+0.7682
+0.07762
+0.05996
+
+
+
+xom
+ibm
+ief
+er
+eStd
+
+
+xom
+ibm
+ief
+er
+eStd
+
+xom
+ibm
+ief
+er
+eStd
+
+0.09395
+0.1378
+0.7682
+0.07762
+0.05996
+
+
+0.09395
+0.1378
+0.7682
+0.07762
+0.05996
+
+0.09395
+0.1378
+0.7682
+0.07762
+0.05996
+创建的图:
+
+
+结论
+这个投资组合优化的给了我们一个发现更低边界例子。这是一个不正常的现象。
+这就是为什么我们结果子集只包括部分边界的顶点(min(StdDev))和最大的回报。因为我们发现边界最小收益到最大的收益,我们保证序列是有序的,所以只考虑了上部边界。
+一个更精确的方法是找到的区域包含市场组合的边值然后用网格搜索寻找最优投资组合。上节我们讨论了在一个范围中拟合曲线的方法。如果有需求,我也可以用上面的方法再做一次。出于演示目的,我想我们应该足够了。
+第四部分
+这节将对投资组合优化系列做一个总结,我们将基于组合优化和测试结果对CAPM市场投资组合构建一个交易策略。 
+值得重申的是:我所说不应该被当做投资建议。这些结果是基于之前观察到的收益并且是一些模拟值。这些技术可以帮助了解如何更好地分配一个投资组合。它不应该被当作是唯一的投资决策。如果你正在寻找的建议，还是找一个合格的专家比较好。
+
+在马科维茨的工作的基础上,特雷诺,夏普等人开发了资本资产定价模型(CAPM)。在1990年，他们因为这项工作与马科维茨共同获得了诺贝尔奖。CAPM是一个一般均衡模型。模型假定市场价格反映了所有可获得的信息并且反映一个标的的“公平”价值。在此基础上,市场投资组合可以证明是市值加权组合。市值(或市值)被定义为股价乘以流通股的数量，也就是公司的股本总额。公司的权重是该公司市值除以所有证券的总市值。
+资本加权指标和指数基金已成为标准。标准普尔是大多数人考虑的标准“市场投资组合”。我们将参考一个市值加权策略对我们的投资组合优化策略进行测试。
+现在的CAPM还存在诸多漏洞，有很多方法都能发现这些问题。一种方法是说现在的价格不是公允价值,而是将均值当作公允价值。在这种情况下,当价格高于公允价值,市值加权组合将对过定价过高的证券资产给予过大的权重。当它用均值取代后, 投资组合的表现将由于权重超标而变差。
+这个理论是著名的罗伯特•阿诺特提出的。我强烈推荐这本书,《基本面指数:一种更好的投资方式》。他认为,任何打破用价格打破相关性的投资组合策略随着时间的推移都将跑赢资本化指数。他在书中提到他创造了一个新的指数,他简单地假定每个标的都是等权重的(标准普尔发布了这个指数)。正因为如此,我们还将在标的同等权重条件下测试我们的策略。
+罗伯特•阿诺特
+组合优化策略
+这是我们的投资组合优化策略:
+
+每个季度初,用上一季度收益计算市场投资组合。
+对当前季度使用当前组合。
+下个季度的开始,循环回到第一步
+在我们的投资组合中至少需要3个股票。
+没有做空。
+用2%作为无风险利率。
+每次分析的第一个季度如果优化失败就使用同等权重的投资组合。
+
+每个季度初,用上一季度收益计算市场投资组合。
+每个季度初,用上一季度收益计算市场投资组合。
+对当前季度使用当前组合。
+对当前季度使用当前组合。
+下个季度的开始,循环回到第一步
+下个季度的开始,循环回到第一步
+在我们的投资组合中至少需要3个股票。
+在我们的投资组合中至少需要3个股票。
+没有做空。
+没有做空。
+用2%作为无风险利率。
+用2%作为无风险利率。
+每次分析的第一个季度如果优化失败就使用同等权重的投资组合。
+每次分析的第一个季度如果优化失败就使用同等权重的投资组合。
+当价格走势是按季度选取的这种策略往往会跑赢大盘。比如如果上个季度的收益和波动性可以准确预测本季度的值的情况就是这样。此外，我们也不考虑交易成本。而且，2%的无风险利率是静态的,严格的说，我们应该在每个季度开始时使用3个月国债的利率。这就是为什么这只是一个例子，我们假定了很多美好的假设。
+首先,我们需要修改我们以前创建的marketPortfolio()函数。你可以在这里找到它。新函数：
+marketPortfolio = function(merged, rf, returnNames, weightNames,graph=FALSE, points=500, maxWeight=.334, Debug=FALSE)
+marketPortfolio = function(merged, rf, returnNames, weightNames,graph=FALSE, points=500, maxWeight=.334, Debug=FALSE)
+改进之处
+我们的改进之处:
+
+如果我们需要可以添加一个调试选项打印输出
+增加容错功能。有时直接得到一个可行解是不可能的,这个函数需要相应的检测并且处理错误。
+资本的最大回报我们限定在50%以下，这个值太大会导致其他奇怪的行为。
+同样,把最小收益的下界定在.005%。
+如果最大收益是< 0,那么简单地找到最小方差投资组合。
+添加一个maxWeight选项,让我们限制每个证券标的的权重。
+
+如果我们需要可以添加一个调试选项打印输出
+如果我们需要可以添加一个调试选项打印输出
+增加容错功能。有时直接得到一个可行解是不可能的,这个函数需要相应的检测并且处理错误。
+增加容错功能。有时直接得到一个可行解是不可能的,这个函数需要相应的检测并且处理错误。
+资本的最大回报我们限定在50%以下，这个值太大会导致其他奇怪的行为。
+资本的最大回报我们限定在50%以下，这个值太大会导致其他奇怪的行为。
+同样,把最小收益的下界定在.005%。
+同样,把最小收益的下界定在.005%。
+如果最大收益是< 0,那么简单地找到最小方差投资组合。
+如果最大收益是< 0,那么简单地找到最小方差投资组合。
+添加一个maxWeight选项,让我们限制每个证券标的的权重。
+添加一个maxWeight选项,让我们限制每个证券标的的权重。
+我们考虑的股票池现在是28个道琼斯成分股（因为某些原因雅虎金融值提供了28只而不是30只）。我预先下载并存储这些收益值为一个 .rda 文件。你可以在这里得到它。我计算每个股票的初始市值权重并存储为 .csv 文件。你可以在这里得到它。
+你可以在这里得到它
+你可以在这里得到它
+# 读取已存的收益值
+load(“D:\\Workspace\\PortfolioOptimization\\returns.rda”)
+returns = results
+rm(results)
+stocks = colnames(returns)
+# 获取大盘权重
+stockWgt = read.table(“D:\\Workspace\\PortfolioOptimization\\stocks.csv”,
+                          header=TRUE,sep=“,”)[,“Weight”]
+# 计算大盘权重投资组合的回报
+results = as.matrix(returns) %*% stockWgt
+colnames(results) = c(“CapWeight Portfolio”)
+results = as.timeSeries(results)
+# 计算等权重投资组合的回报
+ret = t(as.matrix(rep(1/length(stocks),length(stocks))))
+resEqual = as.matrix(returns) %*% t(ret)
+colnames(resEqual) = “EqualWeight Portfolio”
+# 汇总结果到一个时间序列对象中
+results = cbind(results,resEqual)
+# 获取收益值的日期序列
+dates = time(returns)
+dates = dates@Data
+# 从日期计算季度
+qtrs = quarters(dates)
+qtrs = cbind(dates,qtrs)
+keep = NULL
+lastQtr = “n”
+
+#遍历日期和季度序列,只保留每个季度第一天的日期
+for (i in seq(1,nrow(qtrs))){
+      if (qtrs[i,2] == lastQtr){
+            if (i == nrow(qtrs)){
+                  keep = c(keep,1)
+            } else {
+                  keep = c(keep,0)
+            }
+      }else {
+            keep = c(keep,1)
+      }
+     
+      lastQtr = qtrs[i,2]
+}
+qtrs = cbind(qtrs,keep)
+
+# 获取每个季度第一天的下标
+indx = which(qtrs[,3] == 1)
+# 对每个周期的第一个季度,使用等权策略
+res = as.matrix(returns[indx[1]:(indx[2]–1),]) %*% t(ret)
+#对每个周期基于上一季度的数据进行循环计算大盘组合的表现
+for (i in seq(2,length(indx)–1)){
+      print(“Running “)
+      print(i)
+     
+      # 得到上季度股票回报的子集 
+      subset = returns[indx[i–1]:(indx[i]–1),]
+      s = start(subset)
+      e = end(subset)
+      print(“Fitting for:”)
+      print(s)
+      print(e)
+     
+      # 计算大盘投资组合
+      mp = marketPortfolio(subset,.02,stocks,stocks,
+                           graph=TRUE,
+                           points=500,
+                           Debug=FALSE)
+     
+      #如果优化失败,使用等权策略
+      if (is.null(mp)){
+            ret = t(as.matrix(rep(1/length(stocks),length(stocks))))
+      } else {
+            ret = as.matrix(mp[,stocks])
+      }
+     
+      # 本季度的子集
+      subRes = returns[indx[i]:(indx[i+1]–1),]
+      s = start(subRes)
+      e = end(subRes)
+      print(“Calculating Returns for:”)
+      print(s)
+      print(e)
+     
+      # 计算当前季度的大盘策略的收益并追加在收益序列后面
+      subRes = as.matrix(subRes) %*% t(ret)
+      res = rbind(res,subRes)
+}
+
+# 循环计算时，序列的最后一天不计算收益
+subRes = returns[nrow(returns),]
+subRes = as.matrix(subRes) %*% t(ret)
+res = rbind(res,subRes)
+# 添加组合优化策略
+colnames(res) = “Portfolio Optimization”
+res = as.timeSeries(res)
+results = cbind(results,res)
+#计算年化收益统计特征
+table.AnnualizedReturns(results)
+#计算并绘制相关性
+png(“d:\\Workspace\\PortfolioOptimization\\mpCorr.png”)
+chart.Correlation(results,histogram=TRUE,pch=“+”)
+dev.off();
+##计算并绘制累积收益
+png(“d:\\Workspace\\PortfolioOptimization\\mpReturns.png”)
+chart.CumReturns(results,
+            main=“Total Returns CapWeight vs PortOpt”,
+            legend.loc=“topleft”)
+dev.off()
+# 读取已存的收益值
+load(“D:\\Workspace\\PortfolioOptimization\\returns.rda”)
+returns = results
+rm(results)
+stocks = colnames(returns)
+# 获取大盘权重
+stockWgt = read.table(“D:\\Workspace\\PortfolioOptimization\\stocks.csv”,
+                          header=TRUE,sep=“,”)[,“Weight”]
+# 计算大盘权重投资组合的回报
+results = as.matrix(returns) %*% stockWgt
+colnames(results) = c(“CapWeight Portfolio”)
+results = as.timeSeries(results)
+# 计算等权重投资组合的回报
+ret = t(as.matrix(rep(1/length(stocks),length(stocks))))
+resEqual = as.matrix(returns) %*% t(ret)
+colnames(resEqual) = “EqualWeight Portfolio”
+# 汇总结果到一个时间序列对象中
+results = cbind(results,resEqual)
+# 获取收益值的日期序列
+dates = time(returns)
+dates = dates@Data
+# 从日期计算季度
+qtrs = quarters(dates)
+qtrs = cbind(dates,qtrs)
+keep = NULL
+lastQtr = “n”
+
+#遍历日期和季度序列,只保留每个季度第一天的日期
+for (i in seq(1,nrow(qtrs))){
+      if (qtrs[i,2] == lastQtr){
+            if (i == nrow(qtrs)){
+                  keep = c(keep,1)
+            } else {
+                  keep = c(keep,0)
+            }
+      }else {
+            keep = c(keep,1)
+      }
+     
+      lastQtr = qtrs[i,2]
+}
+qtrs = cbind(qtrs,keep)
+
+# 获取每个季度第一天的下标
+indx = which(qtrs[,3] == 1)
+# 对每个周期的第一个季度,使用等权策略
+res = as.matrix(returns[indx[1]:(indx[2]–1),]) %*% t(ret)
+#对每个周期基于上一季度的数据进行循环计算大盘组合的表现
+for (i in seq(2,length(indx)–1)){
+      print(“Running “)
+      print(i)
+     
+      # 得到上季度股票回报的子集 
+      subset = returns[indx[i–1]:(indx[i]–1),]
+      s = start(subset)
+      e = end(subset)
+      print(“Fitting for:”)
+      print(s)
+      print(e)
+     
+      # 计算大盘投资组合
+      mp = marketPortfolio(subset,.02,stocks,stocks,
+                           graph=TRUE,
+                           points=500,
+                           Debug=FALSE)
+     
+      #如果优化失败,使用等权策略
+      if (is.null(mp)){
+            ret = t(as.matrix(rep(1/length(stocks),length(stocks))))
+      } else {
+            ret = as.matrix(mp[,stocks])
+      }
+     
+      # 本季度的子集
+      subRes = returns[indx[i]:(indx[i+1]–1),]
+      s = start(subRes)
+      e = end(subRes)
+      print(“Calculating Returns for:”)
+      print(s)
+      print(e)
+     
+      # 计算当前季度的大盘策略的收益并追加在收益序列后面
+      subRes = as.matrix(subRes) %*% t(ret)
+      res = rbind(res,subRes)
+}
+
+# 循环计算时，序列的最后一天不计算收益
+subRes = returns[nrow(returns),]
+subRes = as.matrix(subRes) %*% t(ret)
+res = rbind(res,subRes)
+# 添加组合优化策略
+colnames(res) = “Portfolio Optimization”
+res = as.timeSeries(res)
+results = cbind(results,res)
+#计算年化收益统计特征
+table.AnnualizedReturns(results)
+#计算并绘制相关性
+png(“d:\\Workspace\\PortfolioOptimization\\mpCorr.png”)
+chart.Correlation(results,histogram=TRUE,pch=“+”)
+dev.off();
+##计算并绘制累积收益
+png(“d:\\Workspace\\PortfolioOptimization\\mpReturns.png”)
+chart.CumReturns(results,
+            main=“Total Returns CapWeight vs PortOpt”,
+            legend.loc=“topleft”)
+dev.off()
+我们的年回报率表:
+
+
+CapWeight Portfolio
+EqualWeight Portfolio
+Portfolio Optimization
+
+
+
+Annualized Return
+-0.0393
+0.0128
+0.0069
+
+
+Annualized Std Dev
+0.2530
+0.2242
+0.1785
+
+
+Annualized Sharpe (Rf=0%)
+-0.1554
+0.0570
+0.0387
+
+
+
+
+CapWeight Portfolio
+EqualWeight Portfolio
+Portfolio Optimization
+
+
+CapWeight Portfolio
+EqualWeight Portfolio
+Portfolio Optimization
+
+CapWeight Portfolio
+EqualWeight Portfolio
+Portfolio Optimization
+
+
+Annualized Return
+-0.0393
+0.0128
+0.0069
+
+
+Annualized Std Dev
+0.2530
+0.2242
+0.1785
+
+
+Annualized Sharpe (Rf=0%)
+-0.1554
+0.0570
+0.0387
+
+
+
+Annualized Return
+-0.0393
+0.0128
+0.0069
+
+Annualized Return
+-0.0393
+0.0128
+0.0069
+
+Annualized Std Dev
+0.2530
+0.2242
+0.1785
+
+Annualized Std Dev
+0.2530
+0.2242
+0.1785
+
+Annualized Sharpe (Rf=0%)
+-0.1554
+0.0570
+0.0387
+
+Annualized Sharpe (Rf=0%)
+-0.1554
+0.0570
+0.0387
+结论
+我们的投资组合优化策略优于大盘权重策略,但跑输了等权重策略。如果你支持阿诺特的话就觉得这没什么奇怪的了,这只是因为我们没有打破价格的相关性罢了。
+这是相关性的图表:
+
+
+我们已经创建了一个和大盘权重策略非常相关的策略，但是还是不如等权策略。等权策略和大盘权重策略的关联度是非常有趣的。
+这是收益绘制的时间序列:
+
+
+有趣的是,可以看到在图中绿色的部分显示我们的投资组合在2009年3月份的市场底部开始有一个快速反弹。这大大跑赢了大盘权重组合。

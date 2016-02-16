@@ -1,0 +1,353 @@
+Strict模式下的编码规范
+JS代码编写灵活，但语法纠错功能较弱，我们经常会因为一些小Bug而调试许久。因此ES5引入了Strict模式，强制开发者使用更为严谨的编码规范，降低脚本出错的概率。
+在函数的第一行加上"use strict"字符串后，即表明在这个函数中使用Strict模式：
+"use strict"
+  function abc(){
+    "use strict"
+    // ...
+  }
+  function abc(){
+    "use strict"
+    // ...
+  }
+如果在整个JS脚本的第一行写上"use strict"，则整个脚本都会处于Strict模式中。
+"use strict"
+一旦开启Strict模式，就应该遵循以下编码规范：
+
+变量必须被显式声明
+禁止修改只读属性
+禁止删除变量、函数、函数参数、原型链
+禁用with语句
+禁用八进制数值
+同一个函数不能有同名形参
+禁止改写arguments的值
+直接调用函数时，this置空
+eval不能污染外层作用域
+禁止用保留字、eval、arguments作为变量或参数名
+禁用caller与callee
+不能在非函数的块级作用域定义函数
+
+变量必须被显式声明
+变量必须被显式声明
+禁止修改只读属性
+禁止修改只读属性
+禁止删除变量、函数、函数参数、原型链
+禁止删除变量、函数、函数参数、原型链
+禁用with语句
+禁用with语句
+with
+禁用八进制数值
+禁用八进制数值
+同一个函数不能有同名形参
+同一个函数不能有同名形参
+禁止改写arguments的值
+禁止改写arguments的值
+arguments
+直接调用函数时，this置空
+直接调用函数时，this置空
+this
+eval不能污染外层作用域
+eval不能污染外层作用域
+eval
+禁止用保留字、eval、arguments作为变量或参数名
+禁止用保留字、eval、arguments作为变量或参数名
+eval
+arguments
+禁用caller与callee
+禁用caller与callee
+caller
+callee
+不能在非函数的块级作用域定义函数
+不能在非函数的块级作用域定义函数
+如果你违反以上原则，那么脚本会抛出异常，并停止后续的执行（除非你用了try-catch处理异常）。我觉得有必要思考一下，为什么这些限制是有意义的。
+try-catch
+变量必须被显式声明
+如果你声明了一个变量，但没用var关键字，那么这个变量就是全局变量。我知道尽量避免全局污染已经是个共识了，但就怕手一抖：
+var
+  var name = 'kid'
+  nane = 'wumeng'
+  var name = 'kid'
+  nane = 'wumeng'
+变量名打错了，该变的没变，还创建了一个新的全局变量。更麻烦的是，在正常模式下，编译器不会给出任何提示。而Strict模式下，你根本不能缺少var（或ES6的let、const）:
+var
+let
+const
+  "use strict"
+  abc = 1  // 抛出异常
+  "use strict"
+  abc = 1  // 抛出异常
+禁止修改只读属性
+只读属性也是ES5的新特性，之后会详细说明。总而言之，如果我误认为某个只读属性是可写的，又没有任何提示的话，那么当脚本执行后不是我预期的结果，我就要查上半天了。而Strict模式会明确阻止你修改一个只读属性：
+  "use strict"
+  var author = {}
+  // 声明author.name为只读属性
+  Object.defineProperty(author, 'name', {
+    value: 'kid',
+    writable: false
+  })
+  author.name = 'dik'  // 抛出异常，delete author.name时也会
+  "use strict"
+  var author = {}
+  // 声明author.name为只读属性
+  Object.defineProperty(author, 'name', {
+    value: 'kid',
+    writable: false
+  })
+  author.name = 'dik'  // 抛出异常，delete author.name时也会
+禁止删除变量、函数、函数参数、原型链
+delete用于删除对象属性，而不该删除其它东西：
+delete
+  "use strict"
+  var a = 1
+  delete a    // 删变量，抛出异常
+  "use strict"
+  var a = 1
+  delete a    // 删变量，抛出异常
+  "use strict"
+  function fn(){}
+  delete fn   // 删函数，抛出异常
+  "use strict"
+  function fn(){}
+  delete fn   // 删函数，抛出异常
+  "use strict"
+  function fn(a){
+    delete a  // 删函数参数，抛出异常
+  }
+  "use strict"
+  function fn(a){
+    delete a  // 删函数参数，抛出异常
+  }
+  "use strict"
+  delete Array.prototype  // 删原型链，抛出异常，原型链是个特别的属性
+  "use strict"
+  delete Array.prototype  // 删原型链，抛出异常，原型链是个特别的属性
+禁用with语句
+with虽然很省事，但只有到运行期才能确定调用哪个对象，所以无法享受到某些编译期优化，是不推荐的写法，在Strict模式中明确禁用：
+with
+"use strict"
+with(console){  // 抛出异常
+  log('kid')
+}
+"use strict"
+with(console){  // 抛出异常
+  log('kid')
+}
+禁用八进制数值
+标准中就没支持过八进制，但几乎所有浏览器都实现了。为什么这不是个好特性？借用MDN上一个经典例子：
+  "use strict"
+  var sum = 010 +  // 抛出异常
+            100 +
+            200
+  // 就算你不开Strict模式，结果也不是310呐
+  "use strict"
+  var sum = 010 +  // 抛出异常
+            100 +
+            200
+  // 就算你不开Strict模式，结果也不是310呐
+据说有人误以为010与10等价，加个0只为对齐……结果当然是错的。
+010
+10
+0
+同一个函数不能有同名形参
+谨防手误：
+  "use strict"
+  function fn(a, a){  // 抛出异常
+    console.log(a)
+  }
+  "use strict"
+  function fn(a, a){  // 抛出异常
+    console.log(a)
+  }
+禁止改写arguments的值
+arguments
+函数实参与arguments是互通的，修改其中任何一方，另一方也会跟着变：
+arguments
+  fn(1)
+  function fn(a){
+    a = 2
+    console.log(arguments[0])  // -> 2
+  }
+  fn(1)
+  function fn(a){
+    a = 2
+    console.log(arguments[0])  // -> 2
+  }
+  fn(1)
+  function fn(a){
+    arguments[0] = 2
+    console.log(a)  // -> 2
+  }
+  fn(1)
+  function fn(a){
+    arguments[0] = 2
+    console.log(a)  // -> 2
+  }
+Strict模式会阻止互通，让其各自独立。arguments将一直保持原始参数值，以便随时取用：
+arguments
+  "use strict"
+  fn(1)
+  function fn(a){
+    a = 2
+    console.log(arguments[0])  // -> 1
+  }
+  "use strict"
+  fn(1)
+  function fn(a){
+    a = 2
+    console.log(arguments[0])  // -> 1
+  }
+  "use strict"
+  fn(1)
+  function fn(a){
+    arguments[0] = 2
+    console.log(a)  // -> 1
+  }
+  "use strict"
+  fn(1)
+  function fn(a){
+    arguments[0] = 2
+    console.log(a)  // -> 1
+  }
+直接调用函数时，this置空
+直接调用某函数时，其this默认指向window对象：
+this
+window
+  fn()
+  function fn(a){
+    console.log(this)  // -> Window{}
+  }
+  fn()
+  function fn(a){
+    console.log(this)  // -> Window{}
+  }
+若在Strict模式下遇到这种情况，this将置为undefined，以构造更严实的封装，降低全局污染的可能性：
+this
+undefined
+  "use strict"
+  fn()
+  function fn(a){
+    console.log(this)  // -> undefined
+  }
+  "use strict"
+  fn()
+  function fn(a){
+    console.log(this)  // -> undefined
+  }
+当然，不会影响new出来的实例对象：
+new
+  "use strict"
+  new Animal()
+  function Animal(a){
+    console.log(this)  // -> Animal{}
+  }
+  "use strict"
+  new Animal()
+  function Animal(a){
+    console.log(this)  // -> Animal{}
+  }
+eval不能污染外层作用域
+正常模式下，如果在eval中声明一个变量，则变量的作用域为eval所在作用域。当你的网页允许用户（或第三方应用）写入自定义脚本时，则可能埋下隐患：
+eval
+eval
+  eval('var a = 1')
+  console.log(a)  // -> 1
+  eval('var a = 1')
+  console.log(a)  // -> 1
+而在Strict模式下，eval中声明的变量不会流出到外层域：
+eval
+  "use strict"
+  eval('var a = 1')
+  console.log(a)  // 异常，a未定义
+  "use strict"
+  eval('var a = 1')
+  console.log(a)  // 异常，a未定义
+其实在Strict模式下，除了全局、函数作用域外，还有一个eval作用域的概念，因此，你仍然可以在eval中使用声明的变量：
+eval
+eval
+  "use strict"
+  eval('var a = 1; console.log(a)')  // -> 1
+  "use strict"
+  eval('var a = 1; console.log(a)')  // -> 1
+禁止用保留字、eval、arguments作为变量或参数名
+保留字（包括：class, enum, export, extends, import和super）在未来可能成为关键字，而eval与arguments有其特殊性，所以Strict模式禁止声明它们：
+class
+enum
+export
+extends
+import
+super
+eval
+arguments
+  "use strict"
+  var eval = 1         // 抛出异常
+  function eval(){}    // 抛出异常
+  function fn(eval){}  // 抛出异常
+  // arguments与保留字情况相同
+  "use strict"
+  var eval = 1         // 抛出异常
+  function eval(){}    // 抛出异常
+  function fn(eval){}  // 抛出异常
+  // arguments与保留字情况相同
+不过倒是可以作为属性名：
+  "use strict"
+  var obj = {
+    eval: 1
+  }
+  // 保留字、arguments情况相同
+  "use strict"
+  var obj = {
+    eval: 1
+  }
+  // 保留字、arguments情况相同
+禁用caller与callee
+
+caller
+callee
+Strict模式下，caller与callee属性不能使用：
+caller
+callee
+  "use strict";
+  function fn(){
+    console.log(fn.caller)  // 抛出异常
+  }
+  fn()
+  "use strict";
+  function fn(){
+    console.log(fn.caller)  // 抛出异常
+  }
+  fn()
+  "use strict";
+  function fn(){
+    console.log(arguments.callee)  // 抛出异常
+  }
+  fn()
+  "use strict";
+  function fn(){
+    console.log(arguments.callee)  // 抛出异常
+  }
+  fn()
+caller能知道是谁调用的函数，代价是破坏了封装性，而且性能优化上也有影响；
+caller
+callee即是函数本身，这在匿名函数的递归时很有用，但无法享受尾递归优化，更推荐的做法是给函数取个名字。关于性能方面的详细解释，可以参考这篇文章：为什么 arguments.callee 从 ES5 严格模式中移除掉？
+callee
+为什么 arguments.callee 从 ES5 严格模式中移除掉？
+不能在非函数的块级作用域定义函数
+听起来很绕，其实是类似下面的情况：
+"use strict";
+if(true){
+  function fn()  // 抛出异常
+}
+while(true){
+  function fn()  // 抛出异常
+}
+"use strict";
+if(true){
+  function fn()  // 抛出异常
+}
+while(true){
+  function fn()  // 抛出异常
+}
+以上只是部分举例，块级作用域是指用{}括起的范围。至于为什么禁止这种写法，请参考这篇说明。简单来说，这么写容易导致浏览器解析的不一致。
+{}
+这篇说明
+我测试了下，打开Strict模式，在Chrome、Opera中这么写并不会抛异常，而Safari、Firefox与IE10+则会遵循标准。

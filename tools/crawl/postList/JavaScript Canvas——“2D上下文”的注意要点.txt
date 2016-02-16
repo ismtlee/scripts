@@ -1,0 +1,1059 @@
+Canvas支持基本绘图能力的2D上下文，以及基于WebGL的3D上下文
+基本用法
+
+canvas元素：定义画布
+getContext()方法：定义2D、3D上下文
+toDataURL()方法：生成图片格式获取URL链接（支持“image/png”；有浏览器也支持“image/jpeg”）
+
+canvas元素：定义画布
+canvas元素：定义画布
+canvas
+getContext()方法：定义2D、3D上下文
+getContext()方法：定义2D、3D上下文
+getContext()
+toDataURL()方法：生成图片格式获取URL链接（支持“image/png”；有浏览器也支持“image/jpeg”）
+toDataURL()方法：生成图片格式获取URL链接（支持“image/png”；有浏览器也支持“image/jpeg”）
+toDataURL()
+要使用canvas元素,必须先设置其width和height属性,指定可以绘图的区域大小.出现在开始和结束标签中的内容是后备信息,如果浏览器不支持就显示这些信息：
+canvas
+
+<canvas id="drawing" width="600" height="400">Canvas here.</canvas>
+
+
+<canvas id="drawing" width="600" height="400">Canvas here.</canvas>
+
+要在这块画布上绘图,需要取得绘图上下文,则需要调用getContext()方法并传入上下文的名字,例如传入"2d"；
+getContext()
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+if (drawing.getContext) {
+    var context = drawing.getContext("2d");
+}
+
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+if (drawing.getContext) {
+    var context = drawing.getContext("2d");
+}
+
+可以使用toDataURL()方法导出在canvas元素上绘制的图像如：
+toDataURL()
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+if (drawing.getContext) {
+    //取得图像数据的URL
+    var imgURL = drawing.toDataURL("image/png");
+
+    //显示图像
+    var image = document.createElement("img");
+    image.src = imgURL;
+    document.body.appendChild(image);
+}
+
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+if (drawing.getContext) {
+    //取得图像数据的URL
+    var imgURL = drawing.toDataURL("image/png");
+
+    //显示图像
+    var image = document.createElement("img");
+    image.src = imgURL;
+    document.body.appendChild(image);
+}
+
+举个例子：
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+if (drawing.getContext) {
+    var context = drawing.getContext("2d");
+    context.fillStyle = "gray";
+    context.fillRect(100, 100, 100, 100);
+
+    context.fillStyle = "#ccc";
+    context.fillRect(100, 10, 100, 100);
+
+    //取得图像数据的URL
+    var imgURL = drawing.toDataURL("image/png");
+
+    //显示图像
+    var image = document.createElement("img");
+    image.src = imgURL;
+    document.body.appendChild(image);
+}
+
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+if (drawing.getContext) {
+    var context = drawing.getContext("2d");
+    context.fillStyle = "gray";
+    context.fillRect(100, 100, 100, 100);
+
+    context.fillStyle = "#ccc";
+    context.fillRect(100, 10, 100, 100);
+
+    //取得图像数据的URL
+    var imgURL = drawing.toDataURL("image/png");
+
+    //显示图像
+    var image = document.createElement("img");
+    image.src = imgURL;
+    document.body.appendChild(image);
+}
+
+填充和描边（基本操作）
+填充,就是用指定的样式填充图形;描边,就是只在图形的边缘画线,分别涉及到两个属性:
+
+fillStyle：填充
+strokeStyle：描边
+
+fillStyle：填充
+fillStyle：填充
+fillStyle
+strokeStyle：描边
+strokeStyle：描边
+strokeStyle
+这两个属性接收值是字符串、渐变对象或模式对象，默认值是“#000000”：
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+if (drawing.getContext) {
+    var context = drawing.getContext("2d");
+    //描边颜色
+    context.strokeStyle = "red";
+    //填充颜色
+    context.fillStyle = "#ccc";
+    //描边矩形
+    context.strokeRect(10, 10, 50, 50);
+    //填充矩形
+    context.fillRect(10, 10, 50, 50);
+}
+
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+if (drawing.getContext) {
+    var context = drawing.getContext("2d");
+    //描边颜色
+    context.strokeStyle = "red";
+    //填充颜色
+    context.fillStyle = "#ccc";
+    //描边矩形
+    context.strokeRect(10, 10, 50, 50);
+    //填充矩形
+    context.fillRect(10, 10, 50, 50);
+}
+
+绘制矩形
+基本方法
+
+fillRect()填充矩形
+strokeRect()描边矩形
+clearRect()清除矩形
+
+fillRect()填充矩形
+fillRect()填充矩形
+fillRect()
+strokeRect()描边矩形
+strokeRect()描边矩形
+strokeRect()
+clearRect()清除矩形
+clearRect()清除矩形
+clearRect()
+四个方法都是接收4个参数:矩形的x坐标,矩形的y坐标,矩形的宽度和矩形的高度.这些参数的单位都是像素；
+如填充一个矩形：
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+if (drawing.getContext) {
+    var context = drawing.getContext("2d");
+    context.fillStyle = "orange";
+    context.fillRect(10, 10, 50, 50);
+}
+
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+if (drawing.getContext) {
+    var context = drawing.getContext("2d");
+    context.fillStyle = "orange";
+    context.fillRect(10, 10, 50, 50);
+}
+
+如描边一个矩形：
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+if (drawing.getContext) {
+    var context = drawing.getContext("2d");
+    context.strokeStyle = "red";
+    context.strokeRect(10, 10, 50, 50);
+}
+
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+if (drawing.getContext) {
+    var context = drawing.getContext("2d");
+    context.strokeStyle = "red";
+    context.strokeRect(10, 10, 50, 50);
+}
+
+又如清除画布上的矩形区域：
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+if (drawing.getContext) {
+    var context = drawing.getContext("2d");
+    context.fillStyle = "red";
+    context.fillRect(10, 10, 50, 50);
+    context.clearRect(12, 12, 46, 46);
+}
+
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+if (drawing.getContext) {
+    var context = drawing.getContext("2d");
+    context.fillStyle = "red";
+    context.fillRect(10, 10, 50, 50);
+    context.clearRect(12, 12, 46, 46);
+}
+
+控制描边的线条
+
+lineWidth属性：任意整数作为参数；
+lineCap属性：控制线条末端的形状是（“butt”平头、“round”圆头、“square”方头）
+lineJoin属性：线条香蕉的方式是（“round”圆交、“bevel”斜交、“miter”斜接）
+
+lineWidth属性：任意整数作为参数；
+lineWidth属性：任意整数作为参数；
+lineWidth
+lineCap属性：控制线条末端的形状是（“butt”平头、“round”圆头、“square”方头）
+lineCap属性：控制线条末端的形状是（“butt”平头、“round”圆头、“square”方头）
+lineCap
+lineJoin属性：线条香蕉的方式是（“round”圆交、“bevel”斜交、“miter”斜接）
+lineJoin属性：线条香蕉的方式是（“round”圆交、“bevel”斜交、“miter”斜接）
+lineJoin
+绘制路径
+要绘制路径,首先必须调用beginPath()方法,表示要开始绘制新路径.然后,再通过调用下列方法来实际的绘制路径
+beginPath()
+beginPath()：该方法表示开始绘制路径
+beginPath()：该方法表示开始绘制路径
+beginPath()：该方法表示开始绘制路径
+beginPath()
+其次使用下面的方法绘制路径：
+
+arc(x, y, radius, startAngle, endAngle, counterclockwise):以(x,y)为圆心绘制一条弧线,弧线的半径为radius,起始和结束角度(用弧度表示)分别为startAngle和endAngle.最后一个参数表示startAngle和endAngle是否按逆时针方向计算,值为false表示按顺时针方向计算.
+arcTo(x1, y1, x2, y2, radius):从上一点开始绘制一条弧线,到(x2, y2)为止,并且以给定的半径radius穿过(x1, y1)
+bezierCurveTo(c1x, c1y, c2x, c2y, x, y):从上一点开始绘制一条曲线,到(x,y)为止,并且以(c1x, c1y)和(c2x, c2y)为控制点.
+lineTo(x, y):从上一点开始绘制一条直线,到(x, y)为止.
+moveTo(x, y):将绘图游标移动到(x, y),不画线.
+quadraticCurveTo(cx, cy, x, y):从上一点开始绘制一条二次曲线,到(x, y)为止,并且以(cx, cy)作为控制点.
+rect(x, y, width, height):从点(x, y)开始绘制一个矩形,宽度和高度分别由width和height指定.这个方法绘制的是矩形路径,而不是strokeRect()和fillRect()所绘制的独立的形状.
+
+arc(x, y, radius, startAngle, endAngle, counterclockwise):以(x,y)为圆心绘制一条弧线,弧线的半径为radius,起始和结束角度(用弧度表示)分别为startAngle和endAngle.最后一个参数表示startAngle和endAngle是否按逆时针方向计算,值为false表示按顺时针方向计算.
+arc(x, y, radius, startAngle, endAngle, counterclockwise):以(x,y)为圆心绘制一条弧线,弧线的半径为radius,起始和结束角度(用弧度表示)分别为startAngle和endAngle.最后一个参数表示startAngle和endAngle是否按逆时针方向计算,值为false表示按顺时针方向计算.
+arc(x, y, radius, startAngle, endAngle, counterclockwise)
+arcTo(x1, y1, x2, y2, radius):从上一点开始绘制一条弧线,到(x2, y2)为止,并且以给定的半径radius穿过(x1, y1)
+arcTo(x1, y1, x2, y2, radius):从上一点开始绘制一条弧线,到(x2, y2)为止,并且以给定的半径radius穿过(x1, y1)
+arcTo(x1, y1, x2, y2, radius)
+bezierCurveTo(c1x, c1y, c2x, c2y, x, y):从上一点开始绘制一条曲线,到(x,y)为止,并且以(c1x, c1y)和(c2x, c2y)为控制点.
+bezierCurveTo(c1x, c1y, c2x, c2y, x, y):从上一点开始绘制一条曲线,到(x,y)为止,并且以(c1x, c1y)和(c2x, c2y)为控制点.
+bezierCurveTo(c1x, c1y, c2x, c2y, x, y)
+lineTo(x, y):从上一点开始绘制一条直线,到(x, y)为止.
+lineTo(x, y):从上一点开始绘制一条直线,到(x, y)为止.
+lineTo(x, y)
+moveTo(x, y):将绘图游标移动到(x, y),不画线.
+moveTo(x, y):将绘图游标移动到(x, y),不画线.
+moveTo(x, y)
+quadraticCurveTo(cx, cy, x, y):从上一点开始绘制一条二次曲线,到(x, y)为止,并且以(cx, cy)作为控制点.
+quadraticCurveTo(cx, cy, x, y):从上一点开始绘制一条二次曲线,到(x, y)为止,并且以(cx, cy)作为控制点.
+quadraticCurveTo(cx, cy, x, y)
+rect(x, y, width, height):从点(x, y)开始绘制一个矩形,宽度和高度分别由width和height指定.这个方法绘制的是矩形路径,而不是strokeRect()和fillRect()所绘制的独立的形状.
+rect(x, y, width, height):从点(x, y)开始绘制一个矩形,宽度和高度分别由width和height指定.这个方法绘制的是矩形路径,而不是strokeRect()和fillRect()所绘制的独立的形状.
+rect(x, y, width, height)
+这个方法绘制的是矩形路径,而不是strokeRect()和fillRect()所绘制的独立的形状.
+结束绘制路径之前，可以检测某个坐标是否在路径轨迹上：
+isPointInPath()：返回布尔值
+isPointInPath()：返回布尔值
+isPointInPath()：返回布尔值
+isPointInPath()
+结束绘制路径之后，可以选择使用下面的方法进一步处理：
+
+closePath()：绘制一条连接到路径起点的线条；
+fill()：利用fillStyle填充；
+stroke()：利用strokeStyle描边；
+clip()：创建一个剪切区域；
+
+closePath()：绘制一条连接到路径起点的线条；
+closePath()：绘制一条连接到路径起点的线条；
+closePath()
+fill()：利用fillStyle填充；
+fill()：利用fillStyle填充；
+fill()
+stroke()：利用strokeStyle描边；
+stroke()：利用strokeStyle描边；
+stroke()
+clip()：创建一个剪切区域；
+clip()：创建一个剪切区域；
+clip()
+如：
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+if (drawing.getContext) {
+    var context = drawing.getContext("2d");
+    context.beginPath();
+
+    //绘制外圆
+    context.arc(100, 100, 99, 0, 2 * Math.PI, false);
+    //绘制内圆
+    context.moveTo(194, 100);
+    context.arc(100, 100, 94, 0, 2 * Math.PI, false);
+    //绘制分针
+    context.moveTo(100, 100);
+    context.lineTo(100,15);
+    //绘制时针
+    context.moveTo(100, 100);
+    context.lineTo(35,100);
+
+    context.stroke();
+}
+
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+if (drawing.getContext) {
+    var context = drawing.getContext("2d");
+    context.beginPath();
+
+    //绘制外圆
+    context.arc(100, 100, 99, 0, 2 * Math.PI, false);
+    //绘制内圆
+    context.moveTo(194, 100);
+    context.arc(100, 100, 94, 0, 2 * Math.PI, false);
+    //绘制分针
+    context.moveTo(100, 100);
+    context.lineTo(100,15);
+    //绘制时针
+    context.moveTo(100, 100);
+    context.lineTo(35,100);
+
+    context.stroke();
+}
+
+绘制文本
+绘制文本通常有两个方法:
+
+fillText()（推荐使用）
+strokeText()
+measureText()：一个参数，即要绘制的文本
+
+fillText()（推荐使用）
+fillText()（推荐使用）
+fillText()
+strokeText()
+strokeText()
+strokeText()
+measureText()：一个参数，即要绘制的文本
+measureText()：一个参数，即要绘制的文本
+measureText()
+这两个方法都可以接收4个参数:要绘制的文本字符串,x坐标,y坐标和可选的最大像素值.而且这三个方法都以下列3个属性为基础:
+
+font:表示文本样式,大小及字体,用CSS中指定字体的格式来指定.
+textAlign:表示文本对其方式.可能的值有"start","end","left","right"和"center".不推荐使用"left"和"right".
+textBaseline:表示文本的基线.可能的值有"top","hanging","middle","alphabetic","ideographic"和"bottom".值为top,y坐标表示文本顶端,值为"bottom",y坐标表示文本底端,值为hanging,alphabetic和ideographic,则y坐标分别指向字体的特定基线坐标.
+
+font:表示文本样式,大小及字体,用CSS中指定字体的格式来指定.
+font:表示文本样式,大小及字体,用CSS中指定字体的格式来指定.
+font
+textAlign:表示文本对其方式.可能的值有"start","end","left","right"和"center".不推荐使用"left"和"right".
+textAlign:表示文本对其方式.可能的值有"start","end","left","right"和"center".不推荐使用"left"和"right".
+textAlign
+不推荐使用"left"和"right".
+textBaseline:表示文本的基线.可能的值有"top","hanging","middle","alphabetic","ideographic"和"bottom".值为top,y坐标表示文本顶端,值为"bottom",y坐标表示文本底端,值为hanging,alphabetic和ideographic,则y坐标分别指向字体的特定基线坐标.
+textBaseline:表示文本的基线.可能的值有"top","hanging","middle","alphabetic","ideographic"和"bottom".值为top,y坐标表示文本顶端,值为"bottom",y坐标表示文本底端,值为hanging,alphabetic和ideographic,则y坐标分别指向字体的特定基线坐标.
+textBaseline
+如：
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+    if (drawing.getContext) {
+        var context = drawing.getContext("2d");
+        //font样式
+        context.font = "24px monospace";
+        //对齐方式
+        context.textAlign = "start";
+        //基线位置
+        context.textBaseline = "bottom";
+        //填充样式
+        context.fillStyle = "red";
+        context.fillText("hello there",100,100);
+        //描边样式
+        context.strokeStyle = "yellow";
+        context.strokeText("hello there",100,100);
+    }
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+    if (drawing.getContext) {
+        var context = drawing.getContext("2d");
+        //font样式
+        context.font = "24px monospace";
+        //对齐方式
+        context.textAlign = "start";
+        //基线位置
+        context.textBaseline = "bottom";
+        //填充样式
+        context.fillStyle = "red";
+        context.fillText("hello there",100,100);
+        //描边样式
+        context.strokeStyle = "yellow";
+        context.strokeText("hello there",100,100);
+    }
+对于measureText()方法，会返回测量字符串相关数据的一个对象，目前只有width属性
+measureText()
+console.log(context.measureText("Hello world")); //返回TextMetrics对象，该对象目前只有width属性
+
+console.log(context.measureText("Hello world")); //返回TextMetrics对象，该对象目前只有width属性
+
+变换
+
+rotate(angle):围绕原点旋转图像angle弧度.
+scale(scaleX, scaleY):缩放图像,在X方向乘以scaleX,在y方向乘以scaleY.scaleX和scaleY的默认值是1.0
+translate(x, y):将坐标原定移动到(x, y).执行这个变换之后,坐标(0,0)会变成之前由(x,y)表示的点.
+transform(m1_1, m1_2, m2_1, m2_2, dx, dy):直接修改变换矩阵,
+
+rotate(angle):围绕原点旋转图像angle弧度.
+rotate(angle):围绕原点旋转图像angle弧度.
+rotate(angle)
+scale(scaleX, scaleY):缩放图像,在X方向乘以scaleX,在y方向乘以scaleY.scaleX和scaleY的默认值是1.0
+scale(scaleX, scaleY):缩放图像,在X方向乘以scaleX,在y方向乘以scaleY.scaleX和scaleY的默认值是1.0
+scale(scaleX, scaleY)
+translate(x, y):将坐标原定移动到(x, y).执行这个变换之后,坐标(0,0)会变成之前由(x,y)表示的点.
+translate(x, y):将坐标原定移动到(x, y).执行这个变换之后,坐标(0,0)会变成之前由(x,y)表示的点.
+translate(x, y)
+transform(m1_1, m1_2, m2_1, m2_2, dx, dy):直接修改变换矩阵,
+transform(m1_1, m1_2, m2_1, m2_2, dx, dy):直接修改变换矩阵,
+transform(m1_1, m1_2, m2_1, m2_2, dx, dy)
+方法是乘以如下矩阵:
+m1_1 m1_2 dx
+m2_1 m2_2 dy
+0      0    1
+
+m1_1 m1_2 dx
+m2_1 m2_2 dy
+0      0    1
+
+setTransform(m1_1, m1_2, m2_1, m2_2, dx, dy):将变换矩阵重置为默认状态,然后再调用transform
+setTransform(m1_1, m1_2, m2_1, m2_2, dx, dy):将变换矩阵重置为默认状态,然后再调用transform
+setTransform(m1_1, m1_2, m2_1, m2_2, dx, dy):将变换矩阵重置为默认状态,然后再调用transform
+setTransform(m1_1, m1_2, m2_1, m2_2, dx, dy)
+如：
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+if (drawing.getContext) {
+    var context = drawing.getContext("2d");
+    context.beginPath();
+    context.arc(100, 100, 90, 0, 2 * Math.PI, false);
+    //变换原点
+    context.translate(100, 100);
+    context.moveTo(0, 0);
+    //旋转
+    context.rotate(1);        
+    context.lineTo(0, -80);
+    context.stroke();
+}
+
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+if (drawing.getContext) {
+    var context = drawing.getContext("2d");
+    context.beginPath();
+    context.arc(100, 100, 90, 0, 2 * Math.PI, false);
+    //变换原点
+    context.translate(100, 100);
+    context.moveTo(0, 0);
+    //旋转
+    context.rotate(1);        
+    context.lineTo(0, -80);
+    context.stroke();
+}
+
+而我们可以通过
+save()
+save()
+save()
+save()
+在堆栈中保存设置,而通过
+restore()
+restore()
+restore()
+restore()
+方法恢复上一级状态.我们可以连续使用save()和restore()方法。
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+if (drawing.getContext) {
+    var context = drawing.getContext("2d");
+    context.fillStyle = "red";
+    context.save(); //第一次存储
+
+    context.fillStyle="yellow";
+    context.translate(100,100);
+    context.save(); //第二次存储
+
+    context.fillStyle = "blue";
+    context.fillRect(0,0,100,200); //因为translate把原点放在了100,100所以，从这个点开始绘制
+
+    context.restore(); //第一次恢复
+    context.fillRect(10,10,100,200); //绘制黄色图形因为运用了一次restore();
+
+    context.restore(); //第二次恢复
+    context.fillRect(0,0,100,200); //原点恢复为0,0，绘制红色图形，因为又运用了一次restore();
+}
+
+var drawing = document.getElementById("drawing");
+//确定浏览器是否支持canvas元素
+if (drawing.getContext) {
+    var context = drawing.getContext("2d");
+    context.fillStyle = "red";
+    context.save(); //第一次存储
+
+    context.fillStyle="yellow";
+    context.translate(100,100);
+    context.save(); //第二次存储
+
+    context.fillStyle = "blue";
+    context.fillRect(0,0,100,200); //因为translate把原点放在了100,100所以，从这个点开始绘制
+
+    context.restore(); //第一次恢复
+    context.fillRect(10,10,100,200); //绘制黄色图形因为运用了一次restore();
+
+    context.restore(); //第二次恢复
+    context.fillRect(0,0,100,200); //原点恢复为0,0，绘制红色图形，因为又运用了一次restore();
+}
+
+要注意的是，save()保存的只是对绘图上下文的设置和变换，不会保存绘图上下文的内容。
+要注意的是，save()保存的只是对绘图上下文的设置和变换，不会保存绘图上下文的内容。
+绘制图像
+使用
+drawImage()
+drawImage()
+drawImage()
+drawImage()
+方法来绘制图像.有三种不同的参数组合:
+传入一个HTML<img>元素,以及绘制该图像的起点的x和y坐标.
+传入一个HTML<img>元素,以及绘制该图像的起点的x和y坐标.
+传入一个HTML<img>元素,以及绘制该图像的起点的x和y坐标.
+如：
+context.drawImage(img, 0, 0); //从0,0处插入绘制图片
+
+context.drawImage(img, 0, 0); //从0,0处插入绘制图片
+
+再多传两个参数,分别表示目标宽度和目标高度(进行缩放，不影响上下文的变换矩阵)
+再多传两个参数,分别表示目标宽度和目标高度(进行缩放，不影响上下文的变换矩阵)
+再多传两个参数,分别表示目标宽度和目标高度(进行缩放，不影响上下文的变换矩阵)
+如：
+context.drawImage(img, 0, 0,300,200); //从0,0处插入绘制图片；长度为300高度为200；
+
+context.drawImage(img, 0, 0,300,200); //从0,0处插入绘制图片；长度为300高度为200；
+
+再多传4个参数,表示目标图像的x,y坐标和目标图像的宽度和高度(并没有进行缩放):
+再多传4个参数,表示目标图像的x,y坐标和目标图像的宽度和高度(并没有进行缩放):
+再多传4个参数,表示目标图像的x,y坐标和目标图像的宽度和高度(并没有进行缩放):
+如：
+context.drawImage(img, 0, 0, 300, 200,100,100,100,80); //从0,0处插入绘制图片；长度为300高度为200；绘制到上下文的100,100处，宽度为100高度为80；
+
+context.drawImage(img, 0, 0, 300, 200,100,100,100,80); //从0,0处插入绘制图片；长度为300高度为200；绘制到上下文的100,100处，宽度为100高度为80；
+
+需要注意的是：图像不能来自其他域，否则toDataURL()会抛出错误。
+需要注意的是：图像不能来自其他域，否则toDataURL()会抛出错误。
+阴影
+
+shadowColor: 用CSS颜色格式表示的阴影颜色,默认为黑色
+shadowOffsetX: 形状或路径x轴方向的阴影偏移量,默认为0
+shadowOffsetY: 形状或路径y轴方向的阴影偏移量,默认为0
+shadowBlur: 模糊的像素数,默认0,即不模糊
+
+shadowColor: 用CSS颜色格式表示的阴影颜色,默认为黑色
+shadowColor: 用CSS颜色格式表示的阴影颜色,默认为黑色
+shadowColor
+shadowOffsetX: 形状或路径x轴方向的阴影偏移量,默认为0
+shadowOffsetX: 形状或路径x轴方向的阴影偏移量,默认为0
+shadowOffsetX
+shadowOffsetY: 形状或路径y轴方向的阴影偏移量,默认为0
+shadowOffsetY: 形状或路径y轴方向的阴影偏移量,默认为0
+shadowOffsetY
+shadowBlur: 模糊的像素数,默认0,即不模糊
+shadowBlur: 模糊的像素数,默认0,即不模糊
+shadowBlur
+如：
+if (drawing.getContext) {
+    var context = drawing.getContext("2d");
+
+    //设置阴影
+    context.shadowColor ="red"; //阴影颜色
+    context.shadowOffsetX = 10; //x轴偏移
+    context.shadowOffsetY = 10; //y轴偏移
+    context.shadowBlur = "100"; //阴影模糊的像素
+
+    //绘制矩形
+    context.fillStyle = "orange";
+    context.fillRect(0,0,300,200);
+
+}
+
+if (drawing.getContext) {
+    var context = drawing.getContext("2d");
+
+    //设置阴影
+    context.shadowColor ="red"; //阴影颜色
+    context.shadowOffsetX = 10; //x轴偏移
+    context.shadowOffsetY = 10; //y轴偏移
+    context.shadowBlur = "100"; //阴影模糊的像素
+
+    //绘制矩形
+    context.fillStyle = "orange";
+    context.fillRect(0,0,300,200);
+
+}
+
+渐变
+渐变由CanvasGradient实例表示,调用
+createLinearGradient()方法,此方法接收4个参数:起点的x坐标,起点的y坐标,终点的x坐标,终点的y坐标.调用这个方法后,它就会创建一个指定大小的渐变,并返回CanvasGradient对象实例.
+createLinearGradient()方法,此方法接收4个参数:起点的x坐标,起点的y坐标,终点的x坐标,终点的y坐标.调用这个方法后,它就会创建一个指定大小的渐变,并返回CanvasGradient对象实例.
+createLinearGradient()方法,此方法接收4个参数:起点的x坐标,起点的y坐标,终点的x坐标,终点的y坐标.调用这个方法后,它就会创建一个指定大小的渐变,并返回CanvasGradient对象实例.
+createLinearGradient()
+创建了渐变对象后,下一步就是使用
+addColorStop()方法来指定色标.接收两个参数:色标位置和CSS颜色值.色标位置是一个0(开始的颜色)到1(结束的颜色)之间的数字.
+addColorStop()方法来指定色标.接收两个参数:色标位置和CSS颜色值.色标位置是一个0(开始的颜色)到1(结束的颜色)之间的数字.
+addColorStop()方法来指定色标.接收两个参数:色标位置和CSS颜色值.色标位置是一个0(开始的颜色)到1(结束的颜色)之间的数字.
+addColorStop()
+如：
+var drawing = document.getElementById("drawing");
+var img = document.images[0];
+// 确定浏览器是否支持canvas元素
+window.onload = function() {
+    if (drawing.getContext) {
+        var context = drawing.getContext("2d");
+
+        //创建渐变
+        var gradient = context.createLinearGradient(0, 100, 200, 100);
+        gradient.addColorStop(0, "red");
+        gradient.addColorStop(1, "orange");
+
+        //将渐变运用到矩形
+        context.fillStyle = gradient;
+        context.fillRect(0,0,200,100);
+    }
+};
+
+var drawing = document.getElementById("drawing");
+var img = document.images[0];
+// 确定浏览器是否支持canvas元素
+window.onload = function() {
+    if (drawing.getContext) {
+        var context = drawing.getContext("2d");
+
+        //创建渐变
+        var gradient = context.createLinearGradient(0, 100, 200, 100);
+        gradient.addColorStop(0, "red");
+        gradient.addColorStop(1, "orange");
+
+        //将渐变运用到矩形
+        context.fillStyle = gradient;
+        context.fillRect(0,0,200,100);
+    }
+};
+
+如果要绘制非常准确的渐变矩形，则可以使用下面的函数：
+function createRectLinearGradient(context, x, y, width, height) {
+    return context.createLinearGradient(x, y, x + width, y + height);
+}
+
+function createRectLinearGradient(context, x, y, width, height) {
+    return context.createLinearGradient(x, y, x + width, y + height);
+}
+
+如：
+function createRectLinearGradient(context, x, y, width, height) {
+    return context.createLinearGradient(x, y, x + width, y + height);
+}
+
+var gradient = createRectLinearGradient(context, 0, 0, 200, 100);
+gradient.addColorStop(0, "red");
+gradient.addColorStop(1, "orange");
+
+context.fillStyle = gradient;
+context.fillRect(0, 0, 200, 100);
+
+function createRectLinearGradient(context, x, y, width, height) {
+    return context.createLinearGradient(x, y, x + width, y + height);
+}
+
+var gradient = createRectLinearGradient(context, 0, 0, 200, 100);
+gradient.addColorStop(0, "red");
+gradient.addColorStop(1, "orange");
+
+context.fillStyle = gradient;
+context.fillRect(0, 0, 200, 100);
+
+要创建径向渐变，就要调用
+createRadialGradient()方法，接收6个参数：起点圆的圆心及半径（前三个参数）；终点圆的圆心及半径（后三个参数）：
+createRadialGradient()方法，接收6个参数：起点圆的圆心及半径（前三个参数）；终点圆的圆心及半径（后三个参数）：
+createRadialGradient()方法，接收6个参数：起点圆的圆心及半径（前三个参数）；终点圆的圆心及半径（后三个参数）：
+createRadialGradient()
+如：
+//移动原点
+context.translate(50, 50);
+//创建径向渐变
+var gradient = context.createRadialGradient(-20, -20, 10, 20, 20, 10);
+gradient.addColorStop(0, "red");
+gradient.addColorStop(1, "orange");
+//填充矩形
+context.fillStyle = gradient;
+context.fillRect(-100, -100, 400, 400);
+
+//移动原点
+context.translate(50, 50);
+//创建径向渐变
+var gradient = context.createRadialGradient(-20, -20, 10, 20, 20, 10);
+gradient.addColorStop(0, "red");
+gradient.addColorStop(1, "orange");
+//填充矩形
+context.fillStyle = gradient;
+context.fillRect(-100, -100, 400, 400);
+
+模式
+模式就是重复的图像,可以用来填充或描边图形.要创建一个新模式,可以调用：
+createPattern()方法并传入两个参数:一个HTMLimg元素和一个表示如何重复图像的字符串.
+createPattern()方法并传入两个参数:一个HTMLimg元素和一个表示如何重复图像的字符串.
+createPattern()方法并传入两个参数:一个HTMLimg元素和一个表示如何重复图像的字符串.
+createPattern()
+img
+其中,第二个参数的值与CSS的background-repeat属性值相同,包括"repeat","repeat-x","repeat-y","no-repeat"；另外，该方法的第一个参数也可以传入video元素以及另一个canvas元素；
+video
+canvas
+var context = drawing.getContext("2d");
+//定义pattern
+var pattern = context.createPattern(img,"repeat");
+//填充
+context.fillStyle = pattern;
+context.fillRect(0,0,600,500);
+
+var context = drawing.getContext("2d");
+//定义pattern
+var pattern = context.createPattern(img,"repeat");
+//填充
+context.fillStyle = pattern;
+context.fillRect(0,0,600,500);
+
+使用图像数据
+通过
+
+getImageData()取得原始图像数据.这个方法接收4个参数:要取得其数据的画面区域的x和y坐标以及该区域的像素宽度和高度:
+setImageData()则根据图像数据，在canvas中绘制出来
+
+getImageData()取得原始图像数据.这个方法接收4个参数:要取得其数据的画面区域的x和y坐标以及该区域的像素宽度和高度:
+getImageData()取得原始图像数据.这个方法接收4个参数:要取得其数据的画面区域的x和y坐标以及该区域的像素宽度和高度:
+getImageData()
+setImageData()则根据图像数据，在canvas中绘制出来
+setImageData()则根据图像数据，在canvas中绘制出来
+setImageData()
+如：
+window.onload = function() {
+    var drawing = document.getElementById("drawing");
+    var imgInput = document.images[0];
+    //检查兼容性
+    if (drawing.getContext) {
+        var context = drawing.getContext("2d");
+        //绘制原始图像
+        context.drawImage(imgInput, 0, 0);
+        //取得图像数据
+        var imageData = context.getImageData(0, 0, imgInput.width, imgInput.height);
+        var data = imageData.data;
+        for (var i = 0, len = data.length; i < len; i+=4) { //i应该是0,4,8...
+            var red = data[i]; //0,4,8...
+            var green = data[i + 1]; //1,5,9...
+            var blue = data[i + 2]; //2,6,10...
+            var alpha = data[i + 3]; //3,7,11
+            //求得rgb平均值
+            var average = Math.floor((red + green + blue) / 3);
+            //设置颜色值，透明度不变
+            data[i] = average;
+            data[i + 1] = average;
+            data[i + 2] = average;
+        }
+        //回写数据并显示结果
+        imageData.data = data;
+        context.putImageData(imageData, 0, 0);
+    }
+};
+
+window.onload = function() {
+    var drawing = document.getElementById("drawing");
+    var imgInput = document.images[0];
+    //检查兼容性
+    if (drawing.getContext) {
+        var context = drawing.getContext("2d");
+        //绘制原始图像
+        context.drawImage(imgInput, 0, 0);
+        //取得图像数据
+        var imageData = context.getImageData(0, 0, imgInput.width, imgInput.height);
+        var data = imageData.data;
+        for (var i = 0, len = data.length; i < len; i+=4) { //i应该是0,4,8...
+            var red = data[i]; //0,4,8...
+            var green = data[i + 1]; //1,5,9...
+            var blue = data[i + 2]; //2,6,10...
+            var alpha = data[i + 3]; //3,7,11
+            //求得rgb平均值
+            var average = Math.floor((red + green + blue) / 3);
+            //设置颜色值，透明度不变
+            data[i] = average;
+            data[i + 1] = average;
+            data[i + 2] = average;
+        }
+        //回写数据并显示结果
+        imageData.data = data;
+        context.putImageData(imageData, 0, 0);
+    }
+};
+
+优化后的代码：
+    window.onload = function() {
+    var drawing = document.getElementById("drawing"),
+        imgInput = document.images[0],
+        context,
+        imageData,data,i,len,
+        red, green, blue, alpha, average;
+    //检查兼容性
+    if (drawing.getContext) {
+        context = drawing.getContext("2d");
+        //绘制原始图像
+        context.drawImage(imgInput, 0, 0);
+        //取得图像数据
+        imageData = context.getImageData(0, 0, imgInput.width, imgInput.height);
+        data = imageData.data;
+        for (i = 0, len = data.length; i < len; i += 4) { //i应该是0,4,8...
+            red = data[i]; //0,4,8...
+            green = data[i + 1]; //1,5,9...
+            blue = data[i + 2]; //2,6,10...
+            alpha = data[i + 3]; //3,7,11
+            //求得rgb平均值
+            average = Math.floor((red + green + blue) / 3);
+            //设置颜色值，透明度不变
+            data[i] = average;
+            data[i + 1] = average;
+            data[i + 2] = average;
+        }
+        //回写数据并显示结果
+        imageData.data = data;
+        context.putImageData(imageData, 0, 0);
+    }
+};
+
+    window.onload = function() {
+    var drawing = document.getElementById("drawing"),
+        imgInput = document.images[0],
+        context,
+        imageData,data,i,len,
+        red, green, blue, alpha, average;
+    //检查兼容性
+    if (drawing.getContext) {
+        context = drawing.getContext("2d");
+        //绘制原始图像
+        context.drawImage(imgInput, 0, 0);
+        //取得图像数据
+        imageData = context.getImageData(0, 0, imgInput.width, imgInput.height);
+        data = imageData.data;
+        for (i = 0, len = data.length; i < len; i += 4) { //i应该是0,4,8...
+            red = data[i]; //0,4,8...
+            green = data[i + 1]; //1,5,9...
+            blue = data[i + 2]; //2,6,10...
+            alpha = data[i + 3]; //3,7,11
+            //求得rgb平均值
+            average = Math.floor((red + green + blue) / 3);
+            //设置颜色值，透明度不变
+            data[i] = average;
+            data[i + 1] = average;
+            data[i + 2] = average;
+        }
+        //回写数据并显示结果
+        imageData.data = data;
+        context.putImageData(imageData, 0, 0);
+    }
+};
+
+或者让图片颜色反转：
+window.onload = function() {
+    var drawing = document.getElementById("drawing");
+    var imgInput = document.images[0];
+    //检查兼容性
+    if (drawing.getContext) {
+        var context = drawing.getContext("2d");
+        //绘制原始图像
+        context.drawImage(imgInput, 0, 0);
+        //取得图像数据
+        var imageData = context.getImageData(0, 0, imgInput.width, imgInput.height);
+        var data = imageData.data;
+        var i, len, red, green, blue, alpha;
+
+        for (i = 0, len = data.length; i < len; i += 4) {
+            red = data[i];
+            green = data[i + 1];
+            blue = data[i + 2];
+            alpha = data[i + 3];
+            //反转颜色
+            data[i] = 255 - data[i];
+            data[i + 1] = 255 - data[i + 1];
+            data[i + 2] = 255 - data[i + 2];
+        }
+        imageData.data = data;
+        context.putImageData(imageData, 0, 0);
+    }
+};
+
+window.onload = function() {
+    var drawing = document.getElementById("drawing");
+    var imgInput = document.images[0];
+    //检查兼容性
+    if (drawing.getContext) {
+        var context = drawing.getContext("2d");
+        //绘制原始图像
+        context.drawImage(imgInput, 0, 0);
+        //取得图像数据
+        var imageData = context.getImageData(0, 0, imgInput.width, imgInput.height);
+        var data = imageData.data;
+        var i, len, red, green, blue, alpha;
+
+        for (i = 0, len = data.length; i < len; i += 4) {
+            red = data[i];
+            green = data[i + 1];
+            blue = data[i + 2];
+            alpha = data[i + 3];
+            //反转颜色
+            data[i] = 255 - data[i];
+            data[i + 1] = 255 - data[i + 1];
+            data[i + 2] = 255 - data[i + 2];
+        }
+        imageData.data = data;
+        context.putImageData(imageData, 0, 0);
+    }
+};
+
+合成
+另外还有属性：
+
+globalAlpha；
+globalCompositionOperation；
+
+globalAlpha；
+globalAlpha；
+globalAlpha
+globalCompositionOperation；
+globalCompositionOperation；
+globalCompositionOperation
+其中第一个属性是一个介于0-1之间的值，用来指定所有绘制的透明度，这样就可以先指定透明度，再画图，然后再重置透明度，如：
+window.onload = function() {
+    var drawing = document.getElementById("drawing");
+    var imgInput = document.images[0];
+    //检查兼容性
+    if (drawing.getContext) {
+        var context = drawing.getContext("2d");
+        //绘制原始图像
+        context.drawImage(imgInput, 0, 0);
+        context.globalAlpha = 0.5;
+        //半透明效果
+        context.drawImage(imgInput, 50, 50);
+        context.globalAlpha = 1;
+        //不透明效果
+        context.drawImage(imgInput, 100, 100);
+    }
+};
+
+window.onload = function() {
+    var drawing = document.getElementById("drawing");
+    var imgInput = document.images[0];
+    //检查兼容性
+    if (drawing.getContext) {
+        var context = drawing.getContext("2d");
+        //绘制原始图像
+        context.drawImage(imgInput, 0, 0);
+        context.globalAlpha = 0.5;
+        //半透明效果
+        context.drawImage(imgInput, 50, 50);
+        context.globalAlpha = 1;
+        //不透明效果
+        context.drawImage(imgInput, 100, 100);
+    }
+};
+
+另外第二个属性则表示后绘制的图形怎样与先绘制的图形结合：
+
+source-over： 默认。在目标图像上显示源图像。
+source-atop： 在目标图像顶部显示源图像。源图像位于目标图像之外的部分是不可见的。
+source-in： 在目标图像中显示源图像。只有目标图像内的源图像部分会显示，目标图像是透明的。
+source-out： 在目标图像之外显示源图像。只会显示目标图像之外源图像部分，目标图像是透明的。
+destination-over： 在源图像上方显示目标图像。
+destination-atop： 在源图像顶部显示目标图像。源图像之外的目标图像部分不会被显示。
+destination-in： 在源图像中显示目标图像。只有源图像内的目标图像部分会被显示，源图像是透明的。
+destination-out： 在源图像外显示目标图像。只有源图像外的目标图像部分会被显示，源图像是透明的。
+lighter： 显示源图像 + 目标图像。
+copy： 显示源图像。忽略目标图像。
+source-over： 使用异或操作对源图像与目标图像进行组合。
+
+source-over： 默认。在目标图像上显示源图像。
+source-over： 默认。在目标图像上显示源图像。
+source-over
+source-atop： 在目标图像顶部显示源图像。源图像位于目标图像之外的部分是不可见的。
+source-atop： 在目标图像顶部显示源图像。源图像位于目标图像之外的部分是不可见的。
+source-atop
+source-in： 在目标图像中显示源图像。只有目标图像内的源图像部分会显示，目标图像是透明的。
+source-in： 在目标图像中显示源图像。只有目标图像内的源图像部分会显示，目标图像是透明的。
+source-in
+source-out： 在目标图像之外显示源图像。只会显示目标图像之外源图像部分，目标图像是透明的。
+source-out： 在目标图像之外显示源图像。只会显示目标图像之外源图像部分，目标图像是透明的。
+source-out
+destination-over： 在源图像上方显示目标图像。
+destination-over： 在源图像上方显示目标图像。
+destination-over
+destination-atop： 在源图像顶部显示目标图像。源图像之外的目标图像部分不会被显示。
+destination-atop： 在源图像顶部显示目标图像。源图像之外的目标图像部分不会被显示。
+destination-atop
+destination-in： 在源图像中显示目标图像。只有源图像内的目标图像部分会被显示，源图像是透明的。
+destination-in： 在源图像中显示目标图像。只有源图像内的目标图像部分会被显示，源图像是透明的。
+destination-in
+destination-out： 在源图像外显示目标图像。只有源图像外的目标图像部分会被显示，源图像是透明的。
+destination-out： 在源图像外显示目标图像。只有源图像外的目标图像部分会被显示，源图像是透明的。
+destination-out
+lighter： 显示源图像 + 目标图像。
+lighter： 显示源图像 + 目标图像。
+lighter
+copy： 显示源图像。忽略目标图像。
+copy： 显示源图像。忽略目标图像。
+copy
+source-over： 使用异或操作对源图像与目标图像进行组合。
+source-over： 使用异或操作对源图像与目标图像进行组合。
+source-over
+如将第二个图片放在第一个图片下方：
+window.onload = function() {
+    var drawing = document.getElementById("drawing");
+    var imgInput = document.images[0];
+    //检查兼容性
+    if (drawing.getContext) {
+        var context = drawing.getContext("2d");
+        //绘制原始图像
+        context.fillStyle = "red";
+        context.fillRect(150, 20, 75, 50);
+
+        context.globalCompositeOperation = "destination-over";
+        
+        context.fillStyle = "blue";
+        context.fillRect(180, 50, 75, 50);
+    }
+};
+window.onload = function() {
+    var drawing = document.getElementById("drawing");
+    var imgInput = document.images[0];
+    //检查兼容性
+    if (drawing.getContext) {
+        var context = drawing.getContext("2d");
+        //绘制原始图像
+        context.fillStyle = "red";
+        context.fillRect(150, 20, 75, 50);
+
+        context.globalCompositeOperation = "destination-over";
+        
+        context.fillStyle = "blue";
+        context.fillRect(180, 50, 75, 50);
+    }
+};

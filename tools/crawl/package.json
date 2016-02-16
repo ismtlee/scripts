@@ -1,0 +1,12 @@
+{
+  "name": "crawl",
+  "version": "1.0.0",
+  "private": false,
+  "dependencies": {
+    "superagent":"*",
+    "observe.js":"*",
+    "cheerio":"*",
+    "mysql":"*",
+    "yamljs":"*"
+  }
+}

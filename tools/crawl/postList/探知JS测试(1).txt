@@ -1,0 +1,274 @@
+有一定水平的js童鞋，应该会经常看到一些书上，在介绍项目的时候，会不由自主说道测试。 比如，单元测试，函数测试，或是TDD,BDD等测试模式。没错，这也是我们需要进行掌握的。 当然，如果你的项目仅仅是写的几个demo，而去写测试的话，这样会有点浪费时间，但是本人非常鼓励这样做，因为你在测试时，会发现自己的代码覆盖率，在经自己重构的时候一点一点的变好。 这感觉是非常不一样的。而且在大项目中，使用测试，无疑是产品和你撕逼是，你用来堵住他嘴的最佳手段。
+
+单元测试
+这是测试类型的一种，所谓的单元即，由一些函数组成能完成某项功能的模块。单元测试的目的就是保证你写的模块能够完成一定任务并且不出现bug. 另外，单元测试，也是单一职责原则的一个具体体现，如果在你的代码测试过程中，需要require多个模块时，这说明你测试的主体模块的耦合性比较高，这也是提醒你进行重构的flag。
+单元测试的过程
+
+想好测试用例
+动手写测试
+查看测试结果，通过则Pass,否则应该进行repeat
+
+想好测试用例
+想好测试用例
+动手写测试
+动手写测试
+查看测试结果，通过则Pass,否则应该进行repeat
+查看测试结果，通过则Pass,否则应该进行repeat
+测试模式
+想说一下，测试模式和单元测试的区别。 测试模式->(包括)单元测试.通常测试模式有BDD和TDD模式。
+
+
+TDD
+TDD全称为Test-driven development即，测试驱动开发. 这个可以算是自主测试，用来帮助你写出好代码的一个非常好的办法。 也是上文说到的，当自己看到自己的代码覆盖率越来越高的时候，心里应该是满满的自豪感。通常的测试步骤应该是:
+
+
+先写测试
+再写代码
+测试
+重构
+通过而在大部分公司里面，通常使用的是BDD测试。这里先对BDD进行讲解，后面会将TDD进行探索。
+
+先写测试
+先写测试
+再写代码
+再写代码
+测试
+测试
+重构
+重构
+通过而在大部分公司里面，通常使用的是BDD测试。这里先对BDD进行讲解，后面会将TDD进行探索。
+通过而在大部分公司里面，通常使用的是BDD测试。这里先对BDD进行讲解，后面会将TDD进行探索。
+
+BDD
+同样BDD的全称为: Behavior-Driven development。 朴素的说法叫做行为驱动开发。 BDD的应用场景就是给一些QA工程师使用的，他用他的语言和你进行交流，即他会进行一些测试用例，然后如果通过则说明，他已经信赖你了。通常BDD测试提供了几个方法:
+
+
+describe() {alias: behavior()}
+it()
+before()
+after()
+beforeEach()
+afterEach()通过上面几个方法，说一下BDD测试应该了解哪些基本概念.
+
+describe() {alias: behavior()}
+describe() {alias: behavior()}
+it()
+it()
+before()
+before()
+after()
+after()
+beforeEach()
+beforeEach()
+afterEach()通过上面几个方法，说一下BDD测试应该了解哪些基本概念.
+afterEach()通过上面几个方法，说一下BDD测试应该了解哪些基本概念.
+
+测试套件在TDD里面是指的是test suit. 在BDD里面就对应describe()，用来对软件某个方面的描述。不懂吧~ 针对于describe我们具体来说一下吧。 describe接受两个参数, 一个是字符串，另外一个是函数。
+测试套件
+
+
+
+describe('Action',function(){
+    //...
+})
+describe('Action',function(){
+    //...
+})
+那第一个字符串是开发者自己写，那么该怎么写呢？很简单，我们需要明白，我们是要给一个测试套件命名。 即，给一篇文章写一个title一样简单。比如，我的一个测试套件是想测试一个计数框架的一些功能。那我们的describe就可以写为Counter(或者"计数",一些你自己觉得合适的title),像这样:
+
+
+
+describe('Counter',function(){
+    it('it should increase',function(){
+        //...
+    })
+    it('it should decrease',function(){
+        //...
+    })
+})
+describe('Counter',function(){
+    it('it should increase',function(){
+        //...
+    })
+    it('it should decrease',function(){
+        //...
+    })
+})
+那么，我们起好标题之后，该干什么呢？ 首先，该空两格~ 接着，就应该开始使用测试用例来写文章的body了。测试用例it就是测试用例的weapon, 它和describe相似，接受两个参数。 第一个是对测试的描述，第二个就是具体实现。
+
+
+
+测试用例
+
+describe('Counter',function(){
+    it('it should increase',function(){
+        //...
+    })
+})
+describe('Counter',function(){
+    it('it should increase',function(){
+        //...
+    })
+})
+同样,it里面的内容该怎么写呢？ 我想这不是我的任务，你可以去问下你的语文老师（或者英语老师）.其实，你是用describe和it就已经可以写出一篇好文章了。唯一欠缺的就是需要在里面填上一些内容。这时候就需要使用到断言库来帮你造句了。市面上流行的断言库有3个，分别是assert,expect,should. 如果学过nodeJS的童鞋应该知道NodeJS自带assert断言库。但是对于本人而言，觉得expect比起assert那种傻逼的写法，看起来还是蛮舒服了。(当然，should也有人使用，关键看你的性趣了).先show show 这3个的风格吧。比如判断相等的写法:
+
+
+
+性
+
+
+//assert
+assert.equal(cal.result,1);
+//expect
+expect(cal.result).to.equal(1);
+//should
+cal.result.shoulde.equal(1)
+//assert
+assert.equal(cal.result,1);
+//expect
+expect(cal.result).to.equal(1);
+//should
+cal.result.shoulde.equal(1)
+接下来就看自己的喜好挑一种吧。ok~ 还记得BDD提供几个API吗？ 没错，还有before,after,beforeEach,afterEach他们分别是干什么用的呢？我这里就应用，官方mocha的demo.
+
+
+
+describe('hooks', function() {
+
+  before(function() {
+    // runs before all tests in this block
+  });
+
+  after(function() {
+    // runs after all tests in this block
+  });
+
+  beforeEach(function() {
+    // runs before each test in this block
+  });
+
+  afterEach(function() {
+    // runs after each test in this block
+  });
+
+  // test cases
+});
+describe('hooks', function() {
+
+  before(function() {
+    // runs before all tests in this block
+  });
+
+  after(function() {
+    // runs after all tests in this block
+  });
+
+  beforeEach(function() {
+    // runs before each test in this block
+  });
+
+  afterEach(function() {
+    // runs after each test in this block
+  });
+
+  // test cases
+});
+按照摸cha的说法，上面说的这些函数都是hook. 将测试的状态点暴露给你，让你可以进行相关的操作。 同样，官方摸cha也举例说明了他们的用途。 比如在数据库打开的时候，就可以使用beforeEach来进行更新。
+摸cha
+摸cha
+beforeEach(function(done) {
+    db.clear(function(err) {
+      if (err) return done(err);
+      db.save([tobi, loki, jane], done);
+    });
+  });
+beforeEach(function(done) {
+    db.clear(function(err) {
+      if (err) return done(err);
+      db.save([tobi, loki, jane], done);
+    });
+  });
+要记住，beforeEach会在当前的Block下的所有case之前执行，不管你嵌套多少层。上面的理论铺垫完了，我们要正式进入，测试的节奏.
+
+mocha框架
+首先，我们运行的一切测试，都需要有一个环境支持，那么mocha就是你的环境。 它应该算是前端测试super 流行的一个框架吧(当然，还有jasmine,zuul等). 因为内容丰富，显示界面友好，所以，用户也是很多的。下载mocha环境:
+
+sude npm install -g mocha
+sude npm install -g mocha
+这里执行全局下载。因为，测试环境在全局都是有效的，所以这里就直接放在global下了.配置assertion这里我们就使用chai就over了，他包括了3种语言风格，你自己引用就可以了。
+
+
+sudo npm install -g chai
+
+sudo npm install -g chai
+
+OK。接下来，先写一个hello world 示例吧。我们按上述步骤一步一步来.
+
+//自己测试的代码
+var Cal = (function(){
+    var num = {
+        base:0
+    };
+    var add = function(){
+        num.base++;
+        return num.base;
+    }
+    var desc = function(){
+        --num.base;
+        return num.base;
+    }
+    return {
+        add,desc,num
+    }
+})();
+//ok,现在引用断言库chai
+var expect = require('chai').expect;
+//写出测试
+describe('Counter',function(){
+    it('it should increase',function(){
+        expect(Cal.num.base).to.below(Cal.add());
+    })
+    it('it should decrease',function(){
+        expect(Cal.num.base).to.above(Cal.desc());
+    })
+})
+//自己测试的代码
+var Cal = (function(){
+    var num = {
+        base:0
+    };
+    var add = function(){
+        num.base++;
+        return num.base;
+    }
+    var desc = function(){
+        --num.base;
+        return num.base;
+    }
+    return {
+        add,desc,num
+    }
+})();
+//ok,现在引用断言库chai
+var expect = require('chai').expect;
+//写出测试
+describe('Counter',function(){
+    it('it should increase',function(){
+        expect(Cal.num.base).to.below(Cal.add());
+    })
+    it('it should decrease',function(){
+        expect(Cal.num.base).to.above(Cal.desc());
+    })
+})
+ok,现在可以打开控制台，切换到你测试文件所在的目录，比如，我的是在 demo/demo.js在控制台输入命令
+
+mocha demo.js
+
+mocha demo.js
+
+如果你的屏幕出现如下:(仅限MAC用户)说明你的virgin测试已经完成了。今天就到这吧，整体的介绍了BDD的测试，断言库，测试框架，后续会深入介绍断言库和测试框架。ending~
+
+
+
+
+

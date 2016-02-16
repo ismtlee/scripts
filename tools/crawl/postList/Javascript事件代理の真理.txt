@@ -1,0 +1,172 @@
+参考资料：js-事件代理
+js-事件代理
+很久很久以来，总感觉事件发生与事件代理到之间没什么鸟区别。
+最近，又看了一下，感觉区别其实真不大！看怎么理解吧。
+要搞清楚什么是事件代理，就需要先搞清楚什么是代理。
+从商业角度来讲，代理就是：我有货，你没货，但丫我没时间、没精力全部卖掉，而你一天闲的蛋疼，只剩下时间了。于是，我委托你帮我买，然后哥给你提成。这个过程中，你实际上相当于也有了货。
+OK，怎么从字面来理解事件代理一词的含义？后文有讲。
+
+一 先看一个真实的，新手绑定onclik事件的例子
+如果按照之前的我，我会怎么给每一个li标签，添加onlick呢？废话，要是我，肯定简单粗暴。循环每一个li，然后全部绑定onlick。
+
+于是我的代码应该是这样子：
+<ul id="thl">
+   <li>001</li>
+   <li>002</li>
+   <li>003</li>
+</ul>
+
+<script>
+    var thl= document.getElementById('thl');
+    var aLi = thl.getElementsByTagName('li');
+    for (var i = 0; i < aLi.length; i++) {
+    　　aLi[i].onclick = fn;
+    }
+    
+    function fn (){
+      console.log("maomaoliang");
+    }
+</script>
+<ul id="thl">
+   <li>001</li>
+   <li>002</li>
+   <li>003</li>
+</ul>
+
+<script>
+    var thl= document.getElementById('thl');
+    var aLi = thl.getElementsByTagName('li');
+    for (var i = 0; i < aLi.length; i++) {
+    　　aLi[i].onclick = fn;
+    }
+    
+    function fn (){
+      console.log("maomaoliang");
+    }
+</script>
+好像看起来没问题了。虽然，有些文章说这样很消耗性能，但是，我丫电脑好，老子管你性能，不能太认真。
+二 突然有一天，我发现通过js添加进来的新的li，没有绑定onlcik
+var node=document.createElement("li");
+var textnode=document.createTextNode("maomaoliang");
+node.appendChild(textnode);
+document.getElementById("ul1").appendChild(node);
+var node=document.createElement("li");
+var textnode=document.createTextNode("maomaoliang");
+node.appendChild(textnode);
+document.getElementById("ul1").appendChild(node);
+然后，点击maomaoliang,它并没有绑定我的onlick，这是为什么？哦，原来，我原有的li跟我后面生成的li根本不是同时发生的，在创建新的li元素之前，已经给存在的li加事件了。好吧，好烦啊。
+
+三 那怎么破？
+然后，又好（无）奇（奈）的看了一些文章，原来有个叫事件代理的东西可以用。我就试试看吧！于是改写了部分代码，像这样：
+var thl= document.getElementById('thl');
+thl.onclick = function(ev) {
+    ev = ev || event;
+    //兼容处理
+    var target = ev.target || ev.srcElement;
+　　//找到li元素
+    if (target.nodeName.toLowerCase() == 'li') {
+          fn();
+     }
+};
+
+function fn (){
+  console.log("maomaoliang");
+}
+var thl= document.getElementById('thl');
+thl.onclick = function(ev) {
+    ev = ev || event;
+    //兼容处理
+    var target = ev.target || ev.srcElement;
+　　//找到li元素
+    if (target.nodeName.toLowerCase() == 'li') {
+          fn();
+     }
+};
+
+function fn (){
+  console.log("maomaoliang");
+}
+结果，点击新的li，居然也触发了fn函数。好吧，身为一个好奇心驱动的肉身，我怎么能不求甚解呢？还是要踏实点，搞清楚这其中的奥秘才行。
+于是，看了事件代理的资料。
+首先，要知道什么是事件冒泡：当一个元素上的事件被触发的时候，比如说鼠标点击了一个按钮，同样的事件将会在那个元素的所有祖先元素中被触发。这一过程被称为事件冒泡。
+然后，再回到之前的问题“怎么从字面来理解事件代理一词的含义”，谁代理了事件？或者事件代理了谁？以本文的例子来讲，看看改动后的代码，我把onlick事件绑定到了ul标签上面，而不是li标签。于是，当我点击任何一个li标签（不管是动态生成的还是之前就有的）是，这个事件就像泡泡一样，冒啊冒。正常的情况下，ul也会绑定onclick，body也会绑定到onclick，也就说它会冒泡到最根层的元素。但我这里给ul绑定了onlick，那么这时，ul会把泡泡截住，事件也就停止上升，无法抵达body标签。
+
+接着， var target = ev.target || ev.srcElement;这一句话，相当于告诉了我，我究竟点的是谁，谁才是target。如果，这个target刚刚好就是li标签if (target.nodeName.toLowerCase() == 'li')，那么执行fn函数。
+ var target = ev.target || ev.srcElement;
+if (target.nodeName.toLowerCase() == 'li')
+最后，我骄傲的回答了那个问题：table代理了onlick事件！
+四 回忆一下事件代理的步骤
+
+父元素绑定事件
+父元素知道事件的实际发生目标是谁
+我们要对目标进行判断，如果是我们需要的元素，则发生回调函数（所以要学好选择器的使用）
+
+父元素绑定事件
+父元素绑定事件
+父元素知道事件的实际发生目标是谁
+父元素知道事件的实际发生目标是谁
+我们要对目标进行判断，如果是我们需要的元素，则发生回调函数（所以要学好选择器的使用）
+我们要对目标进行判断，如果是我们需要的元素，则发生回调函数（所以要学好选择器的使用）
+五 最后总结，事件代理两大好处
+
+性能不小心得到了优化
+动态添加的元素也能绑定事件了
+
+性能不小心得到了优化
+性能不小心得到了优化
+动态添加的元素也能绑定事件了
+动态添加的元素也能绑定事件了
+六 需要注意的一点是
+上述针对的是原生js事件绑定来讲的，如果你用到了jquery。并把代码改成了如下的样子：
+/*var thl= document.getElementById('ul1');
+thl.onclick = function(ev) {
+    ev = ev || event;
+    //兼容处理
+    var target = ev.target || ev.srcElement;
+　　//找到li元素
+    if (target.nodeName.toLowerCase() == 'li') {
+          //li添加的事件
+          fn();
+     }
+};*/
+
+var node=document.createElement("li");
+var textnode=document.createTextNode("maomaoliang");
+node.appendChild(textnode);
+document.getElementById("ul1").appendChild(node);
+
+function fn (){
+  console.log("maomaoliang");
+}
+
+$("#ul1").click(function(){
+    fn();
+});
+/*var thl= document.getElementById('ul1');
+thl.onclick = function(ev) {
+    ev = ev || event;
+    //兼容处理
+    var target = ev.target || ev.srcElement;
+　　//找到li元素
+    if (target.nodeName.toLowerCase() == 'li') {
+          //li添加的事件
+          fn();
+     }
+};*/
+
+var node=document.createElement("li");
+var textnode=document.createTextNode("maomaoliang");
+node.appendChild(textnode);
+document.getElementById("ul1").appendChild(node);
+
+function fn (){
+  console.log("maomaoliang");
+}
+
+$("#ul1").click(function(){
+    fn();
+});
+这样一来，新添加的li标签，也能绑click，是不是很方便、很简单，是不是感觉学js没什么卵用。哈哈，这样想很正常，我以前也这么想，但是，做了一些东西之后，发现jquery还真的不够用了！但是基本够用！虽然，大神们都说要学js，但我还是觉得可以先学jquery，之后再学js，效果也可以的。
+
+
+大神嘛，哪懂叼丝的痛楚。-。-

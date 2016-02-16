@@ -1,0 +1,250 @@
+机缘
+以前有一阵觉得chisel真的挺好用的，后来翻看了历年的WWDC关于lldb的video 还是发现一些tips
+chisel
+Tip
+lldb 统一格式
+<noun> <verb> [options] [argument [argument ...]]
+<noun> <verb> [options] [argument [argument ...]]
+<noun> <verb> [options] [argument [argument ...]]
+<noun> <verb> [options] [argument [argument ...]]
+lldb 命令行都遵循上述格式，例如：
+target create /bin/ls
+breakpoint set —-name malloc
+process attach --pid 1234
+breakpoint set --file hello.c --line 100
+breakpoint modify —condition “self = $myModel"
+target create /bin/ls
+breakpoint set —-name malloc
+process attach --pid 1234
+breakpoint set --file hello.c --line 100
+breakpoint modify —condition “self = $myModel"
+lldb简写
+help ->   hexpression -O --  ->  poexpression --  ->   pthread until 11 -> th u 11breakpoint modify —condition "self = $myModel" -> br m -c “self == $myModel"
+help
+h
+
+expression -O --
+po
+
+expression --
+p
+
+thread until 11
+th u 11
+
+breakpoint modify —condition "self = $myModel"
+br m -c “self == $myModel"
+lldb command alias
+lldb 启动都会加载 ~/.lldbinit，故而我们可以通过修改它来实现自己的增强
+~/.lldbinit
+例如command alias，常见的例子，譬如耳熟能详的Reveal能通过下列命令启动
+command alias
+Reveal
+command alias reveal_load_sim expr (void*)dlopen("/Applications/Reveal.app/Contents/SharedSupport/iOS-Libraries/libReveal.dylib", 0x2);
+command alias reveal_load_sim expr (void*)dlopen("/Applications/Reveal.app/Contents/SharedSupport/iOS-Libraries/libReveal.dylib", 0x2);
+我自己扩展了这个别名pwv:
+pwv
+command alias pwv expr (void)NSLog((NSString*)[[[UIApplication sharedApplication] keyWindow] recursiveDescription])
+command alias pwv expr (void)NSLog((NSString*)[[[UIApplication sharedApplication] keyWindow] recursiveDescription])
+该命令可以打印keyWindow上的view的层级结构。
+command regex
+同样放在~/.lldbinit，跟alias类似，不过可以带参数，使用正则。
+~/.lldbinit
+command regex pv 's/(.+)/expr (void)NSLog((NSString*)[(UIView*)%1 recursiveDescription])/'
+
+command regex postNoti 's/(.+)/expr (void)[[NSNotificationCenter defaultCenter] postNotificationName:%1 object:nil]/'
+command regex pv 's/(.+)/expr (void)NSLog((NSString*)[(UIView*)%1 recursiveDescription])/'
+
+command regex postNoti 's/(.+)/expr (void)[[NSNotificationCenter defaultCenter] postNotificationName:%1 object:nil]/'
+命令pv %1用来打印%1上的所有view的层级结构。命令postNoti %1 用来post 一个notication如:
+pv %1
+%1
+
+postNoti %1
+(lldb) postNoti @"MyNotification"
+(lldb) postNoti @"MyNotification"
+根据日常开发的需要，alias和regex都可以用来当做打开/关闭某些扩展功能，如第三方的调试工具：
+alias
+regex
+打开/关闭FLEX
+command alias flex expr [[FLEXManager sharedManager] toggleExplorer]
+打开/关闭FLEX
+command alias flex expr [[FLEXManager sharedManager] toggleExplorer]
+regex我用得也比较简单，基本跟alias差不多。相信还会有更geek的用法。
+regex
+command script
+chisel就是用下列命令初始化的：
+command script import /path/to/fblldb.py
+command script import /path/to/fblldb.py
+simple example
+simple example
+simple example
+myCommands.py
+def caflushCommand(debugger, command, result, internal_dict):
+debugger.HandleCommand("e (void)[CATransaction flush]")
+def caflushCommand(debugger, command, result, internal_dict):
+debugger.HandleCommand("e (void)[CATransaction flush]")
+command script import ~/myCommands.py
+command script import ~/myCommands.py
+lldb关于python的接口我看得也不细，具体参见wwdc和lldb。chisel的github上也有讲。
+流程控制
+下列命令其意不言自明，日常其实不一定能用到，但thread return在debug时还是相当有用的，调试时发现某些bug，当重现步骤又太麻烦，不想修改代码后重新编译，可以在某些critical method中进行fake return。
+thread return
+process continue continue cthread step-over next nthread step-in step sthread step-out finish 
+process continue
+continue
+c
+
+thread step-over
+next
+n
+
+thread step-in
+step
+s
+
+thread step-out
+finish
+thread return
+thread return
+thread return
+thread return NO
+thread return @"hi"
+thread return
+thread return NO
+thread return @"hi"
+Examining Data
+frame variable
+fr
+v
+(lldb) fr v self
+(lldb) fr v self
+(MyProject.ViewController) self = 0x00007fd63c221fa0 {  UIKit.UIViewController = {
+
+UIResponder = {
+  NSObject = {
+    isa = YourProject.ViewController
+  }
+  _hasAlternateNextResponder = false
+  _hasInputAssistantItem = false
+}
+_overrideTransitioningDelegate = nil
+以下省略
+
+UIResponder = {
+  NSObject = {
+    isa = YourProject.ViewController
+  }
+  _hasAlternateNextResponder = false
+  _hasInputAssistantItem = false
+}
+_overrideTransitioningDelegate = nil
+以下省略
+
+其他拾遗
+寄存器相关
+寄存器相关
+寄存器相关
+(lldb) register read
+General Purpose Registers:
+       rax = 0x0000000010004005
+       rbx = 0x00000000ffffffff
+       rcx = 0x00007fff5559b718
+       rdx = 0x0000000000000000
+       rdi = 0x00007fff5559b880
+       rsi = 0x0000000007000806
+       rbp = 0x00007fff5559b760
+       rsp = 0x00007fff5559b718
+        r8 = 0x0000000000001403
+        r9 = 0x00000000ffffffff
+       r10 = 0x0000000000000c00
+       r11 = 0x0000000000000206
+       r12 = 0x0000000000000c00
+       r13 = 0x0000000000000000
+       r14 = 0x00007fff5559b880
+       r15 = 0x0000000000001403
+       rip = 0x000000010e151386  libsystem_kernel.dylib`mach_msg_trap + 10
+    rflags = 0x0000000000000206
+        cs = 0x000000000000002b
+        fs = 0x0000000000000000
+        gs = 0x0000000000000000
+(lldb) register read
+General Purpose Registers:
+       rax = 0x0000000010004005
+       rbx = 0x00000000ffffffff
+       rcx = 0x00007fff5559b718
+       rdx = 0x0000000000000000
+       rdi = 0x00007fff5559b880
+       rsi = 0x0000000007000806
+       rbp = 0x00007fff5559b760
+       rsp = 0x00007fff5559b718
+        r8 = 0x0000000000001403
+        r9 = 0x00000000ffffffff
+       r10 = 0x0000000000000c00
+       r11 = 0x0000000000000206
+       r12 = 0x0000000000000c00
+       r13 = 0x0000000000000000
+       r14 = 0x00007fff5559b880
+       r15 = 0x0000000000001403
+       rip = 0x000000010e151386  libsystem_kernel.dylib`mach_msg_trap + 10
+    rflags = 0x0000000000000206
+        cs = 0x000000000000002b
+        fs = 0x0000000000000000
+        gs = 0x0000000000000000
+platform shell在lldb中执行shell命令，如
+platform shell在lldb中执行shell命令，如
+platform shell在lldb中执行shell命令，如
+platform shell
+
+(lldb)platform shell ls
+(lldb)platform shell ls
+objective-c set exception 断点
+objective-c set exception 断点
+objective-c set exception 断点
+(lldb) br s -E objc
+(lldb) br s -E objc
+查看类型
+查看类型
+查看类型
+(lldb) type lookup ErrorType
+protocol ErrorType {
+  var _domain: Swift.String { get }
+  var _code: Swift.Int { get }
+}
+extension ErrorType {
+  var _domain: Swift.String {
+    get {}
+  }
+}
+(lldb) type lookup ErrorType
+protocol ErrorType {
+  var _domain: Swift.String { get }
+  var _code: Swift.Int { get }
+}
+extension ErrorType {
+  var _domain: Swift.String {
+    get {}
+  }
+}
+其他wwdc上有说修好了lldb的一些known issue，比如
+其他wwdc上有说修好了lldb的一些known issue，比如
+其他wwdc上有说修好了lldb的一些known issue，比如
+
+(lldb) p NSLog(@“%d”, i)
+error: 'NSLog' has unknown return type;
+  cast the call to its declared return type
+error: 1 errors parsing expression
+(lldb) p NSLog(@“%d”, i)
+error: 'NSLog' has unknown return type;
+  cast the call to its declared return type
+error: 1 errors parsing expression
+(lldb) p [NSApplication sharedApplication].undoManager error: property ‘undoManager’ not found on object of type ‘id’
+error: 1 errors parsing expression
+(lldb) p [NSApplication sharedApplication].undoManager error: property ‘undoManager’ not found on object of type ‘id’
+error: 1 errors parsing expression
+这些问题都修好了。
+总结
+其他的以后再补充。有些东西其实对于大多数开发者用处不大，大家随便看看。
+
+原作写于segmentfault 链接
+链接

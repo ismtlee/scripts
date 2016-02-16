@@ -1,0 +1,136 @@
+前言
+昨天总结了使用eclipse进行jar打包,今天说一下命令行下使用jar命令进行打包。
+eclipse进行jar打包
+在命令行下打包jar需要比使用eclipse这些成熟的工具更需要注意一些东西，但打包jar和使用jar总体来说都不算太复杂，下面慢慢讲述。
+
+jar命令的基本格式
+在命令行中输入jar,查看jar命令的基本格式。
+jar
+用法: jar {ctxui}[vfmn0Me] [jar-file] [manifest-file]
+ [entry-point] [-C dir] files ...
+
+选项:
+    -c  创建新档案
+    -t  列出档案目录
+    -x  从档案中提取指定的 (或所有) 文件
+    -u  更新现有档案
+    -v  在标准输出中生成详细输出
+    -f  指定档案文件名
+    -m  包含指定清单文件中的清单信息
+    -n  创建新档案后执行 Pack200 规范化
+    -e  为绑定到可执行 jar 文件的独立应用程序
+        指定应用程序入口点
+    -0  仅存储; 不使用任何 ZIP 压缩
+    -M  不创建条目的清单文件
+    -i  为指定的 jar 文件生成索引信息
+    -C  更改为指定的目录并包含以下文件
+如果任何文件为目录, 则对其进行递归处理。
+清单文件名, 档案文件名和入口点名称的指定顺序
+与 'm', 'f' 和 'e' 标记的指定顺序相同。
+       
+用法: jar {ctxui}[vfmn0Me] [jar-file] [manifest-file]
+ [entry-point] [-C dir] files ...
+
+选项:
+    -c  创建新档案
+    -t  列出档案目录
+    -x  从档案中提取指定的 (或所有) 文件
+    -u  更新现有档案
+    -v  在标准输出中生成详细输出
+    -f  指定档案文件名
+    -m  包含指定清单文件中的清单信息
+    -n  创建新档案后执行 Pack200 规范化
+    -e  为绑定到可执行 jar 文件的独立应用程序
+        指定应用程序入口点
+    -0  仅存储; 不使用任何 ZIP 压缩
+    -M  不创建条目的清单文件
+    -i  为指定的 jar 文件生成索引信息
+    -C  更改为指定的目录并包含以下文件
+如果任何文件为目录, 则对其进行递归处理。
+清单文件名, 档案文件名和入口点名称的指定顺序
+与 'm', 'f' 和 'e' 标记的指定顺序相同。
+       
+{}内的ctxui是必需参数，其后的参数是可选参数，由其自身的提示可知，清单文件(manifest-file),档案文件(jar-file),入口点（entry-point）分别要对应你参数选择时m，f，e对应的位置
+比如说，你的命令是jar cfm var1 var2那么var1对应的就是参数f，需要你打包后jar文件的名字 var2就是指清单文件对应参数m。
+jar cfm var1 var2
+这个清单文件的作用类似于起到了配置的作用，如果你打开过jar文件的内容后，你会发现在里面有一个文件夹META-INF，在其中就是这个清单文件。
+用记事本打开该文件，你会发现只有一行的
+Manifest-Version: 1.0  
+Manifest-Version: 1.0  
+这是由于你创建时，没有指定manifest而由java自动生成的。如果需要指定manifest，则可以创建一个menifest文件，注意没有后缀哦。
+可以填写的选择有
+Manifest-Version: 1.0  
+Created-By: fat-rabbit 
+Class-Path: .  
+Main-Class: Main  
+
+说明：
+  第一行指定清单的版本，若无，则JDK默认生成：Manifest-Version: 1.0。
+  第二行指明创建的作者，若无，则JDK默认生成Created-By: 1.6.0_22(Sun Microsystems Inc.)。
+  第三行指定主类所在类路径。
+  第四行指明程序运行的主类。构建可执行jar文件的需要填写。
+  注意在末尾有一个空行。
+Manifest-Version: 1.0  
+Created-By: fat-rabbit 
+Class-Path: .  
+Main-Class: Main  
+
+说明：
+  第一行指定清单的版本，若无，则JDK默认生成：Manifest-Version: 1.0。
+  第二行指明创建的作者，若无，则JDK默认生成Created-By: 1.6.0_22(Sun Microsystems Inc.)。
+  第三行指定主类所在类路径。
+  第四行指明程序运行的主类。构建可执行jar文件的需要填写。
+  注意在末尾有一个空行。
+在命令行下使用jar命令进行打包
+一般来说，在命令行下进行打包的命令基础的无非两种。
+一种是无指定manifest文件
+jar cvf classes.jar Foo.class Bar.class
+//将Foo.class和Bar.class 打包成classer.jar文件，并在在标准输出中生成详细输出
+
+jar cvf classes.jar -C foo/ .
+//将 foo/ 目录中的所有文件归档到 classes.jar 中，并在在标准输出中生成详细输出
+jar cvf classes.jar Foo.class Bar.class
+//将Foo.class和Bar.class 打包成classer.jar文件，并在在标准输出中生成详细输出
+
+jar cvf classes.jar -C foo/ .
+//将 foo/ 目录中的所有文件归档到 classes.jar 中，并在在标准输出中生成详细输出
+另一种是指定了manifest文件
+jar cvfm classes.jar mymanifest Foo.class Bar.class
+// 将Foo.class和Bar.class 打包成classer.jar文件，
+// 并在在标准输出中生成详细输出，以及使用指定好的mymanifest文件
+
+jar cvfm classes.jar -C foo/ .
+// 将 foo/ 目录中的所有文件归档到 classes.jar 中，
+// 并在在标准输出中生成详细输出，以及使用指定好的mymanifest文件
+
+jar cvfm classes.jar mymanifest Foo.class Bar.class
+// 将Foo.class和Bar.class 打包成classer.jar文件，
+// 并在在标准输出中生成详细输出，以及使用指定好的mymanifest文件
+
+jar cvfm classes.jar -C foo/ .
+// 将 foo/ 目录中的所有文件归档到 classes.jar 中，
+// 并在在标准输出中生成详细输出，以及使用指定好的mymanifest文件
+
+其余的参数可以按需组合，这里不一一解说。
+在命令行下编译带有第三方jar的java文件
+如果直接编译带有第三方jar的java文件会提示找不到程序包。
+这时则需要使用-cp命令将jar文件添加进classpath里，多个程序包用 ; 隔开（传完呢linux下是冒号，我没试过）。即：
+;
+
+javac -cp aaa\A.jar;bbb\B.jar yourJavaName.java
+//补充一点，若A只是一个目录，则只需javac -cp aaa yourJavaName.java即可
+
+
+javac -cp aaa\A.jar;bbb\B.jar yourJavaName.java
+//补充一点，若A只是一个目录，则只需javac -cp aaa yourJavaName.java即可
+
+
+总结
+这两篇文章总结的可以完成一些普通的打包工作了，如果需要更复杂的打包，可以翻阅专业的资料，jar打包和python打包不同，因为其应用场合的关系，python少有打包成exe发布，虽然sublime-Text是用python写的，但更多时候python是用作服务端的一些工作，而java的各种应用场合都几乎需要用到jar打包技术，所以建议和我一样的新人要对其有一定的认识。
+文章中若有错误，欢迎指正
+最后推荐几篇文章
+文章1文章2
+文章1文章2
+文章1
+
+文章2

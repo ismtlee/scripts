@@ -1,0 +1,978 @@
+概述
+对于物联网应用，收集分布式日志数据到一个中央服务器并做数据可视化是一项十分常见的工作，这通常需要部署和维护自己的服务器、数据库和可视化界面。我对系统管理任务毫无乐趣,所以我找到了一种方法使用谷歌表作为数据库和ShinyApps.io作为可视化平台。上传数据到Google docs是相对简单的,但用shiny连接到Google docs却需要一些技巧,这促使我写这篇教程向其他人展示如何打造一个类似的系统。
+
+在第一部分（原文）中,我将解释如何设置 Google spreadsheet 作为数据库，然后使用它作为一个基本的仪表板。
+在第二部分（原文）,我将教你如何在R中取回数据,并用ggplot2库做数据可视化。
+在第三部分（原文）,我将带您用 Shiny 制作一个简单的交互式可视化应用，通过 ShinyApps.io 平台发布在网上。
+
+在第一部分（原文）中,我将解释如何设置 Google spreadsheet 作为数据库，然后使用它作为一个基本的仪表板。
+在第一部分（原文）中,我将解释如何设置 Google spreadsheet 作为数据库，然后使用它作为一个基本的仪表板。
+第一部分（原文）
+在第二部分（原文）,我将教你如何在R中取回数据,并用ggplot2库做数据可视化。
+在第二部分（原文）,我将教你如何在R中取回数据,并用ggplot2库做数据可视化。
+第二部分（原文）
+在第三部分（原文）,我将带您用 Shiny 制作一个简单的交互式可视化应用，通过 ShinyApps.io 平台发布在网上。
+在第三部分（原文）,我将带您用 Shiny 制作一个简单的交互式可视化应用，通过 ShinyApps.io 平台发布在网上。
+第三部分（原文）
+在本教程中,我们将假装有一个由几个温度和湿度传感器构成的传感器网络。每个传感器用它所在的位置名称(如“卧室”或“客厅”)命名，并记录每小时的温度。我假设您已经知道了物联网硬件如何使用HTTP请求上传数据;因此，教程中我提供了一个Python脚本上传虚拟的温度和湿度值。
+
+为什么使用 Google Sheets?
+Google Sheets 可以作为一个简单的服务器来存储和检索数据,这只需要写很少的代码。我们避免维护我们自己的服务器,另外从容易获得原始数据中获益。最重要的是,电子表格自己强大的分析工具,统计,数据透视表、过滤器,和交互式图表可以嵌入在外部网站。
+
+
+为什么使用 R 和 Shiny？
+R是一种强大的语言专门为数据分析，结合ggplot2图形库，R便可以做专业的数据可视化。一旦你找到了你想要展示什么,shiny 则让可互动的数据可视化图表在网上发布。Shiny 由 RStudio 公司开发,他们甚至提供了免费方便的托管可视化服务。
+
+
+
+第一部分：如何使用 Google Sheet作为数据库服务器
+在本教程的第一部分中,您将学习如何用 Google Sheets 脚本从硬件设备发起一个 HTTP POST请求来上传数据和使用一个 HTTP GET请求来获取数据。在这个过程中,您还将试验表格的一些内置的分析工具:过滤器,数据透视表和图表。
+您也可以跳到第2部分,学习如何在R中获取和操作这些数据,或者学习第3部分：如何使用Shiny。
+相关代码可以从GitHub下载
+相关代码可以从GitHub下载
+前奏:数据存储格式
+我们将为传感器上的每个数据点日志存储起来，包括一个时间戳,一个设备ID,一个变量名(“温度”,或“湿度”)以及访问量。这意味着每次读取的传感器会产生两条线:一个温度和湿度。这种格式是R用户所说的“长格式”。在下面的示例中,我们以每三秒一次的频率监控两个房间:
+
+
+timestamp
+ID
+variable
+value
+
+
+
+1448227096
+kitchen
+temperature
+22.3
+
+
+1448227096
+kitchen
+humidity
+45
+
+
+1448227096
+bedroom
+temperature
+24.0
+
+
+1448227096
+bedroom
+humidity
+46
+
+
+1448227099
+kitchen
+temperature
+22.4
+
+
+1448227099
+kitchen
+humidity
+45
+
+
+1448227099
+bedroom
+temperature
+23.9
+
+
+1448227099
+bedroom
+humidity
+45
+
+
+
+
+timestamp
+ID
+variable
+value
+
+
+timestamp
+ID
+variable
+value
+
+timestamp
+ID
+variable
+value
+
+
+1448227096
+kitchen
+temperature
+22.3
+
+
+1448227096
+kitchen
+humidity
+45
+
+
+1448227096
+bedroom
+temperature
+24.0
+
+
+1448227096
+bedroom
+humidity
+46
+
+
+1448227099
+kitchen
+temperature
+22.4
+
+
+1448227099
+kitchen
+humidity
+45
+
+
+1448227099
+bedroom
+temperature
+23.9
+
+
+1448227099
+bedroom
+humidity
+45
+
+
+
+1448227096
+kitchen
+temperature
+22.3
+
+1448227096
+kitchen
+temperature
+22.3
+
+1448227096
+kitchen
+humidity
+45
+
+1448227096
+kitchen
+humidity
+45
+
+1448227096
+bedroom
+temperature
+24.0
+
+1448227096
+bedroom
+temperature
+24.0
+
+1448227096
+bedroom
+humidity
+46
+
+1448227096
+bedroom
+humidity
+46
+
+1448227099
+kitchen
+temperature
+22.4
+
+1448227099
+kitchen
+temperature
+22.4
+
+1448227099
+kitchen
+humidity
+45
+
+1448227099
+kitchen
+humidity
+45
+
+1448227099
+bedroom
+temperature
+23.9
+
+1448227099
+bedroom
+temperature
+23.9
+
+1448227099
+bedroom
+humidity
+45
+
+1448227099
+bedroom
+humidity
+45
+相比“宽”格式,每个变量都有自己的一栏:
+
+
+timestamp
+kitchen temperature
+kitchen humidity
+bedroom temperature
+bedroom humidity
+
+
+
+1448227096
+22.3
+45
+24.0
+46
+
+
+1448227099
+22.4
+45
+23.9
+45
+
+
+
+
+timestamp
+kitchen temperature
+kitchen humidity
+bedroom temperature
+bedroom humidity
+
+
+timestamp
+kitchen temperature
+kitchen humidity
+bedroom temperature
+bedroom humidity
+
+timestamp
+kitchen temperature
+kitchen humidity
+bedroom temperature
+bedroom humidity
+
+
+1448227096
+22.3
+45
+24.0
+46
+
+
+1448227099
+22.4
+45
+23.9
+45
+
+
+
+1448227096
+22.3
+45
+24.0
+46
+
+1448227096
+22.3
+45
+24.0
+46
+
+1448227099
+22.4
+45
+23.9
+45
+
+1448227099
+22.4
+45
+23.9
+45
+宽格式是更加明显和更紧凑的格式,但不容易扩展。如果我们添加一个新的传感器系统,我们需要添加一个列到文件。而长格式,我们只继续插入新行。长格式也很适合R分析,可以使用数据透视表电子表格转换成宽格式。
+最后,我们将以逗号分隔值(CSV)格式交换数据,因为它从嵌入式设备生成非常容易,要储存为一个文本文件也很简单,而且在任何文本编辑器或电子表格应用程序阅读也非常方便。
+准备接收数据的表格
+如果你没有一个 Google Drive 帐户话可以创建一个。然后:
+
+在 Google Drive 创建一个新的 Google Sheet
+重命名第一张工作表(表中一个标签文档)，这就是数据将被上传到这里。
+创建标题行。每一行的数据,将由unix时间戳(1970年1月1日以来的秒数)、“id”、“变量”和“阅读量”构成。你可以冻结的行,保持可见滚动时,用“视图”>“冻结”>“一行”。
+打开脚本编辑器,在“工具”>“脚本编辑器…”菜单。
+
+在 Google Drive 创建一个新的 Google Sheet
+在 Google Drive 创建一个新的 Google Sheet
+重命名第一张工作表(表中一个标签文档)，这就是数据将被上传到这里。
+重命名第一张工作表(表中一个标签文档)，这就是数据将被上传到这里。
+创建标题行。每一行的数据,将由unix时间戳(1970年1月1日以来的秒数)、“id”、“变量”和“阅读量”构成。你可以冻结的行,保持可见滚动时,用“视图”>“冻结”>“一行”。
+创建标题行。每一行的数据,将由unix时间戳(1970年1月1日以来的秒数)、“id”、“变量”和“阅读量”构成。你可以冻结的行,保持可见滚动时,用“视图”>“冻结”>“一行”。
+打开脚本编辑器,在“工具”>“脚本编辑器…”菜单。
+打开脚本编辑器,在“工具”>“脚本编辑器…”菜单。
+现在您已经准备可以开始写代码啦!
+
+
+用谷歌脚本插入一行数据
+你现在应该看一下脚本编辑器，这个工具允许您编写自定义电子表格函数，比如 =SUM(A1:A5)或者是写简单的web应用程序。我们的第一步是编写一个函数,CSV数据表格插入一行。将这段代码复制到脚本编辑器:
+
+function appendLines(worksheet, csvData) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(worksheet);
+
+  var rows = Utilities.parseCsv(csvData);
+
+  for ( var i = 0; i < rows.length; i++ ) {
+    sheet.appendRow(rows[i]);
+  }
+}
+
+function test() {
+  Logger.log("Appending fake data");
+  appendLines("Raw", "12345, Monday, kitchen, temperature, 30\n12346, Tuesday, living room, humidity, 50");
+}
+function appendLines(worksheet, csvData) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(worksheet);
+
+  var rows = Utilities.parseCsv(csvData);
+
+  for ( var i = 0; i < rows.length; i++ ) {
+    sheet.appendRow(rows[i]);
+  }
+}
+
+function test() {
+  Logger.log("Appending fake data");
+  appendLines("Raw", "12345, Monday, kitchen, temperature, 30\n12346, Tuesday, living room, humidity, 50");
+}
+我们的 appendLine函数:
+
+打开当前电子表格(整个文档);
+在文档中选择一个表,由第一个参数标识(我们目前只有一个 Raw 表);
+解析CSV数据作为第二个参数;
+将每一行的CSV数据,追加到表中。
+
+打开当前电子表格(整个文档);
+打开当前电子表格(整个文档);
+在文档中选择一个表,由第一个参数标识(我们目前只有一个 Raw 表);
+在文档中选择一个表,由第一个参数标识(我们目前只有一个 Raw 表);
+解析CSV数据作为第二个参数;
+解析CSV数据作为第二个参数;
+将每一行的CSV数据,追加到表中。
+将每一行的CSV数据,追加到表中。
+我们另外写了一个小测试来测试appendLines函数的调用,以确保一切正常。选择工具栏中的test函数并单击run按钮可以运行这个脚本。如果执行了该脚本，这应该有两行添加到电子表格。您还可以在脚本编辑器中知道输出的“视图”>“日志”来查看日志。
+appendLines
+test
+run
+
+
+两行数据将被添加到表中：
+
+
+然而,我们的代码还有有一个重要缺陷。
+因为稍后当我们需要将数据作为一个web服务时,相关联的脚本将没有激活电子表格。我们需要更改代码,以构建唯一ID和电子表格ID的关系，从其唯一的ID中找到获取电子表格文档ID:
+
+
+然后修改appendLines通过ID获取文档:
+appendLines
+function appendLines(worksheet, csvData) {
+  var ss = SpreadsheetApp.openById("13_BUd7WJlA8Z9B5Vc-5tyf3vyRUYmIx67sDz7ZmyPG4");
+  var sheet = ss.getSheetByName(worksheet);
+
+  var rows = Utilities.parseCsv(csvData);
+
+  for ( var i = 0; i < rows.length; i++ ) {
+    sheet.appendRow(rows[i]);
+  }
+}
+function appendLines(worksheet, csvData) {
+  var ss = SpreadsheetApp.openById("13_BUd7WJlA8Z9B5Vc-5tyf3vyRUYmIx67sDz7ZmyPG4");
+  var sheet = ss.getSheetByName(worksheet);
+
+  var rows = Utilities.parseCsv(csvData);
+
+  for ( var i = 0; i < rows.length; i++ ) {
+    sheet.appendRow(rows[i]);
+  }
+}
+再次运test函数,它应该添加另一个两行“Raw”选项卡。
+test
+接收POST数据
+谷歌脚本接受两个处理HTTP GET和POST请求的特殊功能:分别是doGet和doPost。这些函数接受一个Event参数类型,而且必须从ContentService或HtmlService返回一个特殊的对象。
+doGet
+doPost
+
+Event
+ContentService
+HtmlService
+我们首先做一个函数响应POST请求，通过返回JSON格式的Event对象的内容继续研究API。将下面的代码添加到脚本编辑器:
+function doPost(e) {
+  var params = JSON.stringify(e);
+  return ContentService.createTextOutput(params);
+}
+function doPost(e) {
+  var params = JSON.stringify(e);
+  return ContentService.createTextOutput(params);
+}
+现在点击“发布”>“部署为web应用程序…”就可以发布了。给版本一个简短描述然后执行,并允许匿名访问,这样你就可以发布到电子表格不需要身份验证,接着部署:
+
+
+复制URL:
+
+
+最后你需要发送HTTP请求到这个新web服务器，然后分享公开的电子表格。返回到电子表格选项卡,打开“文件”>“分享…”。点击“获取共享链接”,允许任何人编辑链接:
+
+
+
+现在,打开你最喜欢的HTTP客户端(比如 Postman就是一款好用的Chrome扩展)。或者在Terminal中使用CURL,向这个URl发送一个POST请求。如果使用CURL确保添加-l参数遵循重定向以及--data参数来添加数据:
+-l
+--data
+$ curl --data "hello, world" "https://script.google.com/macros/s/AKfycbxOw-Tl_r0jDV4wcnixdYdUjcNipSzgufiezRKr28Q5OAN50cIP/exec"
+
+{"parameter":{"hello, world":""},"contextPath":"","contentLength":12,"queryString":null,"parameters":{"hello, world":[""]},"postData":{"length":12,"type":"application/x-www-form-urlencoded","contents":"hello, world","name":"postData"}}%
+$ curl --data "hello, world" "https://script.google.com/macros/s/AKfycbxOw-Tl_r0jDV4wcnixdYdUjcNipSzgufiezRKr28Q5OAN50cIP/exec"
+
+{"parameter":{"hello, world":""},"contextPath":"","contentLength":12,"queryString":null,"parameters":{"hello, world":[""]},"postData":{"length":12,"type":"application/x-www-form-urlencoded","contents":"hello, world","name":"postData"}}%
+我的POST请求收到了JSON响应，可以看到e的结构参数传递给了doPost。你将可以看到 “hello, world” POST 请求的数据将会存储在e["postData"]["contents"]中。
+e
+doPost
+e["postData"]["contents"]
+我们可以使用URL传递参数doPost。重复相同的请求,但附加?sheet=Raw (确保URL引用):
+doPost
+?sheet=Raw 
+$ curl -L --data "hello, world" "https://script.google.com/macros/s/AKfycbxOw-Tl_r0jDV4wcnixdYdUjcNipSzgufiezRKr28Q5OAN50cIP/exec?sheet=Raw"
+
+{"parameter":{"sheet":"Raw","hello, world":""},"contextPath":"","contentLength":12,"queryString":"sheet=Raw","parameters":{"sheet":["Raw"],"hello, world":[""]},"postData":{"length":12,"type":"application/x-www-form-urlencoded","contents":"hello, world","name":"postData"}}%
+$ curl -L --data "hello, world" "https://script.google.com/macros/s/AKfycbxOw-Tl_r0jDV4wcnixdYdUjcNipSzgufiezRKr28Q5OAN50cIP/exec?sheet=Raw"
+
+{"parameter":{"sheet":"Raw","hello, world":""},"contextPath":"","contentLength":12,"queryString":"sheet=Raw","parameters":{"sheet":["Raw"],"hello, world":[""]},"postData":{"length":12,"type":"application/x-www-form-urlencoded","contents":"hello, world","name":"postData"}}%
+URL参数出现在 e["parameter"]["sheet"]。既然我们了解事件对象的结构,我们就可以修改doPost为:
+e["parameter"]["sheet"]
+
+doPost
+
+在URL中找到一个"sheet"参数
+从POST请求中提取CSV数据
+附加在CSV数据到指定表的所有行。
+
+在URL中找到一个"sheet"参数
+在URL中找到一个"sheet"参数
+从POST请求中提取CSV数据
+从POST请求中提取CSV数据
+附加在CSV数据到指定表的所有行。
+附加在CSV数据到指定表的所有行。
+function doPost(e) {
+  var contents = e.postData.contents;
+  var sheetName = e.parameter['sheet'];
+
+  // Append to spreadsheet
+  appendLines(sheetName, contents);
+
+  var params = JSON.stringify(e);
+  return ContentService.createTextOutput(params);
+
+}
+function doPost(e) {
+  var contents = e.postData.contents;
+  var sheetName = e.parameter['sheet'];
+
+  // Append to spreadsheet
+  appendLines(sheetName, contents);
+
+  var params = JSON.stringify(e);
+  return ContentService.createTextOutput(params);
+
+}
+发布一个新版本的应用程序(“发布”>“部署为web应用程序…”,“项目版本”设置为“新”,描述它,并点击“更新”)。现在您可以附加到电子表格行到一个HTTP Post请求!重新运行curl命令,并观察最新的添加到您的电子表格行:
+
+
+清除电子表格:删除所有行除了标题。
+更多关于doGet和doPost的资料: https://developers.google.com/apps-script/guides/web
+doGet
+doPost
+https://developers.google.com/apps-script/guides/web
+更多关于Event 对象的资料: https://developers.google.com/apps-script/guides/triggers/events
+Event
+https://developers.google.com/apps-script/guides/triggers/events
+从Python中上传数据
+在实践中,您可以使用任意语言发起POST请求上传数据到物联网平台。本教程中,我使用一个python脚本创建了一些两个房间每隔一个小时的随机湿度和温度数据并最终上传电子表格。
+本文由于篇幅有，且本节内容并不影响大局，笔者放弃了对本小节其余部分的翻译，请读者谅解。
+第二部分：在R中获取数据并通过ggplot制图
+本节，我们将讨论:如何从网上下载CSV数据,处理日期字段,并使各种与ggplot2相关的细节。如果你阅读教程时已经使用R且勾起了使用谷歌表数据的冲动这将是我们的荣幸，如果没有,我希望本文将激励你深入学习R!
+GitHub上的相关代码
+GitHub上的相关代码
+推荐设置
+如果你是一个经验丰富的R用户,你已经知道你喜欢开发环境可以使用你自己的IDE。如果不是,我建议用RStudio,它可以用于Linux,Mac和Windows多个平台上。RStudio是一个像样的编辑器(还可以支持Vim模式)并且将Shiny集成其中。下载地址
+
+下载地址
+此外，我们还需要在R中安装ggplot2包：
+ggplot2
+install.packages('ggplot2')
+install.packages('ggplot2')
+或者直接在Rstudio中点击Install按钮，输入ggplot2后安装。
+Install
+从web URL导入一个CSV文件
+从网上抓取CSV数据很简单:只要用read.csv带上url参数,它会自动下载正确的数据,使数据帧头的名字。创建一个helpers.R文件,并编写下面的代码:
+read.csv
+url
+
+helpers.R
+getRaw <- function () {
+  data <- read.csv(
+    url("https://script.google.com/macros/s/AKfycbxOw-Tl_r0jDV4wcnixdYdUjcNipSzgufiezRKr28Q5OAN50cIP/exec?sheet=Raw"),
+    strip.white = TRUE
+  )
+  data
+}
+getRaw <- function () {
+  data <- read.csv(
+    url("https://script.google.com/macros/s/AKfycbxOw-Tl_r0jDV4wcnixdYdUjcNipSzgufiezRKr28Q5OAN50cIP/exec?sheet=Raw"),
+    strip.white = TRUE
+  )
+  data
+}
+我们将在稍后的 Shiny App 中用到helpers.R。getRaw函数将会返回一个数据库格式的数据，包括5个变量，而表头就和Google Sheets里面的电子表格的表头一样。
+helpers.R
+getRaw
+> data <- getRaw()
+> summary(data)
+   timestamp                                              date         origin           variable       value      
+ Min.   :1.448e+09   Mon Nov 23 2015 22:44:45 GMT+0100 (CET):  4   bedroom:120   humidity   :120   Min.   :23.00  
+ 1st Qu.:1.448e+09   Mon Nov 23 2015 23:44:45 GMT+0100 (CET):  4   kitchen:120   temperature:120   1st Qu.:23.88  
+ Median :1.448e+09   Thu Nov 26 2015 00:44:45 GMT+0100 (CET):  4                                   Median :32.55  
+ Mean   :1.448e+09   Thu Nov 26 2015 01:44:45 GMT+0100 (CET):  4                                   Mean   :34.34  
+ 3rd Qu.:1.448e+09   Thu Nov 26 2015 02:44:45 GMT+0100 (CET):  4                                   3rd Qu.:44.45  
+ Max.   :1.449e+09   Thu Nov 26 2015 03:44:45 GMT+0100 (CET):  4                                   Max.   :49.90  
+                     (Other)                                :216                                                  
+>
+> data <- getRaw()
+> summary(data)
+   timestamp                                              date         origin           variable       value      
+ Min.   :1.448e+09   Mon Nov 23 2015 22:44:45 GMT+0100 (CET):  4   bedroom:120   humidity   :120   Min.   :23.00  
+ 1st Qu.:1.448e+09   Mon Nov 23 2015 23:44:45 GMT+0100 (CET):  4   kitchen:120   temperature:120   1st Qu.:23.88  
+ Median :1.448e+09   Thu Nov 26 2015 00:44:45 GMT+0100 (CET):  4                                   Median :32.55  
+ Mean   :1.448e+09   Thu Nov 26 2015 01:44:45 GMT+0100 (CET):  4                                   Mean   :34.34  
+ 3rd Qu.:1.448e+09   Thu Nov 26 2015 02:44:45 GMT+0100 (CET):  4                                   3rd Qu.:44.45  
+ Max.   :1.449e+09   Thu Nov 26 2015 03:44:45 GMT+0100 (CET):  4                                   Max.   :49.90  
+                     (Other)                                :216                                                  
+>
+转化 date-time 列
+现在让我们把日期-时间数据转化为适当的R date对象。最简单的方法是将UNIX时间戳列转换为POSIXct对象并取代“日期”列。自从我们生成UTC日期,我们将时区设置为“格林尼治时间”。完成getRaw函数:
+getRaw
+getRaw <- function () {
+  data <- read.csv(
+    url("https://script.google.com/macros/s/AKfycbxOw-Tl_r0jDV4wcnixdYdUjcNipSzgufiezRKr28Q5OAN50cIP/exec?sheet=Raw"),
+    strip.white = TRUE
+  )
+  data$date = as.POSIXct(data$timestamp, tz="GMT", origin="1970-01-01")
+  data
+}
+getRaw <- function () {
+  data <- read.csv(
+    url("https://script.google.com/macros/s/AKfycbxOw-Tl_r0jDV4wcnixdYdUjcNipSzgufiezRKr28Q5OAN50cIP/exec?sheet=Raw"),
+    strip.white = TRUE
+  )
+  data$date = as.POSIXct(data$timestamp, tz="GMT", origin="1970-01-01")
+  data
+}
+万事俱备，只欠东风!
+与 ggplot2 共舞
+ggplot2包提供了机智的qplot 函数，一行代码可以绘制种类繁多的图表,使R成为我最喜欢的工具数据。
+ggplot2包
+qplot
+首先,我们画上所有的值。
+import(ggplot2)
+source("helpers.R")
+data <- getRaw()
+qplot(date, value, data = data)
+import(ggplot2)
+source("helpers.R")
+data <- getRaw()
+qplot(date, value, data = data)
+
+
+qplot(date, value, data = data, colour = origin)
+qplot(date, value, data = data, colour = origin)
+我们可以根据传感器的位置用颜色区分图上的点:
+
+
+我们仍然不能区分温度和湿度，让我们在不同的面板使用“facets”区分这些变量。我们将添加“free_y”选项,允许每个独立y拉伸:
+qplot(date, value, data = data, colour = origin) + facet_grid(variable ~ ., scales = "free_y")
+qplot(date, value, data = data, colour = origin) + facet_grid(variable ~ ., scales = "free_y")
+
+
+因为有很多噪音,加入点线使图表更容易阅读:
+qplot(date, value, data = data, colour = origin, geom = "line") + facet_grid(variable ~ ., scales = "free_y")
+qplot(date, value, data = data, colour = origin, geom = "line") + facet_grid(variable ~ ., scales = "free_y")
+
+
+如果您添加一个传感器在一个新的房间,一个新行颜色会自动出现在图表上。如果你添加一个新的类型的数据(如“权力”功率计),第三个facets就会出现。试一试!只是修改Python脚本发送数据并重新运行Python脚本,运行data<-- getRaw()这行,并且最新qplot命令。
+
+data<-- getRaw()
+
+qplot
+如果x轴上每个点的日期范围似乎是错的话,可以尝试添加scale_x_datetime:
+scale_x_datetime
+qplot(date, value, data = data, colour = origin, geom = "line") + scale_x_datetime() + facet_grid(variable ~ ., scales = "free_y")
+qplot(date, value, data = data, colour = origin, geom = "line") + scale_x_datetime() + facet_grid(variable ~ ., scales = "free_y")
+为 Shiny 封装画图函数
+为了之后 Shiny 便于调用,我们就把两个qplot封装成一个函数。我们的helpers.R文件现在看起来像这样:
+qplot
+
+helpers.R
+library(ggplot2)
+
+getRaw <- function () {
+  data <- read.csv(
+    url("https://script.google.com/macros/s/AKfycbxOw-Tl_r0jDV4wcnixdYdUjcNipSzgufiezRKr28Q5OAN50cIP/exec?sheet=Raw"),
+    strip.white = TRUE
+  )
+
+  data$date = as.POSIXct(data$timestamp, tz="GMT", origin="1970-01-01")
+  data
+}
+
+timeseriesPlot <- function(data) {
+  qplot(date, value, data = data, colour = origin, geom = "line") + scale_x_datetime() + facet_grid(variable ~ ., scales = "free_y")
+}
+
+boxPlot <- function(data) {
+  qplot(origin, value, data = data, geom = "boxplot") + facet_grid(variable ~ ., scales = "free_y")
+}
+library(ggplot2)
+
+getRaw <- function () {
+  data <- read.csv(
+    url("https://script.google.com/macros/s/AKfycbxOw-Tl_r0jDV4wcnixdYdUjcNipSzgufiezRKr28Q5OAN50cIP/exec?sheet=Raw"),
+    strip.white = TRUE
+  )
+
+  data$date = as.POSIXct(data$timestamp, tz="GMT", origin="1970-01-01")
+  data
+}
+
+timeseriesPlot <- function(data) {
+  qplot(date, value, data = data, colour = origin, geom = "line") + scale_x_datetime() + facet_grid(variable ~ ., scales = "free_y")
+}
+
+boxPlot <- function(data) {
+  qplot(origin, value, data = data, geom = "boxplot") + facet_grid(variable ~ ., scales = "free_y")
+}
+第三部分:与Shiny结合
+在这部分, 我们将创建真正的在线仪表盘。Shiny 将 Web 服务器和一个可交互式的Web前端融合在一起，并嵌入 R 的代码和图表。我们将使用它制作一个基于 Web 的仪表盘，换句话说就是一个可以实时修改的传感器数据展示网站。本节，我们将用 Google Sheets 上的数据建立一个简单的页面来展示时间序列和箱线图。
+相关代码
+相关代码
+设置 Shiny
+我建议你按照官方教程最新的安装说明安装。如果你有时间,跟随整个教程的完整概述了解 Shiny 的思维方式。
+官方教程
+我们的第一个仪表板:没有交互性
+我们第一次仪表盘只会显示两个从 Google Sheets 提取最新数据的图表。Shiny 应用由两部分组成：ui.R 和 server.R。ui.R 决定了仪表盘的外观：可视化的内容是什么以及如何排版。在这个文件中我们需要先规定好可视化的对象的名称和类型，具体的可视化内容则在server.R规定。
+ui.R
+server.R
+ui.R
+server.R
+如下的实例代码定义了一个容器: shinyUI(fluidPage(....))。容器里面包含了一个垂直布局的盒子，将子类垂直堆叠。在布局内部，我们放置三个实体：一个标题栏和两个画图实体。
+shinyUI(fluidPage(....))
+# ui.R
+
+shinyUI(fluidPage(
+  verticalLayout(
+    titlePanel("Sensor data dashboard"),
+    plotOutput("timeseries"),
+    plotOutput("boxplot")
+  )  
+))
+# ui.R
+
+shinyUI(fluidPage(
+  verticalLayout(
+    titlePanel("Sensor data dashboard"),
+    plotOutput("timeseries"),
+    plotOutput("boxplot")
+  )  
+))
+下一步是渲染图形,在server.R中用plotOutputs选项控制显示。server.R中的代码在如下时刻会被调用：
+server.R
+plotOutputs
+
+server.R
+
+当服务器启动时;
+每次访问一个页面时;
+每次一个交互式的部件改变时。
+
+当服务器启动时;
+当服务器启动时;
+每次访问一个页面时;
+每次访问一个页面时;
+每次一个交互式的部件改变时。
+每次一个交互式的部件改变时。
+在我们的例子中,当服务器启动时,我们只希望导入辅助代码但不执行(数据加载和绘制函数)。每次页面加载的时候,我们想要获取新数据并画出情节。我们没有小部件,因此,没有第三类中的代码。
+这是服务器代码的初稿,下面,就完成了这个任务：shinyServer(...)代码块之外的代码只会被执行一次，而代码块里面的部分每次访问页面都会被执行。这最后一块读取原始数据,创建了一个时间序列图并将它放入一个我们在ui.R里定义的名为“timeseries”的plotOuput中,然后渲染一个箱线图放入名为“boxplot”的plotOutput中。
+
+shinyServer(...)
+
+
+ui.R
+plotOuput
+plotOutput
+# server.R
+
+source("helpers.R")
+
+shinyServer(function(input, output) {
+
+  # Load data when app is visited
+  data <- getRaw()
+
+  # Populate plots
+  output$timeseries <- renderPlot({
+    timeseriesPlot(data)
+  })
+
+  output$boxplot <- renderPlot({
+    boxPlot(data)
+  })
+
+})
+# server.R
+
+source("helpers.R")
+
+shinyServer(function(input, output) {
+
+  # Load data when app is visited
+  data <- getRaw()
+
+  # Populate plots
+  output$timeseries <- renderPlot({
+    timeseriesPlot(data)
+  })
+
+  output$boxplot <- renderPlot({
+    boxPlot(data)
+  })
+
+})
+像上节提到的helpers.R文件一样,在同一文件夹下创建ui.R和server.R文件后，RStudio 将自动检测到这些文件是 Shiny 应用并且会在编辑器上方的工具栏中自动出现一个 “Run App” 的按钮。
+helpers.R
+ui.R
+server.R
+
+
+使用该按钮来预览应用程序,它应该弹出一个类似下面的窗口:
+
+
+注意,我们的没有对谷歌文档自动检测数据变化的功能,你仍然需要刷新页面来获得最新的数据。
+添加一个按日期分类的网格布局和过滤器
+现在让我们添加一些日期选择小部件,限制显示的日期范围。我们将首先从一个简单的扩展布局垂直堆栈流体网格。遇到足够宽的显示,这种布局显示网格。遇到窄的显示器,它返回一个垂直堆栈,以避免横向滚动。网格会以一个包含column元素的fluidRow元素。分配每一列的宽度(单位1⁄12屏幕的宽度)可以包含另一个小部件(一个输入,一个图表,或另一个网格)。新的ui.R文件下面会现在显示嵌套的行和列的布局。
+column
+fluidRow
+ui.R
+第二个修改是添加输入小部件，输入允许用户通过输入文本,数量,日期,选择按钮…完成可视化交互。你也可以在这里浏览完整的素材库。
+素材库
+我们将使用两种类型的输入:
+
+dateRangeInput:一个下拉日历选择开始和结束日期。
+numericInput:一个只接受数字的输入框,显示了一个向上和向下箭头来修改输入值。
+
+dateRangeInput:一个下拉日历选择开始和结束日期。
+dateRangeInput:一个下拉日历选择开始和结束日期。
+dateRangeInput
+numericInput:一个只接受数字的输入框,显示了一个向上和向下箭头来修改输入值。
+numericInput:一个只接受数字的输入框,显示了一个向上和向下箭头来修改输入值。
+numericInput
+我们使用dateRangeInput指定日期范围的数据绘制,和四个数字输入指定开始一天的小时和分钟,小时和分钟的最后一天。
+dateRangeInput
+# ui.R
+
+shinyUI(fluidPage(
+  verticalLayout(
+    titlePanel("Sensor data dashboard"),
+    fluidRow(
+      column(3,
+             dateRangeInput("dates", "Date Range", start="2015-11-20"),
+             fluidRow(
+               column(4, h3("From:")),
+               column(4, numericInput("min.hours", "hours:", value=0)),
+               column(4, numericInput("min.minutes", "minutes:", value=0))
+             ),
+             fluidRow(
+               column(4, h3("To:")),
+               column(4, numericInput("max.hours", "hours:", value=23)),
+               column(4, numericInput("max.minutes", "minutes:", value=59))
+             )
+      ),
+      column(9, plotOutput("timeseries"))
+    ),
+    fluidRow(
+      column(3),
+      column(9, plotOutput("boxplot"))
+    )
+  )
+))
+# ui.R
+
+shinyUI(fluidPage(
+  verticalLayout(
+    titlePanel("Sensor data dashboard"),
+    fluidRow(
+      column(3,
+             dateRangeInput("dates", "Date Range", start="2015-11-20"),
+             fluidRow(
+               column(4, h3("From:")),
+               column(4, numericInput("min.hours", "hours:", value=0)),
+               column(4, numericInput("min.minutes", "minutes:", value=0))
+             ),
+             fluidRow(
+               column(4, h3("To:")),
+               column(4, numericInput("max.hours", "hours:", value=23)),
+               column(4, numericInput("max.minutes", "minutes:", value=59))
+             )
+      ),
+      column(9, plotOutput("timeseries"))
+    ),
+    fluidRow(
+      column(3),
+      column(9, plotOutput("boxplot"))
+    )
+  )
+))
+通过ShinyServers回调的input参数,服务器端代码可以获取用户从输入部件的值。当前端的输入有任何改变时，shiny将自动重新执行服务器上所有的renderPlot或者reactive的代码块来获取新的输入值。reactive是用来根据用户输入转换数据的,我们将使用一个应用日期范围过滤器。在下面新代码示例的reactive代码块中转换我们输入的两个POSIXct日期对象,然后使用它们作为日期的过滤条件来过滤数据框。
+ShinyServers
+input
+renderPlot
+reactive
+reactive
+reactive
+我们将reactive代码块分配给data.filt并且修改renderPlot调用绘制data.filt()而不是原始data。注意语法:data.filt返回代码块的值传递给reactive。正如上面介绍的那样,每一次的输入都会引发reactive代码块的更新，而其他调用data.filt()的代码块也会跟着更新一次。在下面的例子中，两个renderPlot代码块都会被重新执行以更新数据。
+reactive
+data.filt
+renderPlot
+data.filt()
+data
+data.filt
+reactive
+reactive
+data.filt()
+renderPlot
+警告:确保包括括号每次你调用data.filt()!
+data.filt()
+# server.R
+
+source("helpers.R")
+
+shinyServer(function(input, output) {
+
+  # Load data when app is visited
+  data <- getRaw()
+
+  # Filter by device ID / time range when options are updated
+  data.filt <- reactive({
+    mindate <- as.POSIXct.Date(input$dates[1]) + (input$min.hours * 60 + input$min.minutes) * 60
+    maxdate <- as.POSIXct.Date(input$dates[2]) + (input$max.hours * 60 + input$max.minutes) * 60
+
+    subset(data, date > mindate & date < maxdate)
+  })
+
+  # Populate plots
+  output$timeseries <- renderPlot({
+    timeseriesPlot(data.filt())
+  })
+
+  output$boxplot <- renderPlot({
+    boxPlot(data.filt())
+  })
+
+})
+# server.R
+
+source("helpers.R")
+
+shinyServer(function(input, output) {
+
+  # Load data when app is visited
+  data <- getRaw()
+
+  # Filter by device ID / time range when options are updated
+  data.filt <- reactive({
+    mindate <- as.POSIXct.Date(input$dates[1]) + (input$min.hours * 60 + input$min.minutes) * 60
+    maxdate <- as.POSIXct.Date(input$dates[2]) + (input$max.hours * 60 + input$max.minutes) * 60
+
+    subset(data, date > mindate & date < maxdate)
+  })
+
+  # Populate plots
+  output$timeseries <- renderPlot({
+    timeseriesPlot(data.filt())
+  })
+
+  output$boxplot <- renderPlot({
+    boxPlot(data.filt())
+  })
+
+})
+再次运行应用程序。新结果应该类似于下面我的例子:
+
+
+发布到Shinyapps.io
+ShinyApps.io 为 Shiny 应用提供一个托管服务，而这个扩管服务同时也是 RStudio 的另一个产品。他们的开发者在 RStudio 中集成了这个服务：简单地在你 Shiny 应用的右上角点击"发布"，跟着指引，创建一个免费的账号然后上传你的仪表盘。
+
+
+
+
+一旦发布应用程序,您将注意到一个问题是:在仪表板上没有任何显示。如果你检查服务器日志,你会注意到从 R 访问 Google Sheets 的 HTTPS 请求失败。下面,我们的教程的最后一节将解释如何解决。
+不幸的是, ShinyApps (在撰写本文时)不支持https url,从而阻碍了请求 Google Sheets。为了解决这一问题,我们需要通过外部路由请求服务器(代理),可以通过HTTP、HTTPS可以获取目标页面,并通过HTTP请求回到R的read.csv返回相应的值。这样做不利于发挥安全的HTTPS的优势,但由于我们是在做一项公共仪表板数据公开在谷歌,而且大多仅供演示,我不关心它。
+read.csv
+保存你的工作,我建立了一个HTTPS-to-HTTP代理服务器。在server.R代码,在 script.google.com/之前添加shinyproxy.appspot.com/。在我的例子中,网址是:
+server.R
+# fragment of helpers.R
+
+data <- read.csv(
+  url("https://shinyproxy.appspot.com/script.google.com/macros/s/AKfycbxOw-Tl_r0jDV4wcnixdYdUjcNipSzgufiezRKr28Q5OAN50cIP/exec?sheet=Raw"),
+  strip.white = TRUE
+)
+# fragment of helpers.R
+
+data <- read.csv(
+  url("https://shinyproxy.appspot.com/script.google.com/macros/s/AKfycbxOw-Tl_r0jDV4wcnixdYdUjcNipSzgufiezRKr28Q5OAN50cIP/exec?sheet=Raw"),
+  strip.white = TRUE
+)
+再次发布仪表板,你成功了!
+更多的代理
+HTTPS代理是一个驻留在应用程序引擎的简单代码。相关代码
+相关代码
+原文地址 http://douglas-watson.github.io/post/gdocs_0_intro/
+原文地址 http://douglas-watson.github.io/post/gdocs_0_intro/
+原文地址 http://douglas-watson.github.io/post/gdocs_0_intro/
+http://douglas-watson.github.io/post/gdocs_0_intro/

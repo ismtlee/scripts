@@ -1,0 +1,391 @@
+封装
+让我们回顾下在ES3中定义简单对象的方式：
+  var man = {
+    name: 'kid',
+    age: 18
+  }
+  var man = {
+    name: 'kid',
+    age: 18
+  }
+非常简洁明了，但开发者缺乏更多的控制权。比如，我希望某个属性只读，或者成为私有属性。为此，ES5提供了一些可用机制，协助你封装对象。
+配置项
+Object.defineProperty方法为对象定义属性，并附带一些可选项：
+Object.defineProperty
+  var man = {}
+  Object.defineProperty(man, 'name', {
+    value: 'kid',
+    writable: true,
+    enumerable: true,
+    configurable: true
+  })
+  console.log(man.name)  // -> 'kid'
+  var man = {}
+  Object.defineProperty(man, 'name', {
+    value: 'kid',
+    writable: true,
+    enumerable: true,
+    configurable: true
+  })
+  console.log(man.name)  // -> 'kid'
+配置项作用如下：
+
+writable - 属性是否可写
+enumerable - 属性是否可在for-in中出现
+configurable - 属性是否可以被重新定义
+
+writable - 属性是否可写
+writable - 属性是否可写
+writable
+enumerable - 属性是否可在for-in中出现
+enumerable - 属性是否可在for-in中出现
+enumerable
+for-in
+configurable - 属性是否可以被重新定义
+configurable - 属性是否可以被重新定义
+configurable
+这三个配置的默认值都为false，所以当你不配置时，生成的就是一个只读的私有属性：
+false
+只读的私有属性
+  var man = {}
+  Object.defineProperty(man, 'name', {
+    value: 'kid',
+  })
+  
+  man.name = 'wumeng'    // 不可写，Strict模式下会抛出异常
+  console.log(man.name)  // -> 'kid'
+  
+  for( var key in man ){
+    console.log( man[key] )  // man.name不会被遍历到
+  }
+  
+  // 不能再次定义，即使只是修改配置也不行，Strict模式下会抛出异常
+  Object.defineProperty(man, 'name', {
+    writable: true
+  })
+  var man = {}
+  Object.defineProperty(man, 'name', {
+    value: 'kid',
+  })
+  
+  man.name = 'wumeng'    // 不可写，Strict模式下会抛出异常
+  console.log(man.name)  // -> 'kid'
+  
+  for( var key in man ){
+    console.log( man[key] )  // man.name不会被遍历到
+  }
+  
+  // 不能再次定义，即使只是修改配置也不行，Strict模式下会抛出异常
+  Object.defineProperty(man, 'name', {
+    writable: true
+  })
+属性访问器（ Getter / Setter ）
+访问器将真正存值的变量隐藏起来，并提供对外的接口，当你读取或设置属性时，可执行一定的操作：
+  var birthyear = 1989
+  var man = {}
+  Object.defineProperty(man, 'age', {
+    get: function(){
+      var now = new Date()
+      return now.getFullYear() - birthyear
+    },
+    set: function( age ){
+      var now = new Date()
+      birthyear = now.getFullYear() - age
+    }
+  })
+
+  // 假设当前为2015年
+  console.log(man.age)    // -> 26
+  man.age = 18
+  console.log(birthyear)  // 1997
+  console.log(man.age)    // 18
+  var birthyear = 1989
+  var man = {}
+  Object.defineProperty(man, 'age', {
+    get: function(){
+      var now = new Date()
+      return now.getFullYear() - birthyear
+    },
+    set: function( age ){
+      var now = new Date()
+      birthyear = now.getFullYear() - age
+    }
+  })
+
+  // 假设当前为2015年
+  console.log(man.age)    // -> 26
+  man.age = 18
+  console.log(birthyear)  // 1997
+  console.log(man.age)    // 18
+上列中set的参数就是你设置的值。从外部看，你设置man.age的方式与赋值无异，这与el.style.color = "red"相似：看上去是简单的赋值，却触发了一定行为（设置DOM文本为红色）。
+set
+man.age
+el.style.color = "red"
+访问器在其他语言（如C#）中很常见，是很好用的特性，因为它让MVVM模式拥有一种十分便捷的数据绑定（Model->View）方式，可参见Vue.js，在此不展开。
+Vue.js
+注意，如果你用了访问器，则不能再设置value与writable配置项。
+value
+writable
+多重定义
+你可以用Object.defineProperties方法同时定义多个属性：
+Object.defineProperties
+  var man = {}
+  Object.defineProperties(man, {
+    name: {
+      value: 'kid',
+      writable: false
+    },
+    age: {
+      get: function(){},
+      set: function(age){}
+    }
+  })
+  var man = {}
+  Object.defineProperties(man, {
+    name: {
+      value: 'kid',
+      writable: false
+    },
+    age: {
+      get: function(){},
+      set: function(age){}
+    }
+  })
+读取值与配置项
+Object.getOwnPropertyDescriptor方法可读取defineProperty设定的值、配置项、访问器：
+Object.getOwnPropertyDescriptor
+defineProperty
+  var man = {}
+  Object.defineProperty(man, 'name', {
+    value: 'kid',
+    writable: true,
+    enumerable: true,
+    configurable: true,
+    get: function(){},
+    set: function(){}
+  })
+  
+  var desc = Object.getOwnPropertyDescriptor(man, 'name')
+  console.log(desc)
+  
+  // ->
+  // Object {
+  //   value: 'kid',
+  //   writable: true,
+  //   enumerable: true,
+  //   configurable: true
+  //   get: function(){},
+  //   set: function(){}
+  // }
+  var man = {}
+  Object.defineProperty(man, 'name', {
+    value: 'kid',
+    writable: true,
+    enumerable: true,
+    configurable: true,
+    get: function(){},
+    set: function(){}
+  })
+  
+  var desc = Object.getOwnPropertyDescriptor(man, 'name')
+  console.log(desc)
+  
+  // ->
+  // Object {
+  //   value: 'kid',
+  //   writable: true,
+  //   enumerable: true,
+  //   configurable: true
+  //   get: function(){},
+  //   set: function(){}
+  // }
+禁止扩展
+Object.preventExtensions方法禁止对象添加新属性：
+Object.preventExtensions
+  var man = {
+    name: 'kid'
+  }
+  Object.preventExtensions(man)
+  man.age = 18  // Strict模式下抛出异常
+  var man = {
+    name: 'kid'
+  }
+  Object.preventExtensions(man)
+  man.age = 18  // Strict模式下抛出异常
+通过Object.isExtensible方法可以检验对象是否可以扩展：
+Object.isExtensible
+  var man = {
+    name: 'kid'
+  }
+  Object.isExtensible(man)  // true
+  Object.preventExtensions(man)
+  Object.isExtensible(man)  // false
+  var man = {
+    name: 'kid'
+  }
+  Object.isExtensible(man)  // true
+  Object.preventExtensions(man)
+  Object.isExtensible(man)  // false
+密封
+Object.seal方法用来密封一个对象，这比禁止扩展更严格一些，根据MDN Object.seal的描述，对象一旦被密封，则不可增加、删除其属性，也不可配置或定义访问器。若在Strict模式下违反上述原则，将抛出异常。但在Chrome中实测，仍可配置writable与configurable项，原因未知。：
+Object.seal
+MDN Object.seal
+writable
+configurable
+  var man = {
+    name: 'kid'
+  }
+  Object.seal(man)
+
+  man.age = 18     // 不能添加属性，抛出异常
+  delete man.name  // 不能删除属性，抛出异常
+  
+  Object.defineProperty(man, 'name', {
+    enumerable: false,  // 不能配置enumerable，抛出异常
+    get: function(){},  // 不能转换为访问器，抛出异常
+    set: function(){}   // 不能转换为访问器，抛出异常
+  })
+  var man = {
+    name: 'kid'
+  }
+  Object.seal(man)
+
+  man.age = 18     // 不能添加属性，抛出异常
+  delete man.name  // 不能删除属性，抛出异常
+  
+  Object.defineProperty(man, 'name', {
+    enumerable: false,  // 不能配置enumerable，抛出异常
+    get: function(){},  // 不能转换为访问器，抛出异常
+    set: function(){}   // 不能转换为访问器，抛出异常
+  })
+用isSealed可检查一个对象是否密封：
+isSealed
+  var man = {
+    name: 'kid'
+  }
+  
+  Object.isSealed(man)  // -> false
+  Object.seal(man)
+  Object.isSealed(man)  // -> true
+  var man = {
+    name: 'kid'
+  }
+  
+  Object.isSealed(man)  // -> false
+  Object.seal(man)
+  Object.isSealed(man)  // -> true
+冻结
+密封对象尚可修改属性值，而冻结对象连这也不行，可谓最严格的封装，近似于常量：
+  var man = {
+    name: 'kid'
+  }
+  Object.freeze(man)
+
+  man.name = 'wumeng'  // 不能修改属性，抛出异常
+  man.age = 18         // 不能添加属性，抛出异常
+  delete man.name      // 不能删除属性，抛出异常
+  
+  Object.defineProperty(man, 'name', {
+    writable: true,      // 不能配置为true，抛出异常
+    enumerable: true,    // 不能配置为true，抛出异常
+    configurable: true,  // 不能配置为true，抛出异常
+    get: function(){},   // 不能转换为访问器，抛出异常
+    set: function(){},   // 不能转换为访问器，抛出异常
+  })
+  var man = {
+    name: 'kid'
+  }
+  Object.freeze(man)
+
+  man.name = 'wumeng'  // 不能修改属性，抛出异常
+  man.age = 18         // 不能添加属性，抛出异常
+  delete man.name      // 不能删除属性，抛出异常
+  
+  Object.defineProperty(man, 'name', {
+    writable: true,      // 不能配置为true，抛出异常
+    enumerable: true,    // 不能配置为true，抛出异常
+    configurable: true,  // 不能配置为true，抛出异常
+    get: function(){},   // 不能转换为访问器，抛出异常
+    set: function(){},   // 不能转换为访问器，抛出异常
+  })
+但必须注意，freeze只能实现浅冻结，即仅仅冻结子属性。若子属性是一个对象，比如一个数组，那么它的子属性依然不受限制：
+freeze
+  var man = {
+    hobbies: ['game','comic','music']
+  }
+  Object.freeze(man)
+  man.hobbies[1] = 'code'
+  console.log(man.hobbies)  // -> ['game','comic','music']
+  var man = {
+    hobbies: ['game','comic','music']
+  }
+  Object.freeze(man)
+  man.hobbies[1] = 'code'
+  console.log(man.hobbies)  // -> ['game','comic','music']
+Object.isFrozen方法检测一个对象是否被冻结：
+Object.isFrozen
+  var man = {
+    name: 'kid'
+  }
+  
+  Object.isFrozen(man)  // -> false
+  Object.freeze(man)
+  Object.isFrozen(man)  // -> true
+  var man = {
+    name: 'kid'
+  }
+  
+  Object.isFrozen(man)  // -> false
+  Object.freeze(man)
+  Object.isFrozen(man)  // -> true
+读取属性名
+ES5还新增了两个方法来获取对象属性的key名：
+key
+Object.keys返回一个数组，包含对象的属性名，但会忽略不可枚举的属性：
+Object.keys
+  var man = {
+    name: 'kid',
+    age: 18
+  }
+  
+  Object.defineProperty(man, 'job', {
+    value: 'coder',
+    enumerable: false
+  })
+  
+  Object.keys(man)  // -> ['name','age']
+  var man = {
+    name: 'kid',
+    age: 18
+  }
+  
+  Object.defineProperty(man, 'job', {
+    value: 'coder',
+    enumerable: false
+  })
+  
+  Object.keys(man)  // -> ['name','age']
+与此相对，Object.getOwnPropertyNames方法可获得所有属性名，包括不可枚举的：
+Object.getOwnPropertyNames
+  var man = {
+    name: 'kid',
+    age: 18
+  }
+  Object.defineProperty(man, 'job', {
+    value: 'coder',
+    enumerable: false
+  })
+  
+  Object.getOwnPropertyNames(man)  // -> ['name','age','job']
+  var man = {
+    name: 'kid',
+    age: 18
+  }
+  Object.defineProperty(man, 'job', {
+    value: 'coder',
+    enumerable: false
+  })
+  
+  Object.getOwnPropertyNames(man)  // -> ['name','age','job']
+这两个方法都不会包含从原型链上继承的属性。
+这两个方法都不会包含从原型链上继承的属性。
