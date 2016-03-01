@@ -14,7 +14,7 @@
 // ------------------------------------------------------------------------
 /**
  * 
- * JoyCache
+ * SmtCache
  *
  * 封装Cache的操作
  * 
@@ -23,7 +23,7 @@
  * @version $Revision 2.0 2012-11-19 上午9:10:16
  * @see https://github.com/nicolasff/phpredis
  */
-class JoyCache {
+class SmtCache {
 	// lifetime definition.
 	const FOREVER = 0;
 	const DAY = 86400;
@@ -45,7 +45,7 @@ class JoyCache {
 	 */
 	public static function getInstance() {
 		if (self::$instance === null) {
-			self::$instance = new JoyCache();
+			self::$instance = new SmtCache();
 		}
 		return self::$instance;
 	}
