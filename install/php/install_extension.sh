@@ -1,6 +1,6 @@
 #!/bin/sh
 YAF_V=2.2.9
-IG_V=1.1.1
+IG_V=1.2.1
 CMD_PHPIZE=/usr/local/cellar/php55/bin/phpize
 CMD_PHPCONFIG=/usr/local/cellar/php55/bin/php-config
 SRC_DIR=~/Downloads
