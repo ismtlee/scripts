@@ -1,6 +1,6 @@
 #!/bin/sh
 source ../header.sh
-version=5.5.37
+version=5.5.48
 
 dependencies() {
 	yum -y install openssl openssl-devel
@@ -26,6 +26,13 @@ install() {
 	if [ -n $mysql_installed ]  
 	then
 		echo "old mysql exists, deleted..."
+		rpm -e $mysql_installed --nodeps
+	fi
+    #centos 7默认mariadb
+    mysql_installed=`rpm -qa|grep mariadb`
+	if [ -n $mysql_installed ]  
+	then
+		echo "mariadb exists, deleted..."
 		rpm -e $mysql_installed --nodeps
 	fi
 
