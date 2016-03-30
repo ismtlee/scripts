@@ -1,0 +1,10 @@
+example
+
+打插件
+sh run.sh all
+
+签名
+/Library/usr/workshop/google/linkerboom_codes/plugin/scripts/sign.sh  com.verycoolapps.launcher8_1000
+
+改包名
+sh pkg.sh com.verycoolapps.launcher8_1000  com.new.package
