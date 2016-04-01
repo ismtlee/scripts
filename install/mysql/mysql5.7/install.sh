@@ -56,6 +56,7 @@ install() {
 		-DENABLED_LOCAL_INFILE=1 \
 		-DWITH_INNOBASE_STORAGE_ENGINE=1 \
 		-DWITHOUT_PARTITION_STORAGE_ENGINE=1 #5.6版本此行删除
+        -DDOWNLOAD_BOOST=1
 	make;make install
 }
 
