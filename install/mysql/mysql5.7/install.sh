@@ -6,7 +6,7 @@ dependencies() {
 	yum -y install openssl openssl-devel
 	yum -y install glibc-headers
 	yum -y install gcc-c++
-  yum -y install ncurses-devel
+  	yum -y install ncurses-devel
 	yum -y install make
 	yum -y install cmake
 }
@@ -18,6 +18,8 @@ download() {
   	wget http://cdn.mysql.com/Downloads/MySQL-5.7/${mysql_tgz} -P $download
 		tar zxvf $mysql_tgz
 	fi
+	#download boost manually
+	#wget http://downloads.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz
 }
 
 install() {
@@ -40,10 +42,11 @@ install() {
 	mkdir /opt/mysql/data
 	mkdir /opt/mysql/log
 	mkdir /opt/mysql/etc
-	chown -R mysql:mysql /opt/mysql/data
+	chown -R mysql:mysql /opt/mysql/
 	cmake -DCMAKE_INSTALL_PREFIX=/opt/mysql \
 		-DSYSCONFDIR=/opt/mysql/etc \
 		-DMYSQL_DATADIR=/opt/mysql/data \
+		-DWITH_SYSTEMD=1  \
 		-DMYSQL_TCP_PORT=3306 \
 		-DMYSQL_UNIX_ADDR=/tmp/mysqld.sock \
 		-DMYSQL_USER=mysql \
@@ -55,8 +58,9 @@ install() {
 		-DWITH_EMBEDDED_SERVER=1 \
 		-DENABLED_LOCAL_INFILE=1 \
 		-DWITH_INNOBASE_STORAGE_ENGINE=1 \
-		-DWITHOUT_PARTITION_STORAGE_ENGINE=1 #5.6版本此行删除
-        -DDOWNLOAD_BOOST=1
+		-DWITHOUT_PARTITION_STORAGE_ENGINE=1  \
+	        -DDOWNLOAD_BOOST=1 \
+		-DWITH_BOOST=$download/my_boost
 	make;make install
 }
 
@@ -66,24 +70,34 @@ usergroup() {
 }
 
 config() {
-  #initialize
   #cp /opt/mysql/support-files/my-medium.cnf /opt/mysql/etc/my.cnf
   cp $root/my.cnf /opt/mysql/etc/my.cnf
-  chmod 755 scripts/mysql_install_db
-  scripts/mysql_install_db --user=mysql --basedir=/opt/mysql/ --datadir=/opt/mysql/data/
 
-  cp /opt/mysql/support-files/mysql.server /etc/init.d/mysql
-  chmod +x /etc/init.d/mysql
+  #init mysql db, mysql_install_db is not work since 5.7
+  /opt/mysql/bin/mysqld  --initialize-insecure --user=mysql
 
-  /etc/init.d/mysql restart
+  sysctl_dir=/usr/lib/systemd/system/
+  #centos 6
+  if [ ! -d $sysctl_dir ];
+  then
+    cp /opt/mysql/support-files/mysql.server /etc/init.d/mysql
+    chmod +x /etc/init.d/mysql
+    /etc/init.d/mysql restart 
+  else #centos 7
+    cp /opt/mysql/usr/lib/systemd/system/mysqld.service $sysctl_dir 
+    pid_dir=/var/run/mysqld
+    mkdir $pid_dir 
+    chown -R mysql:mysql $pid_dir 
+    systemctl restart mysqld
+  fi
 
   /opt/mysql/bin/mysqladmin -u root password spvfLy
-  /opt/mysql/bin/mysql -uroot -pspvfLy -e 'use mysql;delete from user where password="";flush privileges;'
+  /opt/mysql/bin/mysql -uroot -pspvfLy -e 'use mysql;delete from user where authentication_string="";flush privileges;'
 	ln -s /opt/mysql/bin/mysql /usr/local/bin/mysql
 }
 
 reload() {
-  /etc/init.d/mysql restart 
+ systemctl reload mysqld 
 }				
 
 
