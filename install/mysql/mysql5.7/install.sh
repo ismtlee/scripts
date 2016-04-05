@@ -1,6 +1,7 @@
 #!/bin/sh
 source ../../header.sh
 version=5.7.11
+sysctl_dir=/usr/lib/systemd/system/
 
 dependencies() {
 	yum -y install openssl openssl-devel
@@ -43,10 +44,9 @@ install() {
 	mkdir /opt/mysql/log
 	mkdir /opt/mysql/etc
 	chown -R mysql:mysql /opt/mysql/
-	cmake -DCMAKE_INSTALL_PREFIX=/opt/mysql \
+	make_config='-DCMAKE_INSTALL_PREFIX=/opt/mysql \
 		-DSYSCONFDIR=/opt/mysql/etc \
 		-DMYSQL_DATADIR=/opt/mysql/data \
-		-DWITH_SYSTEMD=1  \
 		-DMYSQL_TCP_PORT=3306 \
 		-DMYSQL_UNIX_ADDR=/tmp/mysqld.sock \
 		-DMYSQL_USER=mysql \
@@ -60,7 +60,13 @@ install() {
 		-DWITH_INNOBASE_STORAGE_ENGINE=1 \
 		-DWITHOUT_PARTITION_STORAGE_ENGINE=1  \
 	        -DDOWNLOAD_BOOST=1 \
-		-DWITH_BOOST=$download/my_boost
+		-DWITH_BOOST=$download/my_boost'
+    if [  -d $sysctl_dir ];
+    then
+        make_config=${make_config}" -DWITH_SYSTEMD=1"
+    fi 
+
+    cmake $make_config
 	make;make install
 }
 
@@ -76,7 +82,6 @@ config() {
   #init mysql db, mysql_install_db is not work since 5.7
   /opt/mysql/bin/mysqld  --initialize-insecure --user=mysql
 
-  sysctl_dir=/usr/lib/systemd/system/
   #centos 6
   if [ ! -d $sysctl_dir ];
   then
