@@ -16,9 +16,24 @@ function index(req, res) {
   });
 }
 
-function execCmd(req, res, shFile, arg, tip) {
-  //var spawn = require('child_process').spawn;
-  //var cmd = spawn("/bin/sh", [shFile]);
+function execCmd(req, res, shFile, tip) {
+  var spawn = require('child_process').spawn;
+  var cmd = spawn("/bin/sh", [shFile]);
+  res.writeHead(200, {"Content-Type": "text/plain; charset=UTF-8"});
+  cmd.stdout.on("data", function (chunk) {
+    res.write(chunk);
+  });
+  cmd.stderr.on("data", function (chunk) {
+    res.write(chunk);
+  });
+  cmd.on('close', function(code) {
+    res.write(tip);
+    res.end();
+  });
+
+}
+
+function execCmdArg(req, res, shFile, arg, tip) {
   var  exec = require('child_process').exec;
   var cmd = exec('sh ' + shFile + ' ' + arg);
   res.writeHead(200, {"Content-Type": "text/plain; charset=UTF-8"});
@@ -26,16 +41,12 @@ function execCmd(req, res, shFile, arg, tip) {
     res.write(chunk);
   });
   cmd.stderr.on("data", function (chunk) {
-//    res.write(chunk);
-//		res.write("更新失败！");
-//		res.end();
-    res.write(chunk, function(err) {res.end();});
+    res.write(chunk);
+    res.write("Something wrong, plz have a check ...\n");
   });
-  cmd.on('exit', function(code) {// 新版exit要改成close
-    //console.log("end....");
-    //res.write(tip);
-    //res.end();
-    res.write(tip, function(err) {res.end();});
+  cmd.on('close', function(code) {
+    res.write(tip);
+    res.end();
   });
 
 }
@@ -44,12 +55,16 @@ http.createServer(function (req, res) {
   var uri = url.parse(req.url).pathname;
  
   switch(uri) {
-    case '/load':
-      //execCmd(req, res, 'loadGame.sh', '亲，数据已经加载并生效了!');
+    case '/plugin':
+      execCmdArg(req, res, 'scripts/run.sh', 'all', 'apk插件注入完毕!');
       break;
-    case '/andwall':
-    case '/applist':
-      execCmd(req, res, 'svnup.sh', uri, '亲，' + uri + '代码已更新完毕!');
+    //http://localhost:port/pkg?olddir=com.macropinch.pearl_130043&newpkg=com.a.b
+    case '/pkg':
+      //execCmdArg(req, res, 'run.sh', 'all', 'apk插件注入完毕!');
+      pkgname = url.parse(req.url, true).query
+      arg = pkgname.olddir + ' ' + pkgname.newpkg;
+      execCmdArg(req, res, 'scripts/pkg.sh', arg, '');
+      console.log(pkgname);
       break;
     default:
       index(req, res);

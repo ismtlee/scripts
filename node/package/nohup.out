@@ -1,0 +1,48 @@
+/usr/deploy/node/package/server.js:40
+});
+  ^
+
+SyntaxError: Unexpected end of input
+    at exports.runInThisContext (vm.js:53:16)
+    at Module._compile (module.js:373:25)
+    at Object.Module._extensions..js (module.js:416:10)
+    at Module.load (module.js:343:32)
+    at Function.Module._load (module.js:300:12)
+    at Function.Module.runMain (module.js:441:10)
+    at startup (node.js:139:18)
+    at node.js:968:3
+/usr/deploy/node/package/server.js:40
+});
+  ^
+
+SyntaxError: Unexpected end of input
+    at exports.runInThisContext (vm.js:53:16)
+    at Module._compile (module.js:373:25)
+    at Object.Module._extensions..js (module.js:416:10)
+    at Module.load (module.js:343:32)
+    at Function.Module._load (module.js:300:12)
+    at Function.Module.runMain (module.js:441:10)
+    at startup (node.js:139:18)
+    at node.js:968:3
+/usr/deploy/node/package/server.js:40
+});
+  ^
+
+SyntaxError: Unexpected end of input
+    at exports.runInThisContext (vm.js:53:16)
+    at Module._compile (module.js:373:25)
+    at Object.Module._extensions..js (module.js:416:10)
+    at Module.load (module.js:343:32)
+    at Function.Module._load (module.js:300:12)
+    at Function.Module.runMain (module.js:441:10)
+    at startup (node.js:139:18)
+    at node.js:968:3
+Server running at http://0.0.0.0:8008
+Client connected
+Client connected
+svn up
+Client connected
+pkg
+svn up
+Client connected
+pkg

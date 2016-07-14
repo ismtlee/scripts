@@ -1,0 +1,67 @@
+<html>
+<head>
+<title>简易操作入口</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<script>
+$(document).ready(function(){
+  $("#plugin").click(function(){
+    $("#plugin").prop("disabled", true); 
+    $.post("/plugin",
+    {
+    },
+    function(data,status){
+       $("#plugin").prop("disabled", false); 
+       $( "#dialog" ).html(data);
+       $( "#dialog" ).dialog({ 
+           width: 500,
+          buttons: { "Ok": function() { $(this).dialog("close"); } }  
+        }); 
+      //alert("数据：" + data + "\n状态：" + status);
+    });
+  });
+
+  $("#modpkg").click(function(){
+     $("#modpkg").prop("disabled", true); 
+     olddir=$("#olddir").val();
+     newpkg=$("#newpkg").val();
+    $.get("/pkg",
+    { olddir: olddir, 
+      newpkg:  newpkg
+    },
+    function(data,status){
+       $("#modpkg").prop("disabled", false); 
+       $( "#dialog" ).html(data);
+       $( "#dialog" ).dialog({ 
+           width: 500,
+          buttons: { "Ok": function() { $(this).dialog("close"); } }  
+        }); 
+      //alert("数据：" + data + "\n状态：" + status);
+    });
+
+  });
+
+});
+</script>
+</head>
+<body>
+<form>
+  <button id="plugin" type="button" >注入插件</button>
+  <br>
+  <br>
+  <button id="modpkg" type="button">更换包名</button> 
+  <input id="olddir" type="text" />
+  <input id="newpkg" type="text" />
+  <br> <br>
+ </form> 
+  What's your demand? Please Contact <a href="mailto:ilee@foxmail.com">Me</a> ^_^.
+
+<div id="dialog" title="操作结果" >
+   <p>
+   </p>
+</div>
+
+</body>
+</html>

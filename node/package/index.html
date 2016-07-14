@@ -1,0 +1,104 @@
+<html>
+<head>
+<title>打包操作</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script src="http://10.80.1.6:8001/jquery-1.9.1.js"></script>
+<script src="http://10.80.1.6:8001/jquery-ui.js"></script>
+<script src="//cdn.socket.io/socket.io-1.3.7.js"></script>
+<link rel="stylesheet" href="http://10.80.1.6:8001/jquery-ui.css" />
+<style>
+ #info
+      { font-size: 120%;
+        font-weight: bold; }
+    #tail
+      { border: 1px solid #ccc;
+        height: 300px;
+        padding: 0.5em;
+        overflow: hidden;
+        position: relative;
+        overflow-y: scroll; }
+</style>
+<script>
+var Application = function() {
+
+    var socket = io.connect('http://10.80.1.5:8008/');
+
+    socket.on('connect', function() {
+      console.log('Connected to:', socket.host);
+      $('#btn_svnup').on('click', function() {	
+          console.log('svnup');
+	  socket.emit('svnup', { my: 'data' });
+      });
+
+      $("#modpkg").click(function(){
+         console.log('package');
+         $("#modpkg").prop("disabled", true); 
+         pkg=$("#pkg").val();
+         appid=$("#appid").val();
+         apptype=$("#apptype").val();
+         socket.emit('pkg', 
+      		{  
+        		pkg:  pkg,
+        		appid: appid,
+        		apptype: apptype
+      		});
+//       $("#modpkg").prop("disabled", false); 
+
+  });
+
+
+
+
+    });
+    socket.on('message', function(message) {
+      console.log('Received message:', message);
+      if (message.filename) {
+        //$('#info').html( '$ tail -ff ' + message.filename );
+        $('#info').html( 'Output' );
+      };
+      if (message.tail) {
+        $('#tail').html( $('#tail').html() + message.tail );
+        bottom = $("#tail")[0].scrollHeight - $("#tail").height()
+        $('#tail').scrollTop(bottom);
+
+      }
+      if(message.result) {//执行完,按钮恢复可点状态
+	console.log('script excute end.');
+        $("#modpkg").prop("disabled", false); 
+      }
+    });
+
+    return {
+      socket : socket
+    };
+  };
+$(function() { var app = Application(); });
+</script>
+
+</head>
+<body>
+<form>
+  <button id="btn_svnup" type="button">更新</button>
+  <br>
+  <br>
+  <select id=apptype>
+  <option value ="apps">apps</option>
+  <option value ="games", selected="selected">games</option>
+</select>
+<br>
+<br>
+  <input id="appid" type="text" size = 6 maxlength=10 placeholder="110"/>
+  <input id="pkg" type="text" size = 25  placeholder="输入包名" />
+  <button id="modpkg" type="button">打 包</button> 
+  <br> <br>
+ </form> 
+<pre id="info"></pre>
+<pre id="tail"></pre>
+
+<div id="dialog" title="操作结果" >
+   <p>
+   </p>
+</div>
+
+</body>
+</html>

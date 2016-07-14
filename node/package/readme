@@ -1,0 +1,5 @@
+1. npm install socket.io
+2. node server.js /path/to/file/to/tail
+3. After it's running, open a browser at
+
+http://localhost:8008
