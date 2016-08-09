@@ -19,7 +19,7 @@ download() {
   	wget http://cdn.mysql.com/Downloads/MySQL-5.7/${mysql_tgz} -P $download
 		tar zxvf $mysql_tgz
 	fi
-	#download boost manually
+	#download boost manually & untar
 	#wget http://downloads.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz
 }
 
@@ -65,7 +65,7 @@ install() {
     then
         make_config=${make_config}" -DWITH_SYSTEMD=1"
     fi 
-
+    #5.7.14 cd dir 在cmake中不起作用,手动进入目录执行
     cmake $make_config
 	make;make install
 }
