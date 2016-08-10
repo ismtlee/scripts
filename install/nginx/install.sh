@@ -1,6 +1,6 @@
 #!/bin/sh
 source ../header.sh
-version=1.4.2
+version=1.10.1
 
 dependencies() {
   yum -y install pcre pcre-devel
