@@ -35,7 +35,8 @@ config() {
 	sed -i s/6379/$port/g /usr/local/etc/redis/$port.conf
   chmod +x /etc/init.d/redis_$port
   mkdir -p /logs/redis
-  mkdir -p /opt/redis/var/$port
+  #mkdir -p /opt/redis/var/$port
+  mkdir -p /home/data/redis/$port
   chown -R www /logs
   /etc/init.d/redis_$port stop 
   /etc/init.d/redis_$port start

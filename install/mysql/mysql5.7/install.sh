@@ -40,13 +40,15 @@ install() {
 	fi
 
 	mkdir /opt/mysql
-	mkdir /opt/mysql/data
+	#mkdir /opt/mysql/data
+	mkdir -p /home/data/mysql 
 	mkdir /opt/mysql/log
 	mkdir /opt/mysql/etc
 	chown -R mysql:mysql /opt/mysql/
+    #-DMYSQL_DATADIR=/opt/mysql/data \
 	make_config='-DCMAKE_INSTALL_PREFIX=/opt/mysql \
 		-DSYSCONFDIR=/opt/mysql/etc \
-		-DMYSQL_DATADIR=/opt/mysql/data \
+		-DMYSQL_DATADIR=/home/data/mysql \
 		-DMYSQL_TCP_PORT=3306 \
 		-DMYSQL_UNIX_ADDR=/tmp/mysqld.sock \
 		-DMYSQL_USER=mysql \
