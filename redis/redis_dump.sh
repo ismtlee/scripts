@@ -9,7 +9,7 @@ keys=`redis-cli -p $PORT KEYS ${PREFIX}_*`
 mkdir -p $DUMP_DIR
 for k in $keys
 do
-  redis-cli -p 6380 --raw dump $k|head -c-1 >> $DUMP_DIR/$k
+  redis-cli -p $PORT --raw dump $k|head -c-1 >> $DUMP_DIR/$k
 done
 tar zcvf $DUMP_DIR.tgz $DUMP_DIR
 rm -rf $DUMP_DIR
