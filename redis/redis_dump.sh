@@ -3,7 +3,7 @@
 # sh redis_dump.sh MUS data 6380
 PREFIX=$1
 DUMP_DIR=$2
-PORT=6380
+PORT=$3
 keys=`redis-cli -p $PORT KEYS ${PREFIX}_*`
 #rm -rf $DUMP_DIR
 mkdir -p $DUMP_DIR
