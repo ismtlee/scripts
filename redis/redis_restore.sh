@@ -3,7 +3,7 @@
 # sh redis_restore.sh data 6379
 #filename, no extension. say data.tgz mean data.
 DUMP_FILE=$1
-PORT=6379
+PORT=$2
 tar zxvf $DUMP_FILE.tgz
 list=`ls $DUMP_FILE`
 for k in $list 
