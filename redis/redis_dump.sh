@@ -1,6 +1,7 @@
 #!/bin/sh
 # example:
 # sh redis_dump.sh MUS data 6380
+# sh redis_dump.sh \* data 6379
 PREFIX=$1
 DUMP_DIR=$2
 PORT=$3
