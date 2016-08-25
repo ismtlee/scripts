@@ -1,0 +1,42 @@
+#!/usr/local/bin/python
+# -*- coding: utf-8 -*-
+
+# center.py
+
+import wx
+
+class Example(wx.Frame):
+  
+    def __init__(self, parent, title):
+        super(Example, self).__init__(parent, title=title, 
+            size=(500, 300))
+            
+        self.InitUI()
+        self.Centre()
+        self.Show()
+
+    def InitUI(self):
+        panel = wx.Panel(self)
+        #font = wx.SystemSettings_GetFont(wx.SYS_SYSTEM_FONT)
+        #font.SetPointSize(9)
+        vbox = wx.BoxSizer(wx.VERTICAL)
+
+        hbox1 = wx.BoxSizer(wx.HORIZONTAL)
+        st1 = wx.StaticText(panel, label='Tumblr博客名')
+        #st1.SetFont(font)
+        hbox1.Add(st1, flag=wx.RIGHT, border=8)
+        tc = wx.TextCtrl(panel)
+        hbox1.Add(tc, proportion=1)
+        vbox.Add(hbox1, flag=wx.EXPAND|wx.LEFT|wx.RIGHT|wx.TOP, border=10)
+
+        fdlg = wx.FileDialog(self.panel_settings, "Input setting file path", "", "", "CSV files(*.csv)|*.*", wx.FD_SAVE)
+        fdlg.ShowModal()
+        print(fdlg.GetPath())
+
+        panel.SetSizer(vbox)
+    
+if __name__ == '__main__':
+  
+    app = wx.App()
+    Example(None, title='李松的下载器')
+    app.MainLoop()
