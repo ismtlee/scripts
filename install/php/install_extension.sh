@@ -3,6 +3,14 @@ source ./version.sh
 CMD_PHPIZE=/usr/local/cellar/php${suffix}/bin/phpize
 CMD_PHPCONFIG=/usr/local/cellar/php${suffix}/bin/php-config
 SRC_DIR=~/Downloads
+yar() {
+    cd $SRC_DIR
+    wget https://pecl.php.net/get/yar-$YAR_V.tgz
+    tar zxvf yar-$YAR_V.tgz
+    cd yar-$YAR_V
+    $CMD_PHPIZE
+	./configure --with-php-config=$CMD_PHPCONFIG;make;make install
+}
 
 yaf() {
 	cd $SRC_DIR
@@ -58,6 +66,9 @@ case $1 in
    yaf)
 		 yaf
     ;;
+   yar)
+       yar
+    ;;
    zmq)
 		 zmq
     ;;
@@ -71,7 +82,7 @@ case $1 in
 		all
 		;;
    *)
-    echo 'yaf|zmq|igbinary|redis|all'
+    echo 'yaf|yar|zmq|igbinary|redis|all'
     ;;
 esac
 	
