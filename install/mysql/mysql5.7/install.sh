@@ -47,22 +47,22 @@ install() {
 	mkdir /opt/mysql/etc
 	chown -R mysql:mysql /opt/mysql/
     #-DMYSQL_DATADIR=/opt/mysql/data \
-	make_config='-DCMAKE_INSTALL_PREFIX=/opt/mysql \
-		-DSYSCONFDIR=/opt/mysql/etc \
-		-DMYSQL_DATADIR=/home/data/mysql \
-		-DMYSQL_TCP_PORT=3306 \
-		-DMYSQL_UNIX_ADDR=/tmp/mysqld.sock \
-		-DMYSQL_USER=mysql \
-		-DEXTRA_CHARSETS=all \
-		-DDEFAULT_CHARSET=utf8 \
-		-DDEFAULT_COLLATION=utf8_general_ci \
-		-DWITH_READLINE=1 \
-		-DWITH_SSL=system \
-		-DWITH_EMBEDDED_SERVER=1 \
-		-DENABLED_LOCAL_INFILE=1 \
-		-DWITH_INNOBASE_STORAGE_ENGINE=1 \
-		-DWITHOUT_PARTITION_STORAGE_ENGINE=1  \
-	        -DDOWNLOAD_BOOST=1 \
+	make_config='-DCMAKE_INSTALL_PREFIX=/opt/mysql 
+		-DSYSCONFDIR=/opt/mysql/etc 
+		-DMYSQL_DATADIR=/home/data/mysql
+		-DMYSQL_TCP_PORT=3306 
+		-DMYSQL_UNIX_ADDR=/tmp/mysqld.sock 
+		-DMYSQL_USER=mysql 
+		-DEXTRA_CHARSETS=all 
+		-DDEFAULT_CHARSET=utf8 
+		-DDEFAULT_COLLATION=utf8_general_ci 
+		-DWITH_READLINE=1 
+		-DWITH_SSL=system 
+		-DWITH_EMBEDDED_SERVER=1 
+		-DENABLED_LOCAL_INFILE=1
+		-DWITH_INNOBASE_STORAGE_ENGINE=1 
+		-DWITHOUT_PARTITION_STORAGE_ENGINE=1  
+	    -DDOWNLOAD_BOOST=1 
 		-DWITH_BOOST=$download/my_boost'
     if [  -d $sysctl_dir ];
     then
