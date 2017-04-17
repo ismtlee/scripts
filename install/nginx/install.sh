@@ -1,6 +1,7 @@
 #!/bin/sh
 source ../header.sh
 version=1.12.0
+sysctl_dir=/usr/lib/systemd/system/
 
 dependencies() {
   yum -y install pcre pcre-devel
@@ -28,16 +29,23 @@ usergroup() {
 }
 
 config() {
-	cp $root/nginx /etc/init.d/
   cp $root/nginx.conf $prefix/nginx/conf
   cp $root/sites.conf $prefix/nginx/conf
   cp $root/NginxLogCut.sh $prefix/nginx/sbin/
-  chmod +x /etc/init.d/nginx
   mkdir -p /logs/nginx
   chown -R www /logs
-  /etc/init.d/nginx restart
-	#start when reboot
+
+  if [ ! -d $sysctl_dir ];
+  then
+    cp $root/nginx /etc/init.d/
+    chmod +x /etc/init.d/nginx
+    /etc/init.d/nginx restart
 	chkconfig nginx on
+  else #centos 7
+    cp $root/nginx.service $sysctl_dir
+    systemctl restart nginx
+    systemctl enable nginx
+  fi
 }
 
 reload() {

@@ -1,0 +1,10 @@
+[Unit]
+Description=Nginx web server
+After=local-fs.target network.target
+
+[Service]
+ExecStart=/usr/local/cellar/nginx/sbin/nginx
+Type=forking
+
+[Install]
+WantedBy=multi-user.target
