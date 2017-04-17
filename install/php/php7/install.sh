@@ -7,6 +7,7 @@ dependencies() {
 	yum -y install openssl openssl-devel
 	yum -y install bzip2  bzip2-devel
 	yum -y install libcurl-devel 
+	yum -y install gmp-devel 
 	yum -y install gd-devel
 	yum -y install glibc-headers
 	yum -y install gcc-c++
