@@ -19,9 +19,11 @@ download() {
   	wget http://cdn.mysql.com/Downloads/MySQL-5.7/${mysql_tgz} -P $download
 		tar zxvf $mysql_tgz
 	fi
+    # don't need install manually. it automated.
 	# download boost manually & untar
 	# wget http://downloads.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz
     # mv boost_1_59_0 my_boost
+    
 }
 
 install() {
@@ -63,7 +65,7 @@ install() {
 		-DWITH_INNOBASE_STORAGE_ENGINE=1 
 		-DWITHOUT_PARTITION_STORAGE_ENGINE=1  
 	    -DDOWNLOAD_BOOST=1 
-		-DWITH_BOOST=$download/my_boost'
+		-DWITH_BOOST=~/Downloads/my_boost'
     if [  -d $sysctl_dir ];
     then
         make_config=${make_config}" -DWITH_SYSTEMD=1"
