@@ -9,6 +9,7 @@ dependencies() {
 	yum -y install libcurl-devel 
 	yum -y install gmp-devel 
 	yum -y install recode-devel 
+	yum -y install libxslt-devel 
 	yum -y install gd-devel
 	yum -y install glibc-headers
 	yum -y install gcc-c++
