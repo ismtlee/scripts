@@ -58,18 +58,26 @@ usergroup() {
 }
 
 config() {
-	cp $root/php.ini /usr/local/etc/
-  cp $root/php-fpm /etc/init.d/
+  cp $root/php.ini /usr/local/etc/
   cp $root/php-fpm.conf $prefix/php${suffix}/etc/
+
+  mkdir -p /logs/php
+  chown -R www:www /logs
+
+  ln -s $prefix/php${suffix}/bin/php /usr/local/bin/php$suffix
+  ln -s $prefix/php${suffix}/bin/phpize /usr/local/bin/phpize$suffix
+
+  if [ ! -d $sysctl_dir ];
+  then
+    cp $root/php-fpm /etc/init.d/
 	chmod +x /etc/init.d/php-fpm
-
-	mkdir -p /logs/php
-	chown -R www:www /logs
-
-	ln -s $prefix/php${suffix}/bin/php /usr/local/bin/php$suffix
-	ln -s $prefix/php${suffix}/bin/phpize /usr/local/bin/phpize$suffix
-
 	/etc/init.d/php-fpm restart
+    chkconfig php-fpm on
+  else #centos 7
+    cp $root/php-fpm.service $sysctl_dir
+    systemctl restart php-fpm 
+    systemctl enable php-fpm
+  fi
 }
 
 reload() {
