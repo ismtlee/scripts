@@ -1,6 +1,6 @@
 #!/bin/sh
 source ../../header.sh
-version=5.7.11
+version=5.7.18
 sysctl_dir=/usr/lib/systemd/system/
 
 dependencies() {
@@ -19,8 +19,9 @@ download() {
   	wget http://cdn.mysql.com/Downloads/MySQL-5.7/${mysql_tgz} -P $download
 		tar zxvf $mysql_tgz
 	fi
-	#download boost manually & untar
-	#wget http://downloads.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz
+	# download boost manually & untar
+	# wget http://downloads.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz
+    # mv boost_1_59_0 my_boost
 }
 
 install() {
