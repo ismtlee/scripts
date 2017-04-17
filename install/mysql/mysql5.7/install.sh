@@ -68,7 +68,6 @@ install() {
     then
         make_config=${make_config}" -DWITH_SYSTEMD=1"
     fi 
-    #5.7.14 cd dir 在cmake中不起作用,手动进入目录执行
     cmake $make_config
 	make;make install
 }
