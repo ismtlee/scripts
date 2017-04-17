@@ -1,5 +1,5 @@
 #!/bin/sh
-source ../header.sh
+source ../../header.sh
 source ./version.sh
 
 dependencies() {
