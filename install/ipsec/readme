@@ -1,0 +1,133 @@
+StrongSwan is an open source IPsec-based VPN Solution. It supports both the IKEv1 and IKEv2 key exchange protocols in conjunction with the native NETKEY IPsec stack of the Linux kernel. This tutorial will show you how to use strongSwan to set up an IPSec VPN server on CentOS 7.
+
+Install strongSwan
+
+The strongSwan packages are available in the Extra Packages for Enterprise Linux (EPEL) repository. We should enable EPEL first, then install strongSwan.
+
+yum install http://ftp.nluug.nl/pub/os/Linux/distr/fedora-epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+yum install strongSwan openssl
+Generate certificates
+
+Both the VPN client and server need a certificate to identify and authenticate themselves. I have prepared two shell scripts to generate and sign the certificates. First, we download these two scripts into the folder /etc/strongswan/ipsec.d.
+
+cd /etc/strongswan/ipsec.d
+wget https://raw.githubusercontent.com/michael-loo/strongswan_config/for_vultr/server_key.sh
+chmod a+x server_key.sh
+wget https://raw.githubusercontent.com/michael-loo/strongswan_config/for_vultr/client_key.sh
+chmod a+x client_key.sh
+In these two .sh files, I have set the organization name as VULTR-VPS-CENTOS. If you want to change it, open the .sh files and replace O=VULTR-VPS-CENTOS with O=YOUR_ORGANIZATION_NAME.
+
+Next, use server_key.sh with the IP address of your server to generate the certificate authority (CA) key and certificate for server. Replace SERVER_IP with the IP address of your Vultr VPS.
+
+./server_key.sh SERVER_IP
+Generate the client key, certificate, and P12 file. Here, I will create the certificate and P12 file for the VPN user "john".
+
+./client_key.sh john john@gmail.com
+Replace "john" and his email with yours before running the script.
+
+After the certificates for client and server are generated, copy /etc/strongswan/ipsec.d/john.p12 and /etc/strongswan/ipsec.d/cacerts/strongswanCert.pem to your local computer.
+
+Configure strongSwan
+
+Open the strongSwan IPSec configuration file.
+
+vi /etc/strongswan/ipsec.conf
+Replace its content with the following text.
+
+config setup
+    uniqueids=never
+    charondebug="cfg 2, dmn 2, ike 2, net 0"
+
+conn %default
+    left=%defaultroute
+    leftsubnet=0.0.0.0/0
+    leftcert=vpnHostCert.pem
+    right=%any
+    rightsourceip=172.16.1.100/16
+
+conn CiscoIPSec
+    keyexchange=ikev1
+    fragmentation=yes
+    rightauth=pubkey
+    rightauth2=xauth
+    leftsendcert=always
+    rekey=no
+    auto=add
+
+conn XauthPsk
+    keyexchange=ikev1
+    leftauth=psk
+    rightauth=psk
+    rightauth2=xauth
+    auto=add
+
+conn IpsecIKEv2
+    keyexchange=ikev2
+    leftauth=pubkey
+    rightauth=pubkey
+    leftsendcert=always
+    auto=add
+
+conn IpsecIKEv2-EAP
+    keyexchange=ikev2
+    ike=aes256-sha1-modp1024!
+    rekey=no
+    leftauth=pubkey
+    leftsendcert=always
+    rightauth=eap-mschapv2
+    eap_identity=%any
+    auto=add
+Edit the strongSwan configuration file, strongswan.conf.
+
+vi /etc/strongswan/strongswan.conf
+Delete everything and replace it with the following.
+
+charon {
+    load_modular = yes
+    duplicheck.enable = no
+    compress = yes
+    plugins {
+            include strongswan.d/charon/*.conf
+    }
+    dns1 = 8.8.8.8
+    dns2 = 8.8.4.4
+    nbns1 = 8.8.8.8
+    nbns2 = 8.8.4.4
+}
+
+include strongswan.d/*.conf
+Edit the IPsec secret file to add a user and password.
+
+vi /etc/strongswan/ipsec.secrets
+Add a user account "john" into it.
+
+: RSA vpnHostKey.pem
+: PSK "PSK_KEY"
+john %any : EAP "John's Password"
+john %any : XAUTH "John's Password"
+Please note that both sides of the colon ':' need a white-space.
+
+Allow IPv4 forwarding
+
+Edit /etc/sysctl.conf to allow forwarding in the Linux kernel.
+
+vi /etc/sysctl.conf
+Add the following line into the file.
+
+net.ipv4.ip_forward=1
+Save the file, then apply the change.
+
+sysctl -p
+Configure the firewall
+
+Open the firewall for your VPN on the server.
+
+firewall-cmd --permanent --add-service="ipsec"
+firewall-cmd --permanent --add-port=4500/udp
+firewall-cmd --permanent --add-masquerade
+firewall-cmd --reload
+Start VPN
+
+systemctl start strongswan
+systemctl enable strongswan
+StrongSwan is now is running on your server. Install the strongswanCert.pem and .p12 certificate files into your client. You will now be able to join your private network.
