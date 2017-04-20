@@ -4,6 +4,7 @@ version=5.7.18
 sysctl_dir=/usr/lib/systemd/system/
 
 dependencies() {
+    yum -y install wget
 	yum -y install openssl openssl-devel
 	yum -y install glibc-headers
 	yum -y install gcc-c++
