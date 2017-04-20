@@ -2,6 +2,7 @@
 root=$PWD
 download=~/Downloads
 prefix=/usr/local/cellar
+sysctl_dir=/usr/lib/systemd/system/
 
 
 main() {

@@ -82,7 +82,6 @@ config() {
 
 reload() {
 	/etc/init.d/php-fpm reload
-	chkconfig php-fpm on
 }
 
 

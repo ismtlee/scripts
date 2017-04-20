@@ -1,7 +1,7 @@
 #!/bin/sh
 source ../../header.sh
 version=5.7.18
-sysctl_dir=/usr/lib/systemd/system/
+#sysctl_dir=/usr/lib/systemd/system/
 
 dependencies() {
     yum -y install wget
