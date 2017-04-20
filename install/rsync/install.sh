@@ -49,6 +49,7 @@ config() {
 	chmod 600 /etc/rsyncd/rsync.password
   chmod +x /etc/init.d/rsyncd
   /etc/init.d/rsyncd restart
+  chkconfig rsyncd on
 }
 
 reload() {
