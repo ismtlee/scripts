@@ -14,8 +14,10 @@ config() {
 	sed -i s/6379/$port/g /etc/init.d/redis_$port
 
   if [ x$2 = "xdb" ];then
+    echo "db option enabled!"
     cp $root/redis_db.conf /usr/local/etc/redis/$port.conf
   else
+    echo "just cache, not db."
     cp $root/redis.conf /usr/local/etc/redis/$port.conf
   fi
   sed -i s/6379/$port/g /usr/local/etc/redis/$port.conf
