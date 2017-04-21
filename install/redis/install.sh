@@ -1,7 +1,7 @@
 #!/bin/sh
 source ../header.sh
 port=6379
-version=3.2.3
+version=3.2.8
 
 dependencies() {
 	yum install gcc gcc-c++ -y
