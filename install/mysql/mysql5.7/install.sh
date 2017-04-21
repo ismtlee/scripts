@@ -99,6 +99,9 @@ config() {
     mkdir $pid_dir 
     chown -R mysql:mysql $pid_dir 
     systemctl restart mysqld
+    # 解决5.6/5.7版本重开机后/var/run/mysqld文件夹丢失的问题
+    # tmpfiles.d机制似乎只有cenots7支持?
+    echo  "d /var/run/mysqld 0755 mysql mysql -" > /etc/tmpfiles.d/mysql.conf 
   fi
 
   /opt/mysql/bin/mysqladmin -u root password spvfLy
