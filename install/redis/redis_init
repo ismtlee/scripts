@@ -1,6 +1,6 @@
 #!/bin/sh
-#
-# Simple Redis init.d script conceived to work on Linux systems
+# chkconfig: 2345 61 61
+# description: Simple Redis init.d script conceived to work on Linux systems
 # as it does use of the /proc filesystem.
 
 REDISPORT=6379
