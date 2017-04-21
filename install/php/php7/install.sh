@@ -60,7 +60,7 @@ usergroup() {
 config() {
   cp $root/php.ini /usr/local/etc/
   cp $root/php-fpm.conf $prefix/php${suffix}/etc/
-
+  cp $root/www.conf $prefix/php${suffix}/etc/php-fpm.d/
   mkdir -p /logs/php
   chown -R www:www /logs
 
