@@ -1,5 +1,6 @@
 #!/bin/sh
 update() {
+ /usr/local/bin/git  --git-dir=/usr/deploy/$1/.git --work-tree=/usr/deploy/$1 pull
  /usr/bin/svn cleanup /usr/deploy$1
  /usr/bin/svn up /usr/deploy$1
 }
