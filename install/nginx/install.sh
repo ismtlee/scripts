@@ -19,7 +19,7 @@ download() {
 
 install() {
 	cd $download/nginx-$version
-	./configure --prefix=${prefix}/nginx --user=www --group=www  --with-http_stub_status_module 
+	./configure --prefix=${prefix}/nginx --user=www --group=www  --with-http_stub_status_module --with-http_ssl_module
 	make;make install
 }
 
