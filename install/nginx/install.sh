@@ -1,6 +1,6 @@
 #!/bin/sh
 source ../header.sh
-version=1.12.0
+version=1.12.2
 #sysctl_dir=/usr/lib/systemd/system/
 
 dependencies() {
