@@ -1,3 +1,0 @@
-58.218.200.24 - - [22/Jan/2018:02:25:48 -0800] "GET /manager/html HTTP/1.1" 200 0 "-" "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; WOW64; Trident/6.0)"
-45.77.88.250 - - [22/Jan/2018:02:31:09 -0800] "GET /?appid=2187&build=2&country=US&lang=zh-Hant&model=iPod%20Touch%206G&package=com.ivyios.glowblock&uuid=B9F5686E-0766-46C7-8403-387BC58E7B95&version=1.0 HTTP/1.1" 200 0 "-" "IvyiOSSdk_Example/1.0 (iPod touch; iOS 11.2.2; Scale/2.00)"
-45.77.88.250 - - [22/Jan/2018:02:32:20 -0800] "GET /?appid=2187&build=2&country=US&lang=zh-Hant&model=iPod%20Touch%206G&package=com.ivyios.glowblock&uuid=B9F5686E-0766-46C7-8403-387BC58E7B95&version=1.0 HTTP/1.1" 200 0 "-" "IvyiOSSdk_Example/1.0 (iPod touch; iOS 11.2.2; Scale/2.00)"
