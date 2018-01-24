@@ -9,29 +9,52 @@ import re
 import struct
 import base64
 
-def parseRequest(rqst):
-  param = r"?P<param>.*"
-  p = re.compile(r"/\?(%s)" %param, re.VERBOSE)
-  return re.findall(p, rqst)
+def parseRequest(request):
+  #解析request
+  #print(request)
+  rs = {}
+  unknown = "_"
+  if request:
+    params = request.split("&")
+    if params:
+      for i in params:
+        param = i.split("=", 1)  
+        if param:
+          rs[param[0]] = param[1]
+    else:
+      return rs
+  else:
+    return rs 
+  return(rs['appid'] if 'appid' in rs else unknown, 
+         rs['country'] if 'country' in rs else unknown,
+         rs['lang'] if 'lang' in rs else unknown,
+         rs['model'] if 'model' in rs else unknown,
+         rs['package'] if 'package' in rs else unknown,
+         rs['uuid'] if 'uuid' in rs else unknown,
+         rs['version'] if 'version' in rs else unknown,
+         rs['ios'] if 'ios' in rs else unknown)
 
 def parseLine(line):
     ip = r"?P<ip>[\d.]*"
     method = r"?P<method>\S+"
-    request = r"?P<request>/\?appid=\S+"
-    p = re.compile(r"(%s)\ -\ -\ \[.*\]\ \"(%s)[\s](%s)"%(ip, method, request), re.VERBOSE)
+    #request = r"?P<request>/\?appid=\S+"
+    request = r"?P<request>appid=\S+"
+    p = re.compile(r"(%s)\ -\ -\ \[.*\]\ \"(%s)[\s]/\?(%s)"%(ip, method, request), re.VERBOSE)
     return re.findall(p, line)
-    #p = re.match(r"(%s)\ -\ -\ \[.*\]\ \"(%s)[\s](%s)"%(ip, method, request), line)
-    #return p.group() 
-    #print(p.group())
 
 def cutlogs():
-  with open('test.log') as file:
+  with open("nginx.log", "r") as file:
     for line in file:
       m = parseLine(line)
-      #print(m)
       if m: 
-        #p = parseParam(m[0])
-        print(m[0][2])
+        ip = m[0][0]
+        request = m[0][2]
+        (appid, country, lang, model, package, uuid, version, ios) = parseRequest(request)
+        parseRequest(request)
+        newline = "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n"%(ip, appid, country, lang, model, package, uuid, version, ios)
+        with open("raws.log", "a") as newfile:
+            newfile.write(newline)
+
 
 def main():
   cutlogs()
