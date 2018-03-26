@@ -22,11 +22,12 @@ config() {
   cp $root/squid.conf /etc/squid/
   htpasswd -cd /etc/squid3/passwords lee
   #input password here
+  systemctl enable squid.service
+  systemctl restart squid.service
 }
 
 reload() {
-  systemctl enable squid.service
-  systemctl start squid.service
+  systemctl reload squid.service
 }
 
 main $1
