@@ -9,4 +9,4 @@ npm install express --prefix $APIDIR
 npm install big-integer --prefix $APIDIR
 npm install request --prefix $APIDIR
 
-forever start app.js
+forever start $APIDIR/app.js
