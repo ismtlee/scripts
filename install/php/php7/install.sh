@@ -76,9 +76,12 @@ config() {
     chkconfig php-fpm on
   else #centos 7
     cp $root/php-fpm.service $sysctl_dir
+    sed -i ''s/php71/"php$suffix"/'' $sysctl_dir/php-fpm.conf 
+    systemctl daemon-reload 
     systemctl restart php-fpm 
     systemctl enable php-fpm
   fi
+
 }
 
 reload() {
