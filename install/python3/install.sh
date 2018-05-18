@@ -32,7 +32,7 @@ install() {
 	cd $download/Python-$PYTHON_V
   LD_RUN_PATH=/usr/local/sqlite3/lib ./configure --prefix=/usr/local/python$python_dir LDFLAGS="-L/usr/local/sqlite3/lib" CPPFLAGS="-I /usr/local/sqlite3/include"
   LD_RUN_PATH=/usr/local/sqlite3/lib make
-  LD_RUN_PATH=/usr/local/sqlite3/lib make test
+  #LD_RUN_PATH=/usr/local/sqlite3/lib make test
   LD_RUN_PATH=/usr/local/sqlite3/lib make install
 }
 
@@ -41,7 +41,7 @@ usergroup() {
 }
 
 config() {
-  echo "export PATH=$PATH:/usr/local/python$python_dir/bin" >> /etc/profile
+  echo "export PATH=\$PATH:/usr/local/python$python_dir/bin" >> /etc/profile
   source /etc/profile
 }
 
