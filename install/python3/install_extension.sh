@@ -11,6 +11,8 @@ for i in "${ext[@]}"; do
   fi
 done
 
+echo ">>>>>>>>>>>>>>>>>>>>>>>>>>"
+
 for i in "${ext[@]}"; do 
   b=($i)
   if [ ${b[1]} = 1 ]
