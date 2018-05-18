@@ -1,5 +1,5 @@
 #!/bin/sh
-source ../../header.sh
+source ../header.sh
 source ./version.sh
 sqlite=sqlite-autoconf-3170000
 python_dir=${PYTHON_V:0:3}
