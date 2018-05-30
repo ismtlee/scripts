@@ -8,6 +8,10 @@ bit=`getconf LONG_BIT`
 #file descriptor limits
 echo "* soft nofile 655360" >> /etc/security/limits.conf  
 echo "* hard nofile 655360" >> /etc/security/limits.conf  
+#redis warning
+echo "net.core.somaxconn = 65535" >> /etc/sysctl.conf
+echo "vm.overcommit_memory = 1" >> /etc/sysctl.conf
+sysctl  -p
 
 if [ $bit == 32 ]; then
 	echo "session required /lib/security/pam_limits.so" >> /etc/pam.d/login 
