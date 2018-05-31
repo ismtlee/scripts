@@ -1,17 +1,14 @@
 [Unit]
-Description=nginx - high performance web server
-Documentation=http://nginx.org/en/docs/
-After=network.target remote-fs.target nss-lookup.target
+Description=The NGINX HTTP and reverse proxy server
+After=syslog.target network.target remote-fs.target nss-lookup.target
 
 [Service]
 Type=forking
-KillMode=none
+PIDFile=/run/nginx.pid
 ExecStartPre=/usr/local/cellar/nginx/sbin/nginx -t
-ExecStartPre=-/usr/bin/pkill -SIGQUIT nginx
 ExecStart=/usr/local/cellar/nginx/sbin/nginx
 ExecReload=/usr/local/cellar/nginx/sbin/nginx -s reload
-ExecStop=/usr/local/cellar/nginx/sbin/nginx -t
-ExecStop=/usr/local/cellar/nginx/sbin/nginx -s quit
+ExecStop=/bin/kill -s QUIT $MAINPID
 PrivateTmp=true
 
 [Install]
