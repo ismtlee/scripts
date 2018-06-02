@@ -3,6 +3,7 @@
 #update first
 yum update -y
 
+
 bit=`getconf LONG_BIT`
 
 #file descriptor limits
@@ -18,6 +19,12 @@ if [ $bit == 32 ]; then
 else
 	echo "session required /lib64/security/pam_limits.so" >> /etc/pam.d/login 
 fi
+
+#close default firewall
+systemctl disable firewalld.service
+systemctl stop firewalld.service
+#close selinux
+sed -i s/SELINUX=enforcing/SELINUX=disabled/g /etc/selinux/config 
 
 cp  disable-transparent-hugepages /etc/init.d/
 
