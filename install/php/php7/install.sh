@@ -14,6 +14,7 @@ dependencies() {
 	yum -y install glibc-headers
 	yum -y install gcc-c++
 	yum -y install ncurses-devel
+	yum -y install postgresql-devel 
 	yum -y install autoconf 
 	yum -y install make
 }
