@@ -31,6 +31,7 @@ config() {
   wget http://humdi.net/vnstat/init.d/redhat/vnstat -P /etc/init.d/
   chmod +x /etc/init.d/vnstat
   /etc/init.d/vnstat restart
+  ln -s /usr/local/sbin/vnstatd /usr/sbin/vnstatd
   chkconfig vnstat on
 }
 
