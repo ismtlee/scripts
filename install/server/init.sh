@@ -4,6 +4,8 @@
 yum update -y
 #install some apps
 yum install ntpdate -y
+yum install telnet -y
+yum install net-tools -y
 
 
 bit=`getconf LONG_BIT`
