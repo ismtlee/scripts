@@ -16,6 +16,10 @@ echo "* hard nofile 655360" >> /etc/security/limits.conf
 #redis warning
 echo "net.core.somaxconn = 65535" >> /etc/sysctl.conf
 echo "vm.overcommit_memory = 1" >> /etc/sysctl.conf
+#optism
+echo "net.ipv4.tcp_tw_recycle = 1" >> /etc/sysctl.conf
+echo "net.ipv4.tcp_tw_reuse = 1" >> /etc/sysctl.conf
+
 sysctl  -p
 
 if [ $bit == 32 ]; then
