@@ -2,6 +2,8 @@
 
 #update first
 yum update -y
+#install some apps
+yum install ntpdate -y
 
 
 bit=`getconf LONG_BIT`
