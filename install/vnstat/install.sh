@@ -18,6 +18,7 @@ download() {
 
 install() {
 	cd $download/vnstat-$version
+  cp $download/vnstat-$version/vnstat.conf.new /etc/vnstat.conf
 	#./configure --prefix=${prefix}/rsync 
 	./configure 
 	make;make install
