@@ -56,7 +56,7 @@ redis() {
 }
 pb() {
   cd $SRC_DIR
-  git clone git@github.com:protocolbuffers/protobuf.git --depth 1
+  git clone git://github.com/protocolbuffers/protobuf.git --depth 1
   cd protobuf/php/ext/google/protobuf
   $CMD_PHPIZE
   ./configure --with-php-config=$CMD_PHPCONFIG;make;make install
