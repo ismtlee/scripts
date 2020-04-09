@@ -54,12 +54,19 @@ redis() {
 	$CMD_PHPIZE
 	./configure --enable-redis-igbinary --with-php-config=$CMD_PHPCONFIG;make;make install
 }
-
+pb() {
+  cd $SRC_DIR
+  git clone git@github.com:protocolbuffers/protobuf.git --depth 1
+  cd protobuf/php/ext/google/protobuf
+  $CMD_PHPIZE
+  ./configure --with-php-config=$CMD_PHPCONFIG;make;make install
+}
 all() {
 	yaf
 	zmq
 	igbinary
 	redis
+  pb
 }
 
 case $1 in
@@ -78,6 +85,9 @@ case $1 in
 	 redis)
 		 redis
 		 ;;
+   pb)
+     pb
+     ;;
 	 all)
 		all
 		;;
