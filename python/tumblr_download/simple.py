@@ -98,5 +98,5 @@ class Example(wx.Frame):
 if __name__ == '__main__':
   
     app = wx.App()
-    Example(None, title="李松的下载器")
+    Example(None, title="tumblr下载器")
     app.MainLoop()
