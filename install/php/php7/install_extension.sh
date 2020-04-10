@@ -56,11 +56,13 @@ redis() {
 }
 pb() {
   cd $SRC_DIR
-  git clone git://github.com/protocolbuffers/protobuf.git --depth 1
-  cd protobuf/php/ext/google/protobuf
+  wget http://pecl.php.net/get/protobuf-$PB_V.tgz
+  tar zxvf protobuf-$PB_V.tgz
+  cd protobuf-$PB_V
   $CMD_PHPIZE
   ./configure --with-php-config=$CMD_PHPCONFIG;make;make install
 }
+
 all() {
 	yaf
 	zmq
