@@ -2,7 +2,7 @@ service rsync
 {
  #disable = yes
  disable  = no
- flags  = IPv6
+ flags  = IPv4
  socket_type     = stream
  wait            = no
  user            = www 
