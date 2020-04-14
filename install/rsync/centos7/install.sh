@@ -1,5 +1,5 @@
 #!/bin/sh
-source ../header.sh
+source ../../header.sh
 version=3.1.2
 inner_ip=default
 
