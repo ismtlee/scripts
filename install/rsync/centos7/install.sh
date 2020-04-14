@@ -33,7 +33,8 @@ config() {
 }
 
 reload() {
-	/etc/init.d/rsyncd restart
+  systemctl start xinetd.service
+  systemctl enable xinetd.service
 }
 
 inner_ip=$2	
