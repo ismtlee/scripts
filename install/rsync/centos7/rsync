@@ -5,7 +5,7 @@ service rsync
  flags  = IPv4
  socket_type     = stream
  wait            = no
- user            = www 
+ user            = root 
  server          = /usr/bin/rsync
  server_args     = --daemon
  log_on_failure  += USERID
