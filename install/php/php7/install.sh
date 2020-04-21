@@ -21,7 +21,7 @@ dependencies() {
 
 download() {
 	php_tgz=php-${PHP_V}.tar.gz
-  mcrypt_tgz=libmcrypt-2.5.8.tar.gz
+  #mcrypt_tgz=libmcrypt-2.5.8.tar.gz
 
 	if [ ! -f $download/$php_tgz ];
 	then
@@ -30,21 +30,21 @@ download() {
 		tar zxvf $php_tgz
 	fi
 
-	if [ ! -f $download/$mcrypt_tgz ];
-	then
+	#if [ ! -f $download/$mcrypt_tgz ];
+	#then
 		#wget http://nchc.dl.sourceforge.net/project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz -O libmcrypt-2.5.8.tar.gz
-		wget http://211.79.60.17//project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz -O libmcrypt-2.5.8.tar.gz
-		tar zxvf libmcrypt-2.5.8.tar.gz
-	fi
+	#	wget http://211.79.60.17//project/mcrypt/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz -O libmcrypt-2.5.8.tar.gz
+	#	tar zxvf libmcrypt-2.5.8.tar.gz
+	#fi
 
 }
 
 install() {
-	cd $download/libmcrypt-2.5.8/
-	./configure;make;make install
-	cd $download/libmcrypt-2.5.8/libltdl
-	./configure --enable-ltdl-install
-	make;make install
+	#cd $download/libmcrypt-2.5.8/
+	#./configure;make;make install
+	#cd $download/libmcrypt-2.5.8/libltdl
+	#./configure --enable-ltdl-install
+	#make;make install
 	yum -y install libicu libicu-devel
 
 	cd $download/php-${PHP_V}
