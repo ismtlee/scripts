@@ -4,7 +4,7 @@ After=local-fs.target network.target nginx.service
 
 [Service]
 ExecStartPre=/bin/mkdir -p /run/php7
-ExecStart=/usr/local/cellar/php72/sbin/php-fpm --fpm-config /usr/local/cellar/php72/etc/php-fpm.conf 
+ExecStart=/usr/local/cellar/php74/sbin/php-fpm --fpm-config /usr/local/cellar/php74/etc/php-fpm.conf 
 ExecReload=/bin/kill -USR2 $MAINPID
 Type=forking
 
