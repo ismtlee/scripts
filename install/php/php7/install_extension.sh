@@ -94,7 +94,7 @@ case $1 in
 		all
 		;;
    *)
-    echo 'yaf|yar|zmq|igbinary|redis|all'
+    echo 'yaf|yar|zmq|igbinary|redis|pb|all'
     ;;
 esac
 	
