@@ -9,6 +9,7 @@ dependencies() {
 	yum -y install libcurl-devel 
 	yum -y install gmp-devel 
 	yum -y install sqlite-devel 
+	yum -y install oniguruma-devel
 	yum -y install recode-devel 
 	yum -y install libxslt-devel 
 	yum -y install gd-devel
