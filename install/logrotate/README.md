@@ -1,3 +1,8 @@
+How to use:
+Please copy all files with .logrotate to /etc/logrotate.d/.
+To test, you can run logrotate -d /etc/logrotate.conf
+
+
 logrotate测试命令：
      logrotate -d /etc/logrotate.conf 仅测试，不执行操作。
 
