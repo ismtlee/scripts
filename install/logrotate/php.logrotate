@@ -1,5 +1,20 @@
-/logs/php/*.log {
- create 0640 www www 
+/logs/php/error.log {
+ su www www
+ create
+ daily
+ dateext
+ delaycompress
+ compress
+ rotate 30
+ missingok
+ sharedscripts
+ postrotate
+ /bin/kill -USR1 `cat /var/run/php-fpm.pid`
+ endscript
+}
+
+/logs/php/php-fpm.log {
+ create 
  daily
  dateext
  delaycompress
