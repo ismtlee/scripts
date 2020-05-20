@@ -1,5 +1,6 @@
 /logs/nginx/*.log {
  daily
+ notifempty
  dateext 
  delaycompress
  compress

@@ -1,6 +1,7 @@
 /logs/php/errors.log {
  su www www
  create
+ notifempty
  daily
  dateext
  delaycompress
@@ -15,6 +16,7 @@
 
 /logs/php/php-fpm.log {
  create 
+ notifempty
  daily
  dateext
  delaycompress
