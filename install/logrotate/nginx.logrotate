@@ -1,0 +1,25 @@
+/logs/nginx/*.log {
+ daily
+ dateext 
+ #compress
+ create
+ rotate 10 
+ missingok
+ sharedscripts
+ postrotate
+ /bin/kill -USR1 `cat /var/run/nginx.pid`
+ endscript
+}
+
+/logs/php/*.log {
+ daily
+ dateext 
+ create
+ rotate 10
+ missingok
+ sharedscripts
+ postrotate
+ /bin/kill -USR1 `cat /var/run/nginx.pid`
+ endscript
+
+}
