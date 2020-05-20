@@ -1,9 +1,9 @@
 /logs/php/*.log {
+ create 0640 www www #必须放首行
  daily
  dateext
  delaycompress
  compress
- create 0640 www www 
  rotate 30
  missingok
  sharedscripts
