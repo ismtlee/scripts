@@ -1,13 +1,13 @@
-/logs/nginx/*.log {
+/logs/php/*.log {
  daily
- dateext 
+ dateext
  delaycompress
  compress
  create
- rotate 30 
+ rotate 30
  missingok
  sharedscripts
  postrotate
- /bin/kill -USR1 `cat /var/run/nginx.pid`
+ /bin/kill -USR1 `cat /var/run/php-fpm.pid`
  endscript
 }

@@ -7,3 +7,5 @@ logrotate测试命令：
         logrotate -f /etc/logrotate.d/mysql.logrotate
 
 原理/etc/cron.daily/logrotate
+
+如果开启了压缩,可以用zgrep,不必先解压文件
