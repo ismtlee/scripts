@@ -19,7 +19,6 @@
  missingok
  sharedscripts
  postrotate
- /bin/kill -USR1 `cat /var/run/nginx.pid`
+ /bin/kill -USR1 `cat /var/run/php-fpm.pid`
  endscript
-
 }
