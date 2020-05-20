@@ -3,7 +3,7 @@
  dateext
  delaycompress
  compress
- create
+ create 0640 www www 
  rotate 30
  missingok
  sharedscripts
