@@ -1,4 +1,4 @@
-/logs/php/error.log {
+/logs/php/errors.log {
  su www www
  create
  daily

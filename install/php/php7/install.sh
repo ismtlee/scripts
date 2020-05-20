@@ -67,7 +67,9 @@ config() {
   cp $root/php-fpm.conf $prefix/php${suffix}/etc/
   cp $root/www.conf $prefix/php${suffix}/etc/php-fpm.d/
   mkdir -p /logs/php
-  chown -R www:www /logs
+  touch /logs/php/errors.log
+  # Not chown /logs/php to root, for logratote checking.
+  chown -R www:www /logs/php/errors.log
 
   ln -s $prefix/php${suffix}/bin/php /usr/local/bin/php$suffix
   ln -s $prefix/php${suffix}/bin/phpize /usr/local/bin/phpize$suffix
