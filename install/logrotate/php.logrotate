@@ -1,5 +1,5 @@
 /logs/php/*.log {
- create 0640 www www #必须放首行
+ create 0640 www www 
  daily
  dateext
  delaycompress
